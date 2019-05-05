@@ -1,0 +1,30 @@
+{
+  "name": "typeofweb-discord-bot",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "dev": "tsc-watch --onSuccess \"node ./dist/src/index.js\"",
+    "tslint": "tslint -p tsconfig.json",
+    "tsc": "tsc --noEmit -p tsconfig.json",
+    "clean": "rm -rf dist",
+    "build": "npm run clean && tsc && rsync -av --exclude='*.ts' src/** dist/src/"
+  },
+  "keywords": [],
+  "author": "Michał Miszczyszyn <michal@mmiszy.pl> (https://typeofweb.com/)",
+  "license": "ISC",
+  "devDependencies": {
+    "husky": "2.2.0",
+    "prettier": "1.17.0",
+    "pretty-quick": "1.10.0",
+    "tsc-watch": "2.1.2",
+    "tslint": "5.16.0",
+    "typescript": "3.4.5"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run tslint && pretty-quick --staged"
+    }
+  }
+}
