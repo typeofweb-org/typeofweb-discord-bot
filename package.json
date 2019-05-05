@@ -15,16 +15,27 @@
   "author": "Michał Miszczyszyn <michal@mmiszy.pl> (https://typeofweb.com/)",
   "license": "ISC",
   "devDependencies": {
+    "@types/node": "12.0.0",
     "husky": "2.2.0",
     "prettier": "1.17.0",
     "pretty-quick": "1.10.0",
     "tsc-watch": "2.1.2",
     "tslint": "5.16.0",
+    "tslint-config-prettier": "1.18.0",
+    "tslint-immutable": "5.5.2",
     "typescript": "3.4.5"
   },
   "husky": {
     "hooks": {
       "pre-commit": "npm run tslint && pretty-quick --staged"
     }
+  },
+  "dependencies": {
+    "@discordjs/uws": "11.149.1",
+    "bufferutil": "4.0.1",
+    "discord.js": "github:discordjs/discord.js",
+    "discord.rss": "4.0.2",
+    "erlpack": "github:discordapp/erlpack",
+    "zlib-sync": "0.1.4"
   }
 }
