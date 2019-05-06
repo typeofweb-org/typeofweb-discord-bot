@@ -17,6 +17,7 @@ const drss = new DiscordRSS.Client({
     timezone: 'Europe/Warsaw',
     dateFormat: 'LLL',
     dateLanguage: 'pl',
+    dateLanguageList: ['pl'],
   },
 });
 
