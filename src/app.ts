@@ -1,25 +1,25 @@
-import Discord from "discord.js";
-import DiscordRSS from "discord.rss";
+import Discord from 'discord.js';
+import DiscordRSS from 'discord.rss';
 
-import { handleCommand } from "./commands";
-import { getConfig } from "./config";
+import { handleCommand } from './commands';
+import { getConfig } from './config';
 
-const PREFIX = "!";
+const PREFIX = '!';
 const client = new Discord.Client();
 const drss = new DiscordRSS.Client({
   database: {
-    uri: getConfig("MONGO_URL"),
+    uri: getConfig('MONGO_URL'),
     connection: {
-      useNewUrlParser: true
-    }
-  }
+      useNewUrlParser: true,
+    },
+  },
 });
 
-client.on("ready", () => {
+client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
-client.on("message", msg => {
+client.on('message', msg => {
   if (!msg.content.startsWith(PREFIX) || msg.author.bot) {
     return;
   }
@@ -27,7 +27,7 @@ client.on("message", msg => {
 });
 
 async function init() {
-  await client.login(getConfig("DISCORD_BOT_TOKEN"));
+  await client.login(getConfig('DISCORD_BOT_TOKEN'));
   drss._defineBot(client);
 }
 
