@@ -61,7 +61,7 @@ const server = Http.createServer((_req, res) => {
   // tslint:disable-next-line:no-magic-numbers
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify({ errors, warnings }));
+  res.end(JSON.stringify({ errors, warnings, debugs }));
 });
 
 server.listen(getConfig('PORT'), () => {
