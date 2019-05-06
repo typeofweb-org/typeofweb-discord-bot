@@ -19,6 +19,7 @@ const drss = new DiscordRSS.Client({
     dateFormat: 'LLL',
     dateLanguage: 'pl',
     dateLanguageList: ['pl'],
+    sendOldOnFirstCycle: true,
   },
 });
 
