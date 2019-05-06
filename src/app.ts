@@ -38,6 +38,11 @@ client.on('warn', warning => {
   warnings.push(warning);
 });
 
+const debugs: string[] = [];
+client.on('debug', debug => {
+  debugs.push(debug);
+});
+
 client.on('message', msg => {
   if (!msg.content.startsWith(PREFIX) || msg.author.bot) {
     return;
