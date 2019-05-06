@@ -26,7 +26,9 @@ declare module "discord.rss" {
     commandAliases: CommandAliases;
   }
 
-  interface Connection {}
+  interface Connection {
+    useNewUrlParser?: boolean;
+  }
 
   interface Database {
     uri: string;

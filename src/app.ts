@@ -7,7 +7,12 @@ import { getConfig } from "./config";
 const PREFIX = "!";
 const client = new Discord.Client();
 const drss = new DiscordRSS.Client({
-  database: { uri: getConfig("MONGO_URL") }
+  database: {
+    uri: getConfig("MONGO_URL"),
+    connection: {
+      useNewUrlParser: true
+    }
+  }
 });
 
 client.on("ready", () => {
