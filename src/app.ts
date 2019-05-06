@@ -13,6 +13,11 @@ const drss = new DiscordRSS.Client({
       useNewUrlParser: true,
     },
   },
+  feeds: {
+    timezone: 'Europe/Warsaw',
+    dateFormat: 'LLL',
+    dateLanguage: 'pl',
+  },
 });
 
 client.on('ready', () => {
