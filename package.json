@@ -5,6 +5,7 @@
   "main": "index.js",
   "private": true,
   "scripts": {
+    "start": "NODE_ENV=production node app.js",
     "dev": "tsc-watch --onSuccess \"node ./dist/src/index.js\"",
     "tslint": "tslint -p tsconfig.json",
     "tsc": "tsc --noEmit -p tsconfig.json",
@@ -15,6 +16,7 @@
   "author": "Michał Miszczyszyn <michal@mmiszy.pl> (https://typeofweb.com/)",
   "license": "ISC",
   "devDependencies": {
+    "@types/dotenv": "6.1.1",
     "@types/node": "12.0.0",
     "husky": "2.2.0",
     "prettier": "1.17.0",
@@ -33,8 +35,9 @@
   "dependencies": {
     "@discordjs/uws": "11.149.1",
     "bufferutil": "4.0.1",
-    "discord.js": "github:discordjs/discord.js",
+    "discord.js": "11.4.2",
     "discord.rss": "4.0.2",
+    "dotenv": "8.0.0",
     "erlpack": "github:discordapp/erlpack",
     "zlib-sync": "0.1.4"
   }

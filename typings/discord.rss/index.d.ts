@@ -97,7 +97,9 @@ declare module "discord.rss" {
     login(
       token: string | Discord.Client | Discord.ShardingManager,
       noChildren?: boolean
-    );
+    ): void;
+
+    _defineBot(client: Discord.Client): void;
 
     listenToShardedEvents(bot: Discord.Client);
 
