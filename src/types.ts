@@ -4,6 +4,7 @@ interface CommandCommon {
   name: string;
   description: string;
   guildOnly?: boolean;
+  cooldown?: number;
 }
 
 type CommandWithArgs = {
