@@ -2,11 +2,12 @@ import Discord from 'discord.js';
 import { getConfig } from '../config';
 import server from './server';
 import link from './link';
+import spectre from './spectre';
 import { InvalidUsageError, Command } from '../types';
 
 const commandPattern = new RegExp(getConfig('PREFIX') + '([a-z]+)(?: (.*))?');
 
-const allCommands = { server, link };
+const allCommands = { server, link, spectre };
 const cooldowns = new Discord.Collection<string, Discord.Collection<string, number>>();
 
 function verifyCooldown(msg: Discord.Message, command: Command) {
