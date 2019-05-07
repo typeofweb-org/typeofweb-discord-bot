@@ -51,6 +51,8 @@ client.on('message', async msg => {
     } else {
       void msg.reply('przepraszam, ale coś poszło nie tak…');
     }
+  } finally {
+    await msg.channel.stopTyping(true);
   }
 });
 
