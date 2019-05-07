@@ -2,11 +2,12 @@ import Discord from 'discord.js';
 import { getConfig } from '../config';
 import server from './server';
 import link from './link';
+import mdn from './mdn';
 import { InvalidUsageError, Command } from '../types';
 
 const commandPattern = new RegExp(getConfig('PREFIX') + '([a-z]+)(?: (.*))?');
 
-const allCommands = { server, link };
+const allCommands = { server, link, mdn };
 const cooldowns = new Discord.Collection<string, Discord.Collection<string, number>>();
 
 function verifyCooldown(msg: Discord.Message, command: Command) {
@@ -100,8 +101,9 @@ export async function handleCommand(msg: Discord.Message) {
 
   const args = rest ? rest.split(/\s+/g) : [];
   if (!args.length) {
-    throw new InvalidUsageError(`nie podałeś argumentów!`);
+    throw new InvalidUsageError(`nie podano argumentów!`);
   }
 
-  return command.execute(msg, args);
+  await command.execute(msg, args);
+  return msg.channel.stopTyping(true);
 }
