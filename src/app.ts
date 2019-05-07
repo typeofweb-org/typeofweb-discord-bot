@@ -38,11 +38,6 @@ client.on('warn', warning => {
   warnings.push(warning);
 });
 
-const debugs: string[] = [];
-client.on('debug', debug => {
-  debugs.push(debug);
-});
-
 client.on('message', msg => {
   if (!msg.content.startsWith(PREFIX) || msg.author.bot) {
     return;
@@ -61,7 +56,7 @@ const server = Http.createServer((_req, res) => {
   // tslint:disable-next-line:no-magic-numbers
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify({ errors, warnings, debugs }));
+  res.end(JSON.stringify({ errors, warnings }));
 });
 
 server.listen(getConfig('PORT'), () => {
