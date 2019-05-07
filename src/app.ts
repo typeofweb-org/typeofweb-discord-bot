@@ -4,8 +4,8 @@ import Http from 'http';
 
 import { handleCommand } from './commands';
 import { getConfig } from './config';
+import { InvalidUsageError } from './types';
 
-const PREFIX = '!';
 const client = new Discord.Client();
 const drss = new DiscordRSS.Client({
   database: {
@@ -38,11 +38,20 @@ client.on('warn', warning => {
   warnings.push(warning);
 });
 
-client.on('message', msg => {
-  if (!msg.content.startsWith(PREFIX) || msg.author.bot) {
+client.on('message', async msg => {
+  if (!msg.content.startsWith(getConfig('PREFIX')) || msg.author.bot) {
     return;
   }
-  handleCommand(msg);
+
+  try {
+    await handleCommand(msg);
+  } catch (err) {
+    if (err instanceof InvalidUsageError) {
+      void msg.reply(err.message);
+    } else {
+      void msg.reply('przepraszam, ale coś poszło nie tak…');
+    }
+  }
 });
 
 async function init() {

@@ -11,6 +11,8 @@ export function getConfig(name: string): string {
       return val || 'development';
     case 'PORT':
       return val || '3000';
+    case 'PREFIX':
+      return '!';
   }
 
   if (!val) {
