@@ -3,11 +3,12 @@ import { getConfig } from '../config';
 import server from './server';
 import link from './link';
 import mdn from './mdn';
+import xd from './xd';
 import { InvalidUsageError, Command } from '../types';
 
 const commandPattern = new RegExp(getConfig('PREFIX') + '([a-z]+)(?: (.*))?');
 
-const allCommands = { server, link, mdn };
+const allCommands = { server, link, mdn, xd };
 const cooldowns = new Discord.Collection<string, Discord.Collection<string, number>>();
 
 function verifyCooldown(msg: Discord.Message, command: Command) {
@@ -85,6 +86,8 @@ export async function handleCommand(msg: Discord.Message) {
     return undefined;
   }
 
+  msg.channel.startTyping();
+
   const commandName = maybeCommand as keyof typeof allCommands;
 
   const command = allCommands[commandName];
@@ -104,6 +107,5 @@ export async function handleCommand(msg: Discord.Message) {
     throw new InvalidUsageError(`nie podano argumentów!`);
   }
 
-  await command.execute(msg, args);
-  return msg.channel.stopTyping(true);
+  return command.execute(msg, args);
 }

@@ -1,4 +1,3 @@
-import Discord from 'discord.js';
 import { Command } from '../types';
 import fetch from 'node-fetch';
 
@@ -6,8 +5,7 @@ const link: Command = {
   name: 'mdn',
   description: 'Wyszukuje podane wyrażenia na MDN',
   args: true,
-  async execute(msg: Discord.Message, args) {
-    msg.channel.startTyping();
+  async execute(msg, args) {
     const query = encodeURIComponent(args.join(' '));
     const res = await fetch(
       `https://developer.mozilla.org/en-US/search.json?locale=en-US&highlight=false&q=${query}`
