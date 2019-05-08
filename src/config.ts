@@ -9,8 +9,6 @@ export function getConfig(name: string): string {
       return val || 'development';
     case 'ENV':
       return val || 'development';
-    case 'YOUTUBE_API_KEY':
-      return val || '';
     case 'PORT':
       return val || '3000';
     case 'PREFIX':
