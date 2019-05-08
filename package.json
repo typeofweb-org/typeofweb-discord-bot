@@ -9,12 +9,22 @@
     "dev": "tsc-watch --onSuccess \"node ./dist/src/index.js\"",
     "tslint": "tslint -p tsconfig.json",
     "tsc": "tsc --noEmit -p tsconfig.json",
+    "test": "npm run tsc && npm run tslint",
     "clean": "rm -rf dist",
     "build": "npm run clean && tsc && rsync -av --exclude='*.ts' src/** dist/src/"
   },
   "keywords": [],
   "author": "Michał Miszczyszyn <michal@mmiszy.pl> (https://typeofweb.com/)",
   "license": "ISC",
+  "dependencies": {
+    "bufferutil": "4.0.1",
+    "discord.js": "11.4.2",
+    "discord.rss": "4.0.2",
+    "dotenv": "8.0.0",
+    "erlpack": "github:discordapp/erlpack",
+    "node-fetch": "2.5.0",
+    "zlib-sync": "0.1.4"
+  },
   "devDependencies": {
     "@types/dotenv": "6.1.1",
     "@types/node": "12.0.0",
@@ -32,15 +42,5 @@
     "hooks": {
       "pre-commit": "npm run tslint && pretty-quick --staged"
     }
-  },
-  "dependencies": {
-    "@types/node-fetch": "^2.3.3",
-    "bufferutil": "4.0.1",
-    "discord.js": "11.4.2",
-    "discord.rss": "4.0.2",
-    "dotenv": "8.0.0",
-    "erlpack": "github:discordapp/erlpack",
-    "node-fetch": "2.5.0",
-    "zlib-sync": "0.1.4"
   }
 }
