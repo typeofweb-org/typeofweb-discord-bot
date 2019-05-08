@@ -39,19 +39,33 @@ client.on('warn', warning => {
 });
 
 client.on('message', async msg => {
-  if (!msg.content.startsWith(getConfig('PREFIX')) || msg.author.bot) {
+  if (msg.author.bot) {
     return;
   }
 
-  try {
-    await handleCommand(msg);
-  } catch (err) {
-    if (err instanceof InvalidUsageError) {
-      void msg.reply(err.message);
-    } else {
-      void msg.reply('przepraszam, ale coś poszło nie tak…');
+  if (msg.content === `(╯°□°）╯︵ ┻━┻`) {
+    return msg.channel.send(`┬─┬ノ( ◕◡◕ ノ)`);
+  }
+
+  if (/mongo/i.test(msg.content)) {
+    return msg.channel.send(`https://youtu.be/b2F-DItXtZs`);
+  }
+
+  if (msg.content.startsWith(getConfig('PREFIX'))) {
+    try {
+      await handleCommand(msg);
+    } catch (err) {
+      if (err instanceof InvalidUsageError) {
+        void msg.reply(err.message);
+      } else {
+        void msg.reply('przepraszam, ale coś poszło nie tak…');
+      }
+    } finally {
+      await msg.channel.stopTyping(true);
     }
   }
+
+  return;
 });
 
 async function init() {
