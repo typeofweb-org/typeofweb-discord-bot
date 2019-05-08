@@ -13,11 +13,13 @@ const youtube: Command = {
       `https://www.googleapis.com/youtube/v3/search?part=id&type=video&key=${YOUTUBE_API_KEY}&q=${query}`
     );
     const data = (await result.json()) as YoutubeResponse;
+
     if (!data.items.length) {
       return msg.channel.send(`Niestety nic nie znalazłam 😭`);
     }
-    const { videoId: videoUrl } = data.items[0].id;
-    return msg.channel.send(`https://www.youtube.com/watch?v=${videoUrl}`);
+
+    const { videoId } = data.items[0].id;
+    return msg.channel.send(`https://www.youtube.com/watch?v=${videoId}`);
   },
 };
 
