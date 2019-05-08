@@ -19,7 +19,6 @@ const spotify: Command = {
 
     const res = await fetch('https://accounts.spotify.com/api/token', {
       method: 'POST',
-
       body: searchParams,
       headers: {
         Authorization: `Basic ${secret}`,
@@ -35,13 +34,14 @@ const spotify: Command = {
         },
       }
     );
+
     const {
       tracks: { items },
     } = (await results.json()) as QueryResponse;
 
     return items[0]
       ? msg.channel.send(items[0].external_urls.spotify)
-      : msg.channel.send('Dupa nie ma nic takiego');
+      : msg.channel.send('Niestety nic nie znalazłam 🎷');
   },
 };
 
@@ -73,8 +73,8 @@ interface Item {
   disc_number: number;
   duration_ms: number;
   explicit: boolean;
-  external_ids: Externalids;
-  external_urls: Externalurls;
+  external_ids: ExternalIds;
+  external_urls: ExternalURLs;
   href: string;
   id: string;
   is_local: boolean;
@@ -86,7 +86,7 @@ interface Item {
   uri: string;
 }
 
-interface Externalids {
+interface ExternalIds {
   isrc: string;
 }
 
@@ -94,7 +94,7 @@ interface Album {
   album_type: string;
   artists: Artist[];
   available_markets: string[];
-  external_urls: Externalurls;
+  external_urls: ExternalURLs;
   href: string;
   id: string;
   images: Image[];
@@ -113,7 +113,7 @@ interface Image {
 }
 
 interface Artist {
-  external_urls: Externalurls;
+  external_urls: ExternalURLs;
   href: string;
   id: string;
   name: string;
@@ -121,6 +121,6 @@ interface Artist {
   uri: string;
 }
 
-interface Externalurls {
+interface ExternalURLs {
   spotify: string;
 }
