@@ -4,11 +4,12 @@ import server from './server';
 import link from './link';
 import mdn from './mdn';
 import xd from './xd';
+import youtube from './youtube';
 import { InvalidUsageError, Command } from '../types';
 
 const commandPattern = new RegExp(getConfig('PREFIX') + '([a-z]+)(?: (.*))?');
 
-const allCommands = { server, link, mdn, xd };
+const allCommands = { server, link, mdn, xd, youtube };
 const cooldowns = new Discord.Collection<string, Discord.Collection<string, number>>();
 
 function verifyCooldown(msg: Discord.Message, command: Command) {
