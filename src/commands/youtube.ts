@@ -1,3 +1,4 @@
+import { getConfig } from '../config';
 import { Command } from '../types';
 import fetch from 'node-fetch';
 
@@ -7,10 +8,9 @@ const youtube: Command = {
   args: true,
   async execute(msg, args) {
     const query = encodeURIComponent(args.join(' '));
+    const YOUTUBE_API_KEY = getConfig('YOUTUBE_API_KEY');
     const result = await fetch(
-      `https://www.googleapis.com/youtube/v3/search?part=id&type=video&key=${
-        process.env.YOUTUBE_API_KEY
-      }&q=${query}`
+      `https://www.googleapis.com/youtube/v3/search?part=id&type=video&key=${YOUTUBE_API_KEY}&q=${query}`
     );
     const data = (await result.json()) as YoutubeResponse;
     if (!data.items.length) {
