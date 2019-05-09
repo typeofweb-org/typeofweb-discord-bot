@@ -15,7 +15,7 @@ const drss = new DiscordRSS.Client({
     },
   },
   feeds: {
-    refreshTimeMinutes: 1,
+    refreshTimeMinutes: 10,
     timezone: 'Europe/Warsaw',
     dateFormat: 'LLL',
     dateLanguage: 'pl',
