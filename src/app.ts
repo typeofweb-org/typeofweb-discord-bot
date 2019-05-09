@@ -15,12 +15,13 @@ const drss = new DiscordRSS.Client({
     },
   },
   feeds: {
-    refreshTimeMinutes: 15,
+    refreshTimeMinutes: 1,
     timezone: 'Europe/Warsaw',
     dateFormat: 'LLL',
     dateLanguage: 'pl',
     dateLanguageList: ['pl'],
     sendOldOnFirstCycle: true,
+    cycleMaxAge: 5,
   },
 });
 
