@@ -14,7 +14,7 @@ fi
 git pull origin master
 
 echo "👉 Installing deps…"
-npm ci
+npm i
 
 echo "👉 Bulding…"
 NODE_ENV=production ENV=production npm run build
