@@ -6,17 +6,21 @@ const markdown: Command = {
     description: 'Wyświetla przykłady formatowania tekstu w Markdown.',
     args: false,
     execute(msg: Discord.Message) {
-        return msg.channel.send('```*kursywa* or _kursywa_ \n'
-            + '__ * podkreślona kursywa * __ \n'
-            + '** pogrubiony ** \n'
-            + '__ ** podkreślony pogrubiony ** __ \n'
-            + '*** pogrubiona kursywa *** \n'
-            + '__ *** podkreślona pogrubiona kursywa *** __ \n'
-            + '__podkreślenie__ \n'
-            + '~~przekreślenie~~``` \n'
-            + '\```js (or html, css, json, cp, md, py, xml etc.) \n'
-            + 'kod \n'
-            + '\``` \n');
+        return msg.channel.send([
+            '```',
+            '*kursywa* lub _kursywa_',
+            '__*podkreślona kursywa*__',
+            '**pogrubiony**',
+            '__**podkreślony pogrubiony**__',
+            '***pogrubiona kursywa***',
+            '__***podkreślona pogrubiona kursywa***__',
+            '__podkreślenie__',
+            '~~przekreślenie~~',
+            '```',
+            '\\```js (html, css, json, cp, md, py, xml etc.)',
+            'kod',
+            '\\```',
+        ].join('\n'));
     },
 };
 
