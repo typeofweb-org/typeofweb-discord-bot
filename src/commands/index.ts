@@ -8,11 +8,12 @@ import youtube from './youtube';
 import spotify from './spotify';
 import regulamin from './regulamin';
 import co from './co';
+import markdown from './markdown';
 import { InvalidUsageError, Command } from '../types';
 
 const commandPattern = new RegExp(getConfig('PREFIX') + '([a-z]+)(?: (.*))?');
 
-const allCommands = { server, link, mdn, xd, youtube, spotify, regulamin, co };
+const allCommands = { server, link, mdn, xd, youtube, spotify, regulamin, co, markdown };
 const cooldowns = new Discord.Collection<string, Discord.Collection<string, number>>();
 
 function verifyCooldown(msg: Discord.Message, command: Command) {
