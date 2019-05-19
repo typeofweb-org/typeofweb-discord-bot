@@ -7,19 +7,17 @@ const markdown: Command = {
     args: false,
     execute(msg: Discord.Message) {
         return msg.channel.send([
-            '```',
-            '*kursywa* lub _kursywa_',
-            '__*podkreślona kursywa*__',
-            '**pogrubiony**',
-            '__**podkreślony pogrubiony**__',
-            '***pogrubiona kursywa***',
-            '__***podkreślona pogrubiona kursywa***__',
-            '__podkreślenie__',
-            '~~przekreślenie~~',
-            '```',
-            '\\```js (html, css, json, cp, md, py, xml etc.)',
+            '\*tekst\* || \_tekst\_  :point_right:  *tekst*',
+            '\_\_\*tekst\*\_\_  :point_right:  __*tekst*__',
+            '\*\*tekst\*\*  :point_right:  **tekst**',
+            '\_\_\*\*tekst\*\*\_\_  :point_right:  __**tekst**__',
+            '\*\*\*tekst\*\*\*  :point_right:  ***tekst***',
+            '\_\_\*\*\*tekst\*\*\*\_\_  :point_right: __***tekst***__',
+            '\_\_tekst\_\_  :point_right:  __tekst__',
+            '\~\~tekst\~\~  :point_right:  ~~tekst~~',
+            '\```js (html, css, json, cp, md, py, xml etc.)',
             'kod',
-            '\\```',
+            '\```'
         ].join('\n'));
     },
 };
