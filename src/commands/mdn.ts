@@ -1,7 +1,7 @@
 import { Command } from '../types';
 import fetch from 'node-fetch';
 
-const link: Command = {
+const mdn: Command = {
   name: 'mdn',
   description: 'Wyszukuje podane wyrażenia na MDN',
   args: true,
@@ -20,7 +20,7 @@ const link: Command = {
   },
 };
 
-export default link;
+export default mdn;
 
 interface MDNResponse {
   query: string;
