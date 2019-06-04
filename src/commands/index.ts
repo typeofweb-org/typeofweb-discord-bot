@@ -1,19 +1,33 @@
 import Discord from 'discord.js';
 import { getConfig } from '../config';
-import server from './server';
+import { InvalidUsageError, Command } from '../types';
+
+import co from './co';
 import link from './link';
+import markdown from './markdown';
 import mdn from './mdn';
+import npm from './npm';
+import regulamin from './regulamin';
+import server from './server';
+import spotify from './spotify';
 import xd from './xd';
 import youtube from './youtube';
-import spotify from './spotify';
-import regulamin from './regulamin';
-import co from './co';
-import markdown from './markdown';
-import { InvalidUsageError, Command } from '../types';
 
 const commandPattern = new RegExp(getConfig('PREFIX') + '([a-z]+)(?: (.*))?');
 
-const allCommands = { server, link, mdn, xd, youtube, spotify, regulamin, co, markdown };
+const allCommands = {
+  server,
+  link,
+  mdn,
+  xd,
+  youtube,
+  spotify,
+  regulamin,
+  co,
+  markdown,
+  npm,
+};
+
 const cooldowns = new Discord.Collection<string, Discord.Collection<string, number>>();
 
 function verifyCooldown(msg: Discord.Message, command: Command) {
