@@ -2,6 +2,7 @@ import Discord from 'discord.js';
 
 interface CommandCommon {
   name: string;
+  aliases?: string[];
   description: string;
   guildOnly?: boolean;
   cooldown?: number;

@@ -4,6 +4,7 @@ import fetch from 'node-fetch';
 
 const youtube: Command = {
   name: 'youtube',
+  aliases: ['yt', 'tytuba'],
   description: 'Wyszukuje video z youtube',
   args: true,
   async execute(msg, args) {
