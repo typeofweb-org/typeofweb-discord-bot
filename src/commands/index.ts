@@ -28,7 +28,6 @@ const allCommands = {
   npm,
 };
 
-
 const cooldowns = new Discord.Collection<string, Discord.Collection<string, number>>();
 
 function verifyCooldown(msg: Discord.Message, command: Command) {
