@@ -48,8 +48,8 @@ client.on('message', async msg => {
     return msg.channel.send(`┬─┬ノ( ◕◡◕ ノ)`);
   }
 
-  if (/mongo/i.test(msg.content)) {
-    return msg.channel.send(`https://youtu.be/b2F-DItXtZs`);
+  if (/mango/i.test(msg.content)) {
+    return msg.channel.send(` Here is your mango: https://i.imgur.com/OJzN2SO.png`);
   }
 
   if (msg.content.startsWith(getConfig('PREFIX'))) {
