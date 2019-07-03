@@ -6,6 +6,7 @@ import co from './co';
 import link from './link';
 import markdown from './markdown';
 import mdn from './mdn';
+import mongodb from './mongodb';
 import npm from './npm';
 import regulamin from './regulamin';
 import server from './server';
@@ -16,16 +17,17 @@ import youtube from './youtube';
 const commandPattern = new RegExp(getConfig('PREFIX') + '([a-z]+)(?: (.*))?');
 
 const allCommands = {
-  server,
+  co,
   link,
+  markdown,
   mdn,
+  mongodb,
+  npm,
+  regulamin,
+  server,
+  spotify,
   xd,
   youtube,
-  spotify,
-  regulamin,
-  co,
-  markdown,
-  npm,
 };
 
 const cooldowns = new Discord.Collection<string, Discord.Collection<string, number>>();
