@@ -6,6 +6,7 @@ const MAX_MESSAGES = 10;
 const prune: Command = {
   name: 'prune',
   description: 'prune?',
+  permissions: 'ADMINISTRATOR',
   args: true,
   async execute(msg, [howMany]) {
     // tslint:disable-next-line:no-magic-numbers
