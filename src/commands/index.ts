@@ -65,7 +65,7 @@ function verifyCooldown(msg: Discord.Message, command: Command) {
   }
 }
 
-function printHelp(msg: Discord.Message) {
+function printHelp(msg: Discord.Message, member: Discord.GuildMember) {
   const commands = Object.entries(allCommands)
     .sort(([a], [b]) => {
       if (a > b) {
@@ -75,7 +75,12 @@ function printHelp(msg: Discord.Message) {
       }
       return 1;
     })
-    .filter(([, c]) => !c.permissions || msg.member.hasPermission(c.permissions));
+    .filter(([, command]) => {
+      if (command.permissions && !member.hasPermission(command.permissions)) {
+        return false;
+      }
+      return true;
+    });
 
   const data = [
     `**Oto lista wszystkich komend:**`,
@@ -103,8 +108,9 @@ function printHelp(msg: Discord.Message) {
 export async function handleCommand(msg: Discord.Message) {
   const [, maybeCommand, rest] = msg.content.match(commandPattern) || [null, null, null];
 
+  const member = await msg.guild.fetchMember(msg.author);
   if (maybeCommand === 'help') {
-    return printHelp(msg);
+    return printHelp(msg, member);
   }
 
   if (!maybeCommand || !(maybeCommand in allCommands)) {
@@ -115,7 +121,7 @@ export async function handleCommand(msg: Discord.Message) {
 
   const command = allCommands[commandName];
 
-  if (command.permissions && !msg.member.hasPermission(command.permissions)) {
+  if (command.permissions && !member.hasPermission(command.permissions)) {
     return undefined; // silence is golden
   }
 
