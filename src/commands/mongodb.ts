@@ -1,6 +1,6 @@
 import { Command } from '../types';
 
-const link: Command = {
+const mongodb: Command = {
   name: 'mongodb',
   description: 'Mongo is webscale!',
   args: false,
@@ -10,4 +10,4 @@ const link: Command = {
   },
 };
 
-export default link;
+export default mongodb;

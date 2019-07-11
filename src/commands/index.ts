@@ -8,6 +8,7 @@ import markdown from './markdown';
 import mdn from './mdn';
 import mongodb from './mongodb';
 import npm from './npm';
+import prune from './prune';
 import regulamin from './regulamin';
 import server from './server';
 import spotify from './spotify';
@@ -23,6 +24,7 @@ const allCommands = {
   mdn,
   mongodb,
   npm,
+  prune,
   regulamin,
   server,
   spotify,
@@ -107,11 +109,15 @@ export async function handleCommand(msg: Discord.Message) {
     return undefined;
   }
 
-  msg.channel.startTyping();
-
   const commandName = maybeCommand as keyof typeof allCommands;
 
   const command = allCommands[commandName];
+
+  if (command.permissions && !msg.member.hasPermission(command.permissions)) {
+    return undefined; // silence is golden
+  }
+
+  msg.channel.startTyping();
 
   await verifyCooldown(msg, command);
 
