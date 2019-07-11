@@ -55,6 +55,7 @@ client.on('message', async msg => {
       if (err instanceof InvalidUsageError) {
         void msg.reply(err.message);
       } else {
+        console.error(err);
         void msg.reply('przepraszam, ale coś poszło nie tak…');
       }
     } finally {
