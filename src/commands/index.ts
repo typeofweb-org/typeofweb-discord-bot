@@ -66,14 +66,16 @@ function verifyCooldown(msg: Discord.Message, command: Command) {
 }
 
 function printHelp(msg: Discord.Message) {
-  const commands = Object.entries(allCommands).sort(([a], [b]) => {
-    if (a > b) {
+  const commands = Object.entries(allCommands)
+    .sort(([a], [b]) => {
+      if (a > b) {
+        return 1;
+      } else if (a < b) {
+        return -1;
+      }
       return 1;
-    } else if (a < b) {
-      return -1;
-    }
-    return 1;
-  });
+    })
+    .filter(([, c]) => !c.permissions || msg.member.hasPermission(c.permissions));
 
   const data = [
     `**Oto lista wszystkich komend:**`,
