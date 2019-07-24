@@ -7,6 +7,7 @@ import link from './link';
 import markdown from './markdown';
 import mdn from './mdn';
 import mongodb from './mongodb';
+import mydevil from './mydevil';
 import npm from './npm';
 import prune from './prune';
 import regulamin from './regulamin';
@@ -23,6 +24,7 @@ const allCommands = {
   markdown,
   mdn,
   mongodb,
+  mydevil,
   npm,
   prune,
   regulamin,
