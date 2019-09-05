@@ -2,6 +2,7 @@
 source ~/.bash_profile
 set -e
 
+
 cd ~/domains/bot.typeofweb.com/public_nodejs
 echo "👉 Pulling from the server…"
 git fetch https
