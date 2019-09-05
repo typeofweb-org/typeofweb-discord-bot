@@ -5,12 +5,16 @@ interface CommandCommon {
   aliases?: string[];
   description: string;
   guildOnly?: boolean;
+  permissions?: Discord.PermissionResolvable;
   cooldown?: number;
 }
 
 type CommandWithArgs = {
   args: true;
-  execute(msg: Discord.Message, args: string[]): Promise<Discord.Message | Discord.Message[]>;
+  execute(
+    msg: Discord.Message,
+    args: string[]
+  ): Promise<Discord.Message | Discord.Message[] | null>;
 } & CommandCommon;
 
 type CommandWithoutArgs = {

@@ -7,7 +7,9 @@ import link from './link';
 import markdown from './markdown';
 import mdn from './mdn';
 import mongodb from './mongodb';
+import mydevil from './mydevil';
 import npm from './npm';
+import prune from './prune';
 import regulamin from './regulamin';
 import server from './server';
 import spotify from './spotify';
@@ -22,7 +24,9 @@ const allCommands = {
   markdown,
   mdn,
   mongodb,
+  mydevil,
   npm,
+  prune,
   regulamin,
   server,
   spotify,
@@ -63,15 +67,22 @@ function verifyCooldown(msg: Discord.Message, command: Command) {
   }
 }
 
-function printHelp(msg: Discord.Message) {
-  const commands = Object.entries(allCommands).sort(([a], [b]) => {
-    if (a > b) {
+function printHelp(msg: Discord.Message, member: Discord.GuildMember) {
+  const commands = Object.entries(allCommands)
+    .sort(([a], [b]) => {
+      if (a > b) {
+        return 1;
+      } else if (a < b) {
+        return -1;
+      }
       return 1;
-    } else if (a < b) {
-      return -1;
-    }
-    return 1;
-  });
+    })
+    .filter(([, command]) => {
+      if (command.permissions && !member.hasPermission(command.permissions)) {
+        return false;
+      }
+      return true;
+    });
 
   const data = [
     `**Oto lista wszystkich komend:**`,
@@ -99,19 +110,24 @@ function printHelp(msg: Discord.Message) {
 export async function handleCommand(msg: Discord.Message) {
   const [, maybeCommand, rest] = msg.content.match(commandPattern) || [null, null, null];
 
+  const member = await msg.guild.fetchMember(msg.author);
   if (maybeCommand === 'help') {
-    return printHelp(msg);
+    return printHelp(msg, member);
   }
 
   if (!maybeCommand || !(maybeCommand in allCommands)) {
     return undefined;
   }
 
-  msg.channel.startTyping();
-
   const commandName = maybeCommand as keyof typeof allCommands;
 
   const command = allCommands[commandName];
+
+  if (command.permissions && !member.hasPermission(command.permissions)) {
+    return undefined; // silence is golden
+  }
+
+  msg.channel.startTyping();
 
   await verifyCooldown(msg, command);
 

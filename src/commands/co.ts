@@ -1,6 +1,6 @@
 import { Command } from '../types';
 
-const link: Command = {
+const co: Command = {
   name: 'co',
   description: 'co?',
   args: false,
@@ -12,4 +12,4 @@ const link: Command = {
   },
 };
 
-export default link;
+export default co;
