@@ -16,7 +16,10 @@ const mdn: Command = {
     }
 
     const firstDocument = data.documents[0];
-    return msg.channel.send([firstDocument.excerpt, firstDocument.url]);
+    return msg.channel.send([
+      firstDocument.excerpt,
+      `https://developer.mozilla.org/${firstDocument.slug}`,
+    ]);
   },
 };
 
