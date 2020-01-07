@@ -2,7 +2,7 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 
-[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors-)
 
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
@@ -19,6 +19,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/Deeadline"><img src="https://avatars3.githubusercontent.com/u/26546280?v=4" width="100px;" alt=""/><br /><sub><b>Deeadline</b></sub></a><br /><a href="https://github.com/mmiszy/typeofweb-discord-bot/commits?author=Deeadline" title="Code">💻</a> <a href="#ideas-Deeadline" title="Ideas, Planning, & Feedback">🤔</a></td>
     <td align="center"><a href="http://trzasq.pl"><img src="https://avatars2.githubusercontent.com/u/20127089?v=4" width="100px;" alt=""/><br /><sub><b>przytrzask</b></sub></a><br /><a href="https://github.com/mmiszy/typeofweb-discord-bot/commits?author=przytrzask" title="Code">💻</a> <a href="#ideas-przytrzask" title="Ideas, Planning, & Feedback">🤔</a></td>
     <td align="center"><a href="https://github.com/nanoDW"><img src="https://avatars2.githubusercontent.com/u/37413661?v=4" width="100px;" alt=""/><br /><sub><b>nanoDW</b></sub></a><br /><a href="https://github.com/mmiszy/typeofweb-discord-bot/commits?author=nanoDW" title="Code">💻</a> <a href="#ideas-nanoDW" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://github.com/Secrus"><img src="https://avatars2.githubusercontent.com/u/26322915?v=4" width="100px;" alt=""/><br /><sub><b>Secrus</b></sub></a><br /><a href="https://github.com/mmiszy/typeofweb-discord-bot/commits?author=Secrus" title="Code">💻</a></td>
   </tr>
 </table>
 
