@@ -21,6 +21,15 @@
         "infra",
         "review"
       ]
+    },
+    {
+      "login": "Deeadline",
+      "name": "Deeadline",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/26546280?v=4",
+      "profile": "https://github.com/Deeadline",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7
