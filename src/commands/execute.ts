@@ -6,6 +6,8 @@ import { VM, CompilerFunction } from 'vm2';
 
 /* config */
 const MaxOutputLines = 20;
+const MaxOutputCharacters = 1600;
+const Cooldown = 30;
 
 const NodeLanguages: { [key: string]: 'javascript' | CompilerFunction } = {
   js: 'javascript',
@@ -31,20 +33,23 @@ export interface ExecuteResult {
 export function parseArg(arg: ResultType) {
   if (typeof arg === 'object') {
     return JSON.stringify(arg);
+  } else if (typeof arg !== 'undefined' && arg !== null) {
+    return arg.toString();
+  } else {
+    return arg;
   }
-  return arg;
 }
 
 export function parseMessage(msg: string) {
-  const TicksCount = 3;
-  const opening = msg.indexOf('```');
-  const closing = msg.lastIndexOf('```');
-  const newline = msg.indexOf('\n', opening + TicksCount);
+  const Delimiter = '```';
+  const opening = msg.indexOf(Delimiter);
+  const closing = msg.lastIndexOf(Delimiter);
+  const newline = msg.indexOf('\n', opening + Delimiter.length);
   if (opening === -1 || newline === -1) {
     throw new Error('Nieprawidłowa składnia');
   }
   const source = msg.substring(newline + 1, closing);
-  const language = msg.substring(opening + TicksCount, newline).toLowerCase();
+  const language = msg.substring(opening + Delimiter.length, newline).toLowerCase();
   return {
     source,
     language: language.length > 0 ? language : 'js',
@@ -79,15 +84,23 @@ export function executeCode(source: string, language: string): ExecuteResult {
   };
 }
 
+function wrapText(text: string, lang = '') {
+  return `\`\`\`${lang}\n${text}\n\`\`\``;
+}
+
 export function writeResponse(result: ExecuteResult): string {
+  const stdoutList = result.stdout
+    .slice(0, MaxOutputLines)
+    .join('\n')
+    .slice(0, MaxOutputCharacters);
+  const isCut = stdoutList.length !== result.stdout.join('\n').length;
   const stdout =
     result.stdout.length === 0
       ? ''
-      : `Wyjście (${result.stdout.length} linii): \n\`\`\`` +
-        result.stdout.slice(0, MaxOutputLines).join('\n') +
-        `${result.stdout.length > MaxOutputLines ? '\n...\n```' : '\n```'}`;
-  const codeResult =
-    (result.time ? `Wynik (${result.time} ms):` : 'Wynik: ') + '```\n' + result.result + '\n```';
+      : `Wyjście (${result.stdout.length} linii): \n` +
+        wrapText(stdoutList + (isCut ? '\n...' : '')) +
+        '\n';
+  const codeResult = `Wynik (${result.time} ms): ` + wrapText(parseArg(result.result), 'json');
   return stdout + codeResult;
 }
 
@@ -103,7 +116,7 @@ const execute: Command = {
   name: 'execute',
   description: 'Wykonuje kod JS/TS',
   args: false,
-  cooldown: 0,
+  cooldown: Cooldown,
   async execute(msg: Message) {
     try {
       const { source, language } = parseMessage(msg.content);
