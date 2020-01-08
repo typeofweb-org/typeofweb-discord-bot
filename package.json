@@ -10,7 +10,7 @@
     "tslint": "tslint -p tsconfig.json",
     "tsc": "tsc --noEmit -p tsconfig.json",
     "lint": "npm run tsc && npm run tslint",
-    "test": "nyc mocha -r ts-node/register 'src/**/*.spec.ts'",
+    "test": "mocha -r ts-node/register 'src/**/*.spec.ts'",
     "clean": "rm -rf dist",
     "build": "npm run clean && tsc && rsync -av --exclude='*.ts' src/** dist/src/"
   },

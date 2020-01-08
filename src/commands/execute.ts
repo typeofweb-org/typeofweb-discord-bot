@@ -3,10 +3,13 @@ import { Message } from 'discord.js';
 import lodash from 'lodash';
 import * as ts from 'typescript';
 import { VM, CompilerFunction } from 'vm2';
+import { polishPlurals } from 'polish-plurals';
+
+const pluralize = (count: number) => polishPlurals('linia', 'linie', 'linii', count);
 
 /* config */
-const MaxOutputLines = 20;
-const MaxOutputCharacters = 1600;
+export const MaxOutputLines = 20;
+export const MaxOutputCharacters = 1600;
 const Cooldown = 30;
 
 const NodeLanguages: { [key: string]: 'javascript' | CompilerFunction } = {
@@ -28,6 +31,11 @@ export interface ExecuteResult {
   stdout: string[];
   result: ResultType;
   time?: number;
+}
+
+export interface Stdout {
+  text: string;
+  lines: number;
 }
 
 export function parseArg(arg: ResultType) {
@@ -88,20 +96,27 @@ function wrapText(text: string, lang = '') {
   return `\`\`\`${lang}\n${text}\n\`\`\``;
 }
 
+export function prepareOutput(result: ExecuteResult) {
+  return {
+    text: result.stdout
+      .slice(0, MaxOutputLines)
+      .join('\n')
+      .slice(0, MaxOutputCharacters),
+    lines: result.stdout.length,
+  };
+}
+
 export function writeResponse(result: ExecuteResult): string {
-  const stdoutList = result.stdout
-    .slice(0, MaxOutputLines)
-    .join('\n')
-    .slice(0, MaxOutputCharacters);
-  const isCut = stdoutList.length !== result.stdout.join('\n').length;
-  const stdout =
-    result.stdout.length === 0
+  const stdout = prepareOutput(result);
+  const isCut = stdout.text.length !== result.stdout.join('\n').length;
+  const stdoutText =
+    stdout.lines === 0
       ? ''
-      : `Wyjście (${result.stdout.length} linii): \n` +
-        wrapText(stdoutList + (isCut ? '\n...' : '')) +
-        '\n';
+      : `Wyjście (${stdout.lines} ${pluralize(stdout.lines)}): ${wrapText(
+          stdout.text + (isCut ? '\n...' : '')
+        )}\n`;
   const codeResult = `Wynik (${result.time} ms): ` + wrapText(parseArg(result.result), 'json');
-  return stdout + codeResult;
+  return stdoutText + codeResult;
 }
 
 const errorMessage = (error: Error | string) =>

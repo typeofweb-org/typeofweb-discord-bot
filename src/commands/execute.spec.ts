@@ -23,7 +23,7 @@ describe('Command: execute', () => {
   });
 
   it('throws invalid message', () => {
-    const message = '!exxecute ``js\nsdfs\n```';
+    const message = '!execute ``js\nsdfs\n```';
     expect(() => execute.parseMessage(message)).to.throw();
   });
 
@@ -64,30 +64,42 @@ describe('Command: execute', () => {
   });
 
   it('omitts long output log', () => {
-    const iters = 1000;
+    const iters = 2000;
     const executeResult = execute.executeCode(`for(let i=0; i<${iters}; i++) console.log(1)`, 'js');
+    const stdout = execute.prepareOutput(executeResult);
+    expect(stdout.text.length).is.not.greaterThan(execute.MaxOutputCharacters);
     expect(executeResult.stdout.length).to.equal(iters);
-    const response = execute.writeResponse(executeResult);
-    expect(response.split('\n').length).to.be.lessThan(30);
+    expect(stdout.text.split('\n').length).is.not.greaterThan(execute.MaxOutputLines);
   });
 
   it('result is written', () => {
     const result = {
       stdout: ['hello', 'world'],
       result: 5,
+      time: 10,
     };
-    const response = execute.writeResponse(result as execute.ExecuteResult);
-    expect(response.split('```').length).to.equal(5);
+    const expected = [
+      'Wyjście (2 linie): ```',
+      'hello',
+      'world',
+      '```',
+      'Wynik (10 ms): ```json',
+      '5',
+      '```',
+    ].join('\n');
+    const response = execute.writeResponse(result);
+    expect(response).to.be.equal(expected);
   });
 
-  it('"output" is omited when none', () => {
+  it('"output" is omitted when none', () => {
     const result = {
       stdout: [],
       result: 5,
+      time: 10,
     };
-    const response = execute.writeResponse(result as execute.ExecuteResult);
-    expect(response.split('```').length).to.equal(3);
-    expect(response.indexOf('Wejście')).to.equal(-1);
+    const expected = ['Wynik (10 ms): ```json', '5', '```'].join('\n');
+    const response = execute.writeResponse(result);
+    expect(response).to.be.equal(expected);
   });
 
   it('throws when code executes dangerous code', () => {
