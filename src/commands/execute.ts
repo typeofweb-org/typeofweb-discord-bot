@@ -8,7 +8,8 @@ const pluralize = (count: number) => polishPlurals('linia', 'linie', 'linii', co
 
 /* config */
 export const MAX_OUTPUT_LINES = 20;
-export const MAX_OUTPUT_CHARACTERS = 1600;
+export const MAX_OUTPUT_CHARACTERS = 1200;
+export const MAX_RESULT_CHARACTERS = 700;
 const TIMEOUT = 100;
 const MEMORY_LIMIT = 64;
 const COOLDOWN = 30;
@@ -46,9 +47,8 @@ export function parseArg(arg: ResultType) {
     return JSON.stringify(arg);
   } else if (typeof arg !== 'undefined' && arg !== null) {
     return arg.toString();
-  } else {
-    return 'undefined';
   }
+  return 'undefined';
 }
 
 export function parseMessage(msg: string) {
@@ -84,7 +84,7 @@ console = {
   }
 }`;
 
-export function executeCode(source: string, language: string): ExecuteResult {
+export async function executeCode(source: string, language: string): Promise<ExecuteResult> {
   if (Object.keys(jsTranspile).indexOf(language) === -1) {
     throw new Error(`Nieobsługiwany język ${language}`);
   }
@@ -92,8 +92,8 @@ export function executeCode(source: string, language: string): ExecuteResult {
   const vm = new ivm.Isolate({
     memoryLimit: MEMORY_LIMIT,
   });
-  const context = vm.createContextSync();
-  context.evalSync(consoleWrapCode);
+  const context = await vm.createContext();
+  await context.eval(consoleWrapCode);
 
   const config = {
     timeout: TIMEOUT,
@@ -105,10 +105,10 @@ export function executeCode(source: string, language: string): ExecuteResult {
 
   try {
     const begin = new Date().getTime();
-    const exeResult = context.evalSync(code, config);
+    const exeResult = await context.eval(code, config);
     const result = exeResult.result;
     const end = new Date().getTime();
-    const rawStdout = context.evalSync('__logs', config).result as ResultType[][];
+    const rawStdout = (await context.eval('__logs', config)).result as ResultType[][];
     const stdout = rawStdout.map(row => row.map(parseArg).join(', '));
     return {
       stdout,
@@ -145,7 +145,9 @@ export function writeResponse(result: ExecuteResult): string {
       : `Wyjście (${stdout.lines} ${pluralize(stdout.lines)}): ${wrapText(
           stdout.text + (isCut ? '\n...' : '')
         )}\n`;
-  const codeResult = `Wynik (${result.time} ms): ` + wrapText(parseArg(result.result), 'json');
+  const codeResult =
+    `Wynik (${result.time} ms): ` +
+    wrapText(parseArg(result.result).substr(0, MAX_RESULT_CHARACTERS), 'json');
   return stdoutText + codeResult;
 }
 
@@ -155,7 +157,7 @@ const errorMessage = (error: Error | string) =>
   '> !execute \\`\\`\\`js\n' +
   '> // kod\n' +
   '> \\`\\`\\`\n' +
-  'Obsługiwane języki: js, ts';
+  `Obsługiwane języki: ${Object.keys(jsTranspile).join(', ')}`;
 
 const execute: Command = {
   name: 'execute',
@@ -165,7 +167,7 @@ const execute: Command = {
   async execute(msg: Message) {
     try {
       const { source, language } = parseMessage(msg.content);
-      const result = executeCode(source, language);
+      const result = await executeCode(source, language);
       const response = writeResponse(result);
       return msg.channel.send(response);
     } catch (error) {

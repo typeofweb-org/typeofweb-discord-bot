@@ -3,9 +3,11 @@
 /* eslint no-let: "off" */
 /* tslint:disable:no-implicit-dependencies no-magic-numbers */
 
-import { expect } from 'chai';
+import chai, { expect } from 'chai';
 import 'mocha';
 import * as execute from './execute';
+import chaiAsPromised from 'chai-as-promised';
+chai.use(chaiAsPromised);
 
 const Template = (language: string, code: string) => `!execute \`\`\`${language}
 ${code}
@@ -42,38 +44,47 @@ describe('Command: execute', () => {
     expect(parseResult.language).to.equal('js');
   });
 
-  it('throws when language is not known', () => {
-    expect(() => execute.executeCode('2 + 2', 'prolog')).to.throw();
+  it('throws when language is not known', async () => {
+    await expect(execute.executeCode('2 + 2', 'prolog')).to.eventually.be.rejected;
+    // try {
+    //   await execute.executeCode('2 + 2', 'prolog');
+    //   assert.fail('Expected to throw');
+    // } catch(error) {
+    //   expect(error).to.not.be.equal(null);
+    // }
   });
 
-  it('executes simple program', () => {
-    const executeResult = execute.executeCode('2 + 2', 'js');
+  it('executes simple program', async () => {
+    const executeResult = await execute.executeCode('2 + 2', 'js');
     expect(executeResult.stdout.length).to.equal(0);
     expect(executeResult.result).to.equal(4);
   });
 
-  it('receives json as result', () => {
-    const executeResult = execute.executeCode('const foo = () => ({foo: "bar"}); foo()', 'js');
+  it('receives json as result', async () => {
+    const executeResult = await execute.executeCode(
+      'const foo = () => ({foo: "bar"}); foo()',
+      'js'
+    );
     expect(executeResult.stdout.length).to.equal(0);
     expect(JSON.stringify(executeResult.result)).to.equal('{"foo":"bar"}');
   });
 
-  it('executes typescript', () => {
-    const executeResult = execute.executeCode(tsCode, 'ts');
+  it('executes typescript', async () => {
+    const executeResult = await execute.executeCode(tsCode, 'ts');
     expect(executeResult).to.be.not.an('undefined');
     expect(executeResult.stdout.length).to.equal(0);
     expect(executeResult.result).to.equal(4);
   });
 
-  it('displays objects as jsons', () => {
+  it('displays objects as jsons', async () => {
     const code = 'console.log({foo: "bar"})';
-    const executeResult = execute.executeCode(code, 'js');
+    const executeResult = await execute.executeCode(code, 'js');
     expect(executeResult.stdout.length).to.be.equal(1);
     expect(executeResult.stdout[0]).to.be.equal('{"foo":"bar"}');
   });
 
-  it('grabs console.log', () => {
-    const executeResult = execute.executeCode(
+  it('grabs console.log', async () => {
+    const executeResult = await execute.executeCode(
       'console.log(1, null, void 0);console.info(3, 4);',
       'js'
     );
@@ -82,9 +93,12 @@ describe('Command: execute', () => {
     expect(executeResult.stdout[1]).to.be.equal('[i], 3, 4');
   });
 
-  it('omitts long output log', () => {
+  it('omitts long output log', async () => {
     const iters = 2000;
-    const executeResult = execute.executeCode(`for(let i=0; i<${iters}; i++) console.log(1)`, 'js');
+    const executeResult = await execute.executeCode(
+      `for(let i=0; i<${iters}; i++) console.log(1)`,
+      'js'
+    );
     const stdout = execute.prepareOutput(executeResult);
     expect(stdout.text.length).is.not.greaterThan(execute.MAX_OUTPUT_CHARACTERS);
     expect(executeResult.stdout.length).to.equal(iters);
@@ -121,7 +135,7 @@ describe('Command: execute', () => {
     expect(response).to.be.equal(expected);
   });
 
-  it('throws when code executes dangerous code', () => {
+  it('throws when code executes dangerous code', async () => {
     const dangerous = [
       'while(1){}',
       'let fs = require("fs")',
@@ -140,8 +154,8 @@ describe('Command: execute', () => {
        }
       `,
     ];
-    dangerous.forEach(code => {
-      expect(() => execute.executeCode(code, 'js')).to.throw();
-    });
+    for (const code of dangerous) {
+      await expect(execute.executeCode(code, 'js')).to.eventually.be.rejected;
+    }
   });
 });
