@@ -22,9 +22,17 @@ describe('Command: execute', () => {
     expect(parseResult.source.trim()).to.equal(code);
   });
 
-  it('throws invalid message', () => {
-    const message = '!execute ``js\nsdfs\n```';
-    expect(() => execute.parseMessage(message)).to.throw();
+  it('throws on invalid message', () => {
+    const messages = [
+      '!execute ``js\n5\n```',
+      '!execute ```js\n5\n',
+      '!execute ```js\n5\n`',
+      '!execute ```js5\n`',
+      '!execute js\n5',
+    ];
+    messages.forEach(message => {
+      expect(() => execute.parseMessage(message)).to.throw();
+    });
   });
 
   it('sets javascript as default', () => {
@@ -44,6 +52,12 @@ describe('Command: execute', () => {
     expect(executeResult.result).to.equal(4);
   });
 
+  it('receives json as result', () => {
+    const executeResult = execute.executeCode('const foo = () => ({foo: "bar"}); foo()', 'js');
+    expect(executeResult.stdout.length).to.equal(0);
+    expect(JSON.stringify(executeResult.result)).to.equal('{"foo":"bar"}');
+  });
+
   it('executes typescript', () => {
     const executeResult = execute.executeCode(tsCode, 'ts');
     expect(executeResult).to.be.not.an('undefined');
@@ -59,23 +73,28 @@ describe('Command: execute', () => {
   });
 
   it('grabs console.log', () => {
-    const executeResult = execute.executeCode('console.log(1, 2);console.log(3, 4);', 'js');
+    const executeResult = execute.executeCode(
+      'console.log(1, null, void 0);console.info(3, 4);',
+      'js'
+    );
     expect(executeResult.stdout.length).to.equal(2);
+    expect(executeResult.stdout[0]).to.be.equal('1, null, undefined');
+    expect(executeResult.stdout[1]).to.be.equal('[i], 3, 4');
   });
 
   it('omitts long output log', () => {
     const iters = 2000;
     const executeResult = execute.executeCode(`for(let i=0; i<${iters}; i++) console.log(1)`, 'js');
     const stdout = execute.prepareOutput(executeResult);
-    expect(stdout.text.length).is.not.greaterThan(execute.MaxOutputCharacters);
+    expect(stdout.text.length).is.not.greaterThan(execute.MAX_OUTPUT_CHARACTERS);
     expect(executeResult.stdout.length).to.equal(iters);
-    expect(stdout.text.split('\n').length).is.not.greaterThan(execute.MaxOutputLines);
+    expect(stdout.text.split('\n').length).is.not.greaterThan(execute.MAX_OUTPUT_LINES);
   });
 
   it('result is written', () => {
     const result = {
       stdout: ['hello', 'world'],
-      result: 5,
+      result: void 0,
       time: 10,
     };
     const expected = [
@@ -84,7 +103,7 @@ describe('Command: execute', () => {
       'world',
       '```',
       'Wynik (10 ms): ```json',
-      '5',
+      'undefined',
       '```',
     ].join('\n');
     const response = execute.writeResponse(result);
@@ -110,6 +129,16 @@ describe('Command: execute', () => {
       'process.exit(0)',
       'eval("require("fs"))',
       'new Function(""))',
+      `const storage = [];
+       const twoMegabytes = 1024 * 1024 * 2;
+       while (true) {
+         const array = new Uint8Array(twoMegabytes);
+         for (let ii = 0; ii < twoMegabytes; ii += 4096) {
+           array[ii] = 1;
+         }
+         storage.push(array);
+       }
+      `,
     ];
     dangerous.forEach(code => {
       expect(() => execute.executeCode(code, 'js')).to.throw();

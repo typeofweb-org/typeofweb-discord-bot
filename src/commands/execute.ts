@@ -1,19 +1,22 @@
 import { Command } from '../types';
 import { Message } from 'discord.js';
-import lodash from 'lodash';
-import * as ts from 'typescript';
-import { VM, CompilerFunction } from 'vm2';
 import { polishPlurals } from 'polish-plurals';
+import * as ts from 'typescript';
+import ivm from 'isolated-vm';
 
 const pluralize = (count: number) => polishPlurals('linia', 'linie', 'linii', count);
 
 /* config */
-export const MaxOutputLines = 20;
-export const MaxOutputCharacters = 1600;
-const Cooldown = 30;
+export const MAX_OUTPUT_LINES = 20;
+export const MAX_OUTPUT_CHARACTERS = 1600;
+const TIMEOUT = 100;
+const MEMORY_LIMIT = 64;
+const COOLDOWN = 30;
 
-const NodeLanguages: { [key: string]: 'javascript' | CompilerFunction } = {
-  js: 'javascript',
+const jsTranspile: { [key: string]: (code: string) => string } = {
+  js(code: string) {
+    return code;
+  },
   ts(code: string): string {
     const out = ts.transpileModule(code, {
       compilerOptions: {
@@ -25,7 +28,7 @@ const NodeLanguages: { [key: string]: 'javascript' | CompilerFunction } = {
   },
 };
 
-type ResultType = number | string | object;
+type ResultType = number | string | object | null | undefined;
 
 export interface ExecuteResult {
   stdout: string[];
@@ -44,7 +47,7 @@ export function parseArg(arg: ResultType) {
   } else if (typeof arg !== 'undefined' && arg !== null) {
     return arg.toString();
   } else {
-    return arg;
+    return 'undefined';
   }
 }
 
@@ -53,7 +56,7 @@ export function parseMessage(msg: string) {
   const opening = msg.indexOf(Delimiter);
   const closing = msg.lastIndexOf(Delimiter);
   const newline = msg.indexOf('\n', opening + Delimiter.length);
-  if (opening === -1 || newline === -1) {
+  if (opening === -1 || newline === -1 || closing === opening) {
     throw new Error('Nieprawidłowa składnia');
   }
   const source = msg.substring(newline + 1, closing);
@@ -64,32 +67,59 @@ export function parseMessage(msg: string) {
   };
 }
 
+const consoleWrapCode = /*JavaScript*/ `
+__logs = []
+console = {
+  log (...args) {
+    __logs.push(args)
+  },
+  info (...args) {
+    __logs.push(['[i]'].concat(args))
+  },
+  debug (...args) {
+    __logs.push(['[d]'].concat(args))
+  },
+  error (...args) {
+    __logs.push(['[e]'].concat(args))
+  }
+}`;
+
 export function executeCode(source: string, language: string): ExecuteResult {
-  if (!(language in NodeLanguages)) {
+  if (Object.keys(jsTranspile).indexOf(language) === -1) {
     throw new Error(`Nieobsługiwany język ${language}`);
   }
-  const stdout: string[] = [];
-  const vm = new VM({
-    timeout: 100,
-    compiler: NodeLanguages[language],
-    eval: false,
-    sandbox: {
-      _: lodash,
-      console: {
-        log: (...args: ResultType[]) => {
-          stdout.push(args.map(parseArg).join(', '));
-        },
-      },
-    },
+  const code = jsTranspile[language](source);
+  const vm = new ivm.Isolate({
+    memoryLimit: MEMORY_LIMIT,
   });
-  const begin = new Date().getTime();
-  const result = vm.run(source);
-  const end = new Date().getTime();
-  return {
-    stdout,
-    result,
-    time: end - begin,
+  const context = vm.createContextSync();
+  context.evalSync(consoleWrapCode);
+
+  const config = {
+    timeout: TIMEOUT,
+    promise: false,
+    copy: true,
+    externalCopy: false,
+    reference: false,
   };
+
+  try {
+    const begin = new Date().getTime();
+    const exeResult = context.evalSync(code, config);
+    const result = exeResult.result;
+    const end = new Date().getTime();
+    const rawStdout = context.evalSync('__logs', config).result as ResultType[][];
+    const stdout = rawStdout.map(row => row.map(parseArg).join(', '));
+    return {
+      stdout,
+      result,
+      time: end - begin,
+    };
+  } catch (error) {
+    throw error;
+  } finally {
+    context.release();
+  }
 }
 
 function wrapText(text: string, lang = '') {
@@ -99,9 +129,9 @@ function wrapText(text: string, lang = '') {
 export function prepareOutput(result: ExecuteResult) {
   return {
     text: result.stdout
-      .slice(0, MaxOutputLines)
+      .slice(0, MAX_OUTPUT_LINES)
       .join('\n')
-      .slice(0, MaxOutputCharacters),
+      .slice(0, MAX_OUTPUT_CHARACTERS),
     lines: result.stdout.length,
   };
 }
@@ -131,7 +161,7 @@ const execute: Command = {
   name: 'execute',
   description: 'Wykonuje kod JS/TS',
   args: false,
-  cooldown: Cooldown,
+  cooldown: COOLDOWN,
   async execute(msg: Message) {
     try {
       const { source, language } = parseMessage(msg.content);
