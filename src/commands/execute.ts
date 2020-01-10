@@ -10,15 +10,16 @@ const pluralize = (count: number) => polishPlurals('linia', 'linie', 'linii', co
 export const MAX_OUTPUT_LINES = 20;
 export const MAX_OUTPUT_CHARACTERS = 1200;
 export const MAX_RESULT_CHARACTERS = 700;
-const TIMEOUT = 100;
-const MEMORY_LIMIT = 64;
+const MAX_ARRAY_ITEMS = 100;
+const TIMEOUT = 10;
+const MEMORY_LIMIT = 32;
 const COOLDOWN = 0;
 
-const jsTranspile: { [key: string]: (code: string) => string } = {
-  js(code: string) {
+const jsTranspile: { [key: string]: (code: string) => Promise<string> } = {
+  async js(code: string) {
     return code;
   },
-  ts(code: string): string {
+  async ts(code: string) {
     const out = ts.transpileModule(code, {
       compilerOptions: {
         module: ts.ModuleKind.CommonJS,
@@ -43,7 +44,11 @@ export interface Stdout {
 }
 
 export function parseArg(arg: ResultType) {
-  if (typeof arg === 'object') {
+  if (Array.isArray(arg)) {
+    return JSON.stringify(arg.slice(0, MAX_ARRAY_ITEMS));
+  } else if (ArrayBuffer.isView(arg)) {
+    return JSON.stringify(Array.from((arg as Uint8Array).slice(0, MAX_ARRAY_ITEMS)));
+  } else if (typeof arg === 'object') {
     return JSON.stringify(arg);
   } else if (typeof arg !== 'undefined' && arg !== null) {
     return arg.toString();
@@ -68,7 +73,8 @@ export function parseMessage(msg: string) {
 }
 
 const consoleWrapCode = /*JavaScript*/ `
-__logs = []
+__logs = [];
+eval = void 0;
 console = {
   log (...args) {
     __logs.push(args)
@@ -88,7 +94,7 @@ export async function executeCode(source: string, language: string): Promise<Exe
   if (Object.keys(jsTranspile).indexOf(language) === -1) {
     throw new Error(`Nieobsługiwany język ${language}`);
   }
-  const code = jsTranspile[language](source);
+  const code = await jsTranspile[language](source);
   const vm = new ivm.Isolate({
     memoryLimit: MEMORY_LIMIT,
   });
@@ -98,17 +104,19 @@ export async function executeCode(source: string, language: string): Promise<Exe
   const config = {
     timeout: TIMEOUT,
     promise: false,
-    copy: true,
-    externalCopy: false,
+    copy: false,
+    externalCopy: true,
     reference: false,
   };
 
   try {
     const begin = new Date().getTime();
     const exeResult = await context.eval(code, config);
-    const result = exeResult.result;
+    const result = exeResult.result.copy({ transferIn: true });
+    const rawStdout = (await context.eval('__logs', config)).result.copy({
+      transferIn: true,
+    }) as ResultType[][];
     const end = new Date().getTime();
-    const rawStdout = (await context.eval('__logs', config)).result as ResultType[][];
     const stdout = rawStdout.map(row => row.map(parseArg).join(', '));
     return {
       stdout,
@@ -153,7 +161,7 @@ export function writeResponse(result: ExecuteResult): string {
 }
 
 const errorMessage = (error: Error | string) =>
-  `Błąd wykonania: ${error}\n` +
+  `Błąd: ${error}\n` +
   'Poprawna składnia to:\n ' +
   '> !execute \\`\\`\\`js\n' +
   '> // kod\n' +
@@ -168,9 +176,13 @@ const execute: Command = {
   async execute(msg: Message) {
     try {
       const { source, language } = parseMessage(msg.content);
-      const result = await executeCode(source, language);
-      const response = writeResponse(result);
-      return msg.channel.send(response);
+      try {
+        const result = await executeCode(source, language);
+        const response = writeResponse(result);
+        return msg.channel.send(response);
+      } catch (error) {
+        return msg.channel.send(`Błąd wykonania: \`\`\`\n${error}\n\`\`\``);
+      }
     } catch (error) {
       return msg.channel.send(errorMessage(error));
     }
