@@ -12,7 +12,7 @@ export const MAX_OUTPUT_CHARACTERS = 1200;
 export const MAX_RESULT_CHARACTERS = 700;
 const TIMEOUT = 100;
 const MEMORY_LIMIT = 64;
-const COOLDOWN = 30;
+const COOLDOWN = 0;
 
 const jsTranspile: { [key: string]: (code: string) => string } = {
   js(code: string) {
@@ -119,6 +119,7 @@ export async function executeCode(source: string, language: string): Promise<Exe
     throw error;
   } finally {
     context.release();
+    vm.dispose();
   }
 }
 
