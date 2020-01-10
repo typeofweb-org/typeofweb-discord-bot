@@ -13,7 +13,7 @@ export const MAX_RESULT_CHARACTERS = 700;
 const MAX_ARRAY_ITEMS = 100;
 const TIMEOUT = 10;
 const MEMORY_LIMIT = 32;
-const COOLDOWN = 0;
+const COOLDOWN = 60;
 
 const jsTranspile: { [key: string]: (code: string) => Promise<string> } = {
   async js(code: string) {
