@@ -3,6 +3,7 @@ import { getConfig } from '../config';
 import { InvalidUsageError, Command } from '../types';
 
 import co from './co';
+import execute from './execute';
 import link from './link';
 import markdown from './markdown';
 import mdn from './mdn';
@@ -20,6 +21,7 @@ const commandPattern = new RegExp(getConfig('PREFIX') + '([a-z]+)(?: (.*))?');
 
 const allCommands = {
   co,
+  execute,
   link,
   markdown,
   mdn,
