@@ -80,6 +80,15 @@
         "code",
         "ideas"
       ]
+    },
+    {
+      "login": "D0man",
+      "name": "Kuba Domański",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/22179216?v=4",
+      "profile": "https://github.com/D0man",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
