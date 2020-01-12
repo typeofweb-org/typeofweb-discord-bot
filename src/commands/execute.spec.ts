@@ -3,11 +3,9 @@
 /* eslint no-let: "off" */
 /* tslint:disable:no-implicit-dependencies no-magic-numbers */
 
-import chai, { expect } from 'chai';
+import { expect } from 'chai';
 import 'mocha';
 import * as execute from './execute';
-import chaiAsPromised from 'chai-as-promised';
-chai.use(chaiAsPromised);
 
 const Template = (language: string, code: string) => `!execute \`\`\`${language}
 ${code}
