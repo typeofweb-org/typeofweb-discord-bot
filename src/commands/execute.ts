@@ -6,7 +6,6 @@ import ivm from 'isolated-vm';
 
 const pluralize = (count: number) => polishPlurals('linia', 'linie', 'linii', count);
 
-/* config */
 export const MAX_OUTPUT_LINES = 20;
 export const MAX_OUTPUT_CHARACTERS = 1200;
 export const MAX_RESULT_CHARACTERS = 700;
@@ -15,7 +14,7 @@ const TIMEOUT = 10;
 const MEMORY_LIMIT = 32;
 const COOLDOWN = 60;
 
-const jsTranspile: { [key: string]: (code: string) => Promise<string> } = {
+const jsTranspilers: { [key: string]: (code: string) => Promise<string> } = {
   async js(code: string) {
     return code;
   },
@@ -29,10 +28,12 @@ const jsTranspile: { [key: string]: (code: string) => Promise<string> } = {
     return out.outputText;
   },
 };
+jsTranspilers.javascript = jsTranspilers.js;
+jsTranspilers.typescript = jsTranspilers.ts;
 
 type ResultType = number | string | object | null | undefined;
 
-export interface ExecuteResult {
+export interface ExecutionResult {
   stdout: string[];
   result: ResultType;
   time?: number;
@@ -57,15 +58,15 @@ export function parseArg(arg: ResultType) {
 }
 
 export function parseMessage(msg: string) {
-  const Delimiter = '```';
-  const opening = msg.indexOf(Delimiter);
-  const closing = msg.lastIndexOf(Delimiter);
-  const newline = msg.indexOf('\n', opening + Delimiter.length);
+  const DELIMITER = '```';
+  const opening = msg.indexOf(DELIMITER);
+  const closing = msg.lastIndexOf(DELIMITER);
+  const newline = msg.indexOf('\n', opening + DELIMITER.length);
   if (opening === -1 || newline === -1 || closing === opening) {
     throw new Error('Nieprawidłowa składnia');
   }
   const source = msg.substring(newline + 1, closing);
-  const language = msg.substring(opening + Delimiter.length, newline).toLowerCase();
+  const language = msg.substring(opening + DELIMITER.length, newline).toLowerCase();
   return {
     source,
     language: language.length > 0 ? language : 'js',
@@ -90,11 +91,11 @@ console = {
   }
 }`;
 
-export async function executeCode(source: string, language: string): Promise<ExecuteResult> {
-  if (Object.keys(jsTranspile).indexOf(language) === -1) {
+export async function executeCode(source: string, language: string): Promise<ExecutionResult> {
+  if (!jsTranspilers[language]) {
     throw new Error(`Nieobsługiwany język ${language}`);
   }
-  const code = await jsTranspile[language](source);
+  const code = await jsTranspilers[language](source);
   const vm = new ivm.Isolate({
     memoryLimit: MEMORY_LIMIT,
   });
@@ -135,7 +136,7 @@ function wrapText(text: string, lang = '') {
   return `\`\`\`${lang}\n${text}\n\`\`\``;
 }
 
-export function prepareOutput(result: ExecuteResult) {
+export function prepareOutput(result: ExecutionResult) {
   return {
     text: result.stdout
       .slice(0, MAX_OUTPUT_LINES)
@@ -145,7 +146,7 @@ export function prepareOutput(result: ExecuteResult) {
   };
 }
 
-export function writeResponse(result: ExecuteResult): string {
+export function writeResponse(result: ExecutionResult): string {
   const stdout = prepareOutput(result);
   const isCut = stdout.text.length !== result.stdout.join('\n').length;
   const stdoutText =
@@ -166,7 +167,7 @@ const errorMessage = (error: Error | string) =>
   '> !execute \\`\\`\\`js\n' +
   '> // kod\n' +
   '> \\`\\`\\`\n' +
-  `Obsługiwane języki: ${Object.keys(jsTranspile).join(', ')}`;
+  `Obsługiwane języki: ${Object.keys(jsTranspilers).join(', ')}`;
 
 const execute: Command = {
   name: 'execute',
