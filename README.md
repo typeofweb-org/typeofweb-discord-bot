@@ -1,7 +1,9 @@
 # Type of Web Discord Bot
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-8-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ## Getting Started
@@ -63,7 +65,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/nanoDW"><img src="https://avatars2.githubusercontent.com/u/37413661?v=4" width="100px;" alt=""/><br /><sub><b>nanoDW</b></sub></a><br /><a href="https://github.com/mmiszy/typeofweb-discord-bot/commits?author=nanoDW" title="Code">💻</a> <a href="#ideas-nanoDW" title="Ideas, Planning, & Feedback">🤔</a></td>
     <td align="center"><a href="https://github.com/Secrus"><img src="https://avatars2.githubusercontent.com/u/26322915?v=4" width="100px;" alt=""/><br /><sub><b>Secrus</b></sub></a><br /><a href="https://github.com/mmiszy/typeofweb-discord-bot/commits?author=Secrus" title="Code">💻</a> <a href="#ideas-Secrus" title="Ideas, Planning, & Feedback">🤔</a></td>
     <td align="center"><a href="https://github.com/larto42"><img src="https://avatars3.githubusercontent.com/u/16961273?v=4" width="100px;" alt=""/><br /><sub><b>larto42</b></sub></a><br /><a href="https://github.com/mmiszy/typeofweb-discord-bot/commits?author=larto42" title="Documentation">📖</a></td>
-    <td align="center"><a href="https://github.com/Razi91"><img src="https://avatars0.githubusercontent.com/u/5995454?v=4" width="100px;" alt=""/><br /><sub><b>jkonieczny</b></sub></a><br /><a href="https://github.com/mmiszy/typeofweb-discord-bot/commits?author=Razi91" title="Code">💻</a> <a href="#ideas-Razi91" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://github.com/Razi91"><img src="https://avatars0.githubusercontent.com/u/5995454?v=4" width="100px;" alt=""/><br /><sub><b>jkonieczny</b></sub></a><br /><a href="https://github.com/mmiszy/typeofweb-discord-bot/commits?author=Razi91" title="Code">💻</a> <a href="#ideas-Razi91" title="Ideas, Planning, & Feedback">🤔</a> <a href="https://github.com/mmiszy/typeofweb-discord-bot/commits?author=Razi91" title="Tests">⚠️</a></td>
   </tr>
   <tr>
     <td align="center"><a href="https://github.com/D0man"><img src="https://avatars2.githubusercontent.com/u/22179216?v=4" width="100px;" alt=""/><br /><sub><b>Kuba Domański</b></sub></a><br /><a href="https://github.com/mmiszy/typeofweb-discord-bot/commits?author=D0man" title="Code">💻</a></td>
@@ -72,6 +74,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
