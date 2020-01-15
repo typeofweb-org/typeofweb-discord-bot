@@ -2,8 +2,6 @@ import { Command } from '../types';
 import fetch from 'node-fetch';
 import { polishPlurals } from 'polish-plurals';
 
-const MAX_RESULTS_NUMBER = 3;
-
 const pluralize = (count: number) => polishPlurals('artykuł', 'artykuły', 'artykułów', count);
 
 const typeofweb: Command = {
@@ -12,19 +10,18 @@ const typeofweb: Command = {
   args: true,
   async execute(msg, args) {
     const query = encodeURIComponent(args.join(' '));
-    const res = await fetch(`https://typeofweb.com/wp-json/wp/v2/search?search=${query}`);
+    const res = await fetch(
+      `https://typeofweb.com/wp-json/wp/v2/search?search=${query}&per_page=3`
+    );
 
     const data = (await res.json()) as ToWSearchResponse[];
-    if (!data[0].url.length) {
+    if (!data.length) {
       return msg.channel.send(`Niestety nic nie znalazłam 😭`);
     }
-    const total = data[0].url.length;
-    const message =
-      `Znalazłam ${total} ${pluralize(total)}` +
-      (total > MAX_RESULTS_NUMBER ? `. Pokazuję pierwsze ${MAX_RESULTS_NUMBER} ` : '') +
-      ':';
+    const total = data.length;
+    const message = `Pokazuję pierwsze ${total} ${pluralize(total)}` + ':';
 
-    const article = data.slice(0, MAX_RESULTS_NUMBER);
+    const article = data.slice(0, total);
     return msg.channel.send([message, ...article.map(doc => doc.url)]);
   },
 };
