@@ -15,12 +15,13 @@ const drss = new DiscordRSS.Client({
     },
   },
   feeds: {
-    refreshTimeMinutes: 15,
+    refreshTimeMinutes: 10,
     timezone: 'Europe/Warsaw',
     dateFormat: 'LLL',
     dateLanguage: 'pl',
     dateLanguageList: ['pl'],
     sendOldOnFirstCycle: true,
+    cycleMaxAge: 5,
   },
 });
 
@@ -47,10 +48,6 @@ client.on('message', async msg => {
     return msg.channel.send(`┬─┬ノ( ◕◡◕ ノ)`);
   }
 
-  if (/mongo/i.test(msg.content)) {
-    return msg.channel.send(`https://youtu.be/b2F-DItXtZs`);
-  }
-
   if (msg.content.startsWith(getConfig('PREFIX'))) {
     try {
       await handleCommand(msg);
@@ -58,6 +55,7 @@ client.on('message', async msg => {
       if (err instanceof InvalidUsageError) {
         void msg.reply(err.message);
       } else {
+        console.error(err);
         void msg.reply('przepraszam, ale coś poszło nie tak…');
       }
     } finally {

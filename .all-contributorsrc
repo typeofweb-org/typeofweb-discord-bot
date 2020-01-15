@@ -1,0 +1,98 @@
+{
+  "projectName": "typeofweb-discord-bot",
+  "projectOwner": "mmiszy",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": true,
+  "commitConvention": "gitmoji",
+  "contributors": [
+    {
+      "login": "mmiszy",
+      "name": "Michał Miszczyszyn",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/1338731?v=4",
+      "profile": "https://typeofweb.com",
+      "contributions": [
+        "code",
+        "ideas",
+        "infra",
+        "review"
+      ]
+    },
+    {
+      "login": "Deeadline",
+      "name": "Deeadline",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/26546280?v=4",
+      "profile": "https://github.com/Deeadline",
+      "contributions": [
+        "code",
+        "ideas"
+      ]
+    },
+    {
+      "login": "przytrzask",
+      "name": "przytrzask",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/20127089?v=4",
+      "profile": "http://trzasq.pl",
+      "contributions": [
+        "code",
+        "ideas"
+      ]
+    },
+    {
+      "login": "nanoDW",
+      "name": "nanoDW",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/37413661?v=4",
+      "profile": "https://github.com/nanoDW",
+      "contributions": [
+        "code",
+        "ideas"
+      ]
+    },
+    {
+      "login": "Secrus",
+      "name": "Secrus",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/26322915?v=4",
+      "profile": "https://github.com/Secrus",
+      "contributions": [
+        "code",
+        "ideas"
+      ]
+    },
+    {
+      "login": "larto42",
+      "name": "larto42",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/16961273?v=4",
+      "profile": "https://github.com/larto42",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "Razi91",
+      "name": "jkonieczny",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/5995454?v=4",
+      "profile": "https://github.com/Razi91",
+      "contributions": [
+        "code",
+        "ideas",
+        "test",
+        "security"
+      ]
+    },
+    {
+      "login": "D0man",
+      "name": "Kuba Domański",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/22179216?v=4",
+      "profile": "https://github.com/D0man",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "skipCi": true
+}
