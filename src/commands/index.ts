@@ -1,8 +1,9 @@
-import Discord from 'discord.js';
+import Discord, { PermissionString } from 'discord.js';
 import { getConfig } from '../config';
 import { InvalidUsageError, Command } from '../types';
 
 import co from './co';
+import execute from './execute';
 import link from './link';
 import markdown from './markdown';
 import mdn from './mdn';
@@ -16,11 +17,13 @@ import server from './server';
 import spotify from './spotify';
 import xd from './xd';
 import youtube from './youtube';
+import typeofweb from './towarticle';
 
 const commandPattern = new RegExp(getConfig('PREFIX') + '([a-z]+)(?: (.*))?');
 
 const allCommands = {
   co,
+  execute,
   link,
   markdown,
   mdn,
@@ -34,11 +37,13 @@ const allCommands = {
   spotify,
   xd,
   youtube,
+  typeofweb,
 };
 
 const cooldowns = new Discord.Collection<string, Discord.Collection<string, number>>();
+const PERMISSION_TO_OVERRIDE_COOLDOWN: PermissionString = 'ADMINISTRATOR';
 
-function verifyCooldown(msg: Discord.Message, command: Command) {
+async function verifyCooldown(msg: Discord.Message, command: Command) {
   if (typeof command.cooldown !== 'number') {
     return;
   }
@@ -57,6 +62,11 @@ function verifyCooldown(msg: Discord.Message, command: Command) {
     const expirationTime = timestamps.get(msg.author.id)! + cooldownAmount;
 
     if (now < expirationTime) {
+      const member = await msg.guild.fetchMember(msg.author);
+      if (member.hasPermission(PERMISSION_TO_OVERRIDE_COOLDOWN)) {
+        return;
+      }
+
       // tslint:disable-next-line:no-magic-numbers
       const timeLeft = Math.ceil((expirationTime - now) / 1000);
       throw new InvalidUsageError(
@@ -131,11 +141,11 @@ export async function handleCommand(msg: Discord.Message) {
 
   msg.channel.startTyping();
 
-  await verifyCooldown(msg, command);
-
   if (command.guildOnly && msg.channel.type !== 'text') {
     throw new InvalidUsageError(`to polecenie można wywołać tylko na kanałach.`);
   }
+
+  await verifyCooldown(msg, command);
 
   if (!command.args) {
     return command.execute(msg);

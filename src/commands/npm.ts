@@ -14,18 +14,16 @@ const npm: Command = {
     const query = encodeURIComponent(args.join(' '));
     const res = await fetch(`http://registry.npmjs.com/-/v1/search?text=${query}`);
 
-    const data = (await res.json()) as NpmResponse;
-    if (!data.objects.length) {
+    const { objects, total } = (await res.json()) as NpmResponse;
+    if (!objects.length) {
       return msg.channel.send(`Niestety nic nie znalazłam 😭`);
     }
-
-    const total = data.objects.length;
     const message =
       `Znalazłam ${total} ${pluralize(total)}` +
       (total > MAX_RESULTS_NUMBER ? `. Pokazuję pierwsze ${MAX_RESULTS_NUMBER}` : '') +
       ':';
 
-    const topDocuments = data.objects.slice(0, MAX_RESULTS_NUMBER);
+    const topDocuments = objects.slice(0, MAX_RESULTS_NUMBER);
     return msg.channel.send([message, ...topDocuments.map(doc => doc.package.links.npm)]);
   },
 };

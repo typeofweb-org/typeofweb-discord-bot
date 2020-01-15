@@ -61,7 +61,48 @@
         "code",
         "ideas"
       ]
+    },
+    {
+      "login": "larto42",
+      "name": "larto42",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/16961273?v=4",
+      "profile": "https://github.com/larto42",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "Razi91",
+      "name": "jkonieczny",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/5995454?v=4",
+      "profile": "https://github.com/Razi91",
+      "contributions": [
+        "code",
+        "ideas",
+        "test",
+        "security"
+      ]
+    },
+    {
+      "login": "D0man",
+      "name": "Kuba Domański",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/22179216?v=4",
+      "profile": "https://github.com/D0man",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Survikrowa",
+      "name": "Survikrowa",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/35381167?v=4",
+      "profile": "https://github.com/Survikrowa",
+      "contributions": [
+        "code",
+        "ideas"
+      ]
     }
   ],
-  "contributorsPerLine": 7
+  "contributorsPerLine": 7,
+  "skipCi": true
 }
