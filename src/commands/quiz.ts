@@ -8,9 +8,8 @@ Dostępne wartości:
 * poziom: junior, mid, senior
 * ilość: [1 - ${MAX_QUESTIONS}] - ile pytań wylosować
 `;
-
-const Levels = ['junior', 'mid', 'senior'];
-const Languages = ['html', 'css', 'js', 'angular', 'react', 'git', 'other'];
+const LEVELS = ['junior', 'mid', 'senior'];
+const LANGUAGES = ['html', 'css', 'js', 'angular', 'react', 'git', 'other'];
 
 const quiz: Command = {
   name: 'quiz',
@@ -26,12 +25,10 @@ const quiz: Command = {
 
     const url = prepareUrl(language, level);
     const result = await fetch(url);
-    const data = (await result.json()) as DevFAQResponse;
-
     const {
       data: questions,
       meta: { total },
-    } = data;
+    } = (await result.json()) as DevFAQResponse;
 
     if (total === 0) {
       return msg.channel.send(`Niestety nie znalazłam pytań 😭`);
@@ -49,13 +46,13 @@ const quiz: Command = {
 };
 
 const validateParams = (language: string, level: string, amount: string) => {
-  if (!language || !Languages.includes(language)) {
+  if (!language || !LANGUAGES.includes(language)) {
     return `Nie znalazłam takiego języka 😭`;
   }
-  if (level && !Levels.includes(level)) {
+  if (level && !LEVELS.includes(level)) {
     return `Nie znalazłam takiego poziomu 😭`;
   }
-  if (amount && (Number(amount) < 0 || Number(amount) > MAX_QUESTIONS)) {
+  if (amount && (Number(amount) <= 0 || Number(amount) > MAX_QUESTIONS)) {
     return `Maksymalnie możesz poprosić o ${MAX_QUESTIONS} pytań.`;
   }
 
