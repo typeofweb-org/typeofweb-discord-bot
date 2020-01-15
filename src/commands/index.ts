@@ -16,6 +16,7 @@ import server from './server';
 import spotify from './spotify';
 import xd from './xd';
 import youtube from './youtube';
+import typeofweb from './towarticle';
 
 const commandPattern = new RegExp(getConfig('PREFIX') + '([a-z]+)(?: (.*))?');
 
@@ -34,6 +35,7 @@ const allCommands = {
   spotify,
   xd,
   youtube,
+  typeofweb,
 };
 
 const cooldowns = new Discord.Collection<string, Discord.Collection<string, number>>();
