@@ -1,12 +1,12 @@
 import { Command } from '../types';
 import fetch from 'node-fetch';
 
-const MAX_AMOUNT = 10;
+const MAX_QUESTIONS = 10;
 const USAGE_MESSAGE = `Format: !quiz język poziom(opcjonalny) ilość(opcjonalny).
 Dostępne wartości:
 * język: html, css, js, angular, react, git, other
 * poziom: junior, mid, senior
-* ilość: [1 - ${MAX_AMOUNT}] - ile pytań wylosować
+* ilość: [1 - ${MAX_QUESTIONS}] - ile pytań wylosować
 `;
 
 const Levels = ['junior', 'mid', 'senior'];
@@ -19,9 +19,9 @@ const quiz: Command = {
   async execute(msg, args) {
     const [language, level, amount = '1'] = args;
 
-    const validation = validateParams(language, level, amount);
-    if (!validation.isValid) {
-      return msg.channel.send(`${validation.errorMsg} \`\`\`${USAGE_MESSAGE}\`\`\``);
+    const errorMsg = validateParams(language, level, amount);
+    if (errorMsg) {
+      return msg.channel.send(`${errorMsg} \`\`\`${USAGE_MESSAGE}\`\`\``);
     }
 
     const url = prepareUrl(language, level);
@@ -49,20 +49,17 @@ const quiz: Command = {
 };
 
 const validateParams = (language: string, level: string, amount: string) => {
-  const validator: { isValid: boolean; errorMsg: string } = { isValid: true, errorMsg: '' };
-
   if (!language || !Languages.includes(language)) {
-    validator.isValid = false;
-    validator.errorMsg = `Nie znalazłam takiego języka 😭`;
-  } else if (level && !Levels.includes(level)) {
-    validator.isValid = false;
-    validator.errorMsg = `Nie znalazłam takiego poziomu 😭`;
-  } else if (amount && (Number(amount) < 0 || Number(amount) > MAX_AMOUNT)) {
-    validator.isValid = false;
-    validator.errorMsg = `Maksymalnie możesz poprosić o ${MAX_AMOUNT} pytań.`;
+    return `Nie znalazłam takiego języka 😭`;
+  }
+  if (level && !Levels.includes(level)) {
+    return `Nie znalazłam takiego poziomu 😭`;
+  }
+  if (amount && (Number(amount) < 0 || Number(amount) > MAX_QUESTIONS)) {
+    return `Maksymalnie możesz poprosić o ${MAX_QUESTIONS} pytań.`;
   }
 
-  return validator;
+  return '';
 };
 
 const prepareUrl = (language: string, level: string) => {
