@@ -18,7 +18,10 @@ const npm: Command = {
     if (!objects.length) {
       return msg.channel.send(`Niestety nic nie znalazłam 😭`);
     }
-    const message = `Pokazuję pierwsze ${MAX_RESULTS_NUMBER} ${pluralize(total)}`;
+    const message =
+      `Znalazłam ${total} ${pluralize(total)}` +
+      (total > MAX_RESULTS_NUMBER ? `. Pokazuję pierwsze ${MAX_RESULTS_NUMBER}` : '') +
+      ':';
 
     const topDocuments = objects.slice(0, MAX_RESULTS_NUMBER);
     return msg.channel.send([message, ...topDocuments.map(doc => doc.package.links.npm)]);
