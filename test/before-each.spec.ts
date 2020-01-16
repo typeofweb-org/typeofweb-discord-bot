@@ -3,7 +3,14 @@
 /* tslint:disable:no-implicit-dependencies no-magic-numbers */
 
 import nock from 'nock';
-import { expect } from 'chai';
+import Chai, { expect } from 'chai';
+
+import SinonChai from 'sinon-chai';
+import ChaiAsPromised from 'chai-as-promised';
+import Sinon from 'sinon';
+
+Chai.use(SinonChai);
+Chai.use(ChaiAsPromised);
 
 beforeEach(() => {
   nock.disableNetConnect();
@@ -17,4 +24,6 @@ afterEach(() => {
   expect(nock.isDone()).to.equal(true);
   nock.cleanAll();
   nock.enableNetConnect();
+
+  Sinon.restore();
 });
