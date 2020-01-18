@@ -38,7 +38,13 @@
     "no-implicit-dependencies": [true, ["hapi", "joi"]],
     "no-var-keyword": true,
     "no-let": [true, { "ignore-prefix": "mutable" }],
-    "no-delete": true
+    "no-delete": true,
+    "no-shadowed-variable": [
+      true,
+      {
+        "temporalDeadZone": false
+      }
+    ]
   },
   "rulesDirectory": [],
   "autoFixOnSave": true,

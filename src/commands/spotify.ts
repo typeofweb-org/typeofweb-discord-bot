@@ -4,15 +4,15 @@ import fetch from 'node-fetch';
 import { URLSearchParams } from 'url';
 import { getConfig } from '../config';
 
-const secret = Buffer.from(
-  `${getConfig('SPOTIFY_CLIENT_ID')}:${getConfig('SPOTIFY_SECRET')}`
-).toString('base64');
-
 const spotify: Command = {
   name: 'spotify',
   description: 'Pjosenkę gra.',
   args: true,
   async execute(msg: Discord.Message, args: string[]) {
+    const secret = Buffer.from(
+      `${getConfig('SPOTIFY_CLIENT_ID')}:${getConfig('SPOTIFY_SECRET')}`
+    ).toString('base64');
+
     const query = encodeURIComponent(args.join(' '));
     const searchParams = new URLSearchParams();
     searchParams.set('grant_type', 'client_credentials');
