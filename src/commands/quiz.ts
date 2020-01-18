@@ -1,29 +1,30 @@
 import { Command } from '../types';
 import fetch from 'node-fetch';
+import { randomizeArray } from '../utils';
 
 const MAX_QUESTIONS = 10;
-const USAGE_MESSAGE = `Format: !quiz język poziom(opcjonalny) ilość(opcjonalny).
+const USAGE_MESSAGE = `Format: !quiz kategoria poziom(opcjonalny) ilość(opcjonalny).
 Dostępne wartości:
-* język: html, css, js, angular, react, git, other
+* kategoria: html, css, js, angular, react, git, other
 * poziom: junior, mid, senior
 * liczba: [1 - ${MAX_QUESTIONS}] - ile pytań wylosować
 `;
 const LEVELS = ['junior', 'mid', 'senior'];
-const LANGUAGES = ['html', 'css', 'js', 'angular', 'react', 'git', 'other'];
+const CATEGORIES = ['html', 'css', 'js', 'angular', 'react', 'git', 'other'];
 
 const quiz: Command = {
   name: 'quiz',
   description: 'Odpowiedz na pytanie',
   args: true,
   async execute(msg, args) {
-    const [language, level, amount = '1'] = args;
+    const [category, level, amount = '1'] = args;
 
-    const errorMsg = validateParams(language, level, amount);
+    const errorMsg = validateParams(category, level, amount);
     if (errorMsg) {
       return msg.channel.send(`${errorMsg} \`\`\`${USAGE_MESSAGE}\`\`\``);
     }
 
-    const url = prepareUrl(language, level);
+    const url = prepareUrl(category, level);
     const result = await fetch(url);
     const {
       data: questions,
@@ -34,8 +35,7 @@ const quiz: Command = {
       return msg.channel.send(`Niestety nie znalazłam pytań 😭`);
     }
 
-    const randomPivot = 0.5;
-    const shuffled = questions.sort(() => randomPivot - Math.random());
+    const shuffled = randomizeArray(questions);
     const selected = shuffled.slice(0, Number(amount));
     const resQuestions = selected.map(
       (item, index) => `**Pytanie ${index + 1}:**   ${item.question}`
@@ -45,9 +45,9 @@ const quiz: Command = {
   },
 };
 
-const validateParams = (language: string, level: string, amount: string) => {
-  if (!language || !LANGUAGES.includes(language)) {
-    return `Nie znalazłam takiego języka 😭`;
+const validateParams = (category: string, level: string, amount: string) => {
+  if (!category || !CATEGORIES.includes(category)) {
+    return `Nie znalazłam takiej kategorii 😭`;
   }
   if (level && !LEVELS.includes(level)) {
     return `Nie znalazłam takiego poziomu 😭`;
@@ -59,9 +59,9 @@ const validateParams = (language: string, level: string, amount: string) => {
   return '';
 };
 
-const prepareUrl = (language: string, level: string) => {
-  const encodedLanguage = encodeURIComponent(language);
-  const urlBase: string = `https://api.devfaq.pl/questions?category=${encodedLanguage}`;
+const prepareUrl = (category: string, level: string) => {
+  const encodedCategory = encodeURIComponent(category);
+  const urlBase: string = `https://api.devfaq.pl/questions?category=${encodedCategory}`;
   if (level) {
     const encodedLevel = encodeURIComponent(level);
     return `${urlBase}&level=${encodedLevel}`;
