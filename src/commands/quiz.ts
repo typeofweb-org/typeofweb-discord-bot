@@ -6,7 +6,7 @@ const USAGE_MESSAGE = `Format: !quiz język poziom(opcjonalny) ilość(opcjonaln
 Dostępne wartości:
 * język: html, css, js, angular, react, git, other
 * poziom: junior, mid, senior
-* ilość: [1 - ${MAX_QUESTIONS}] - ile pytań wylosować
+* liczba: [1 - ${MAX_QUESTIONS}] - ile pytań wylosować
 `;
 const LEVELS = ['junior', 'mid', 'senior'];
 const LANGUAGES = ['html', 'css', 'js', 'angular', 'react', 'git', 'other'];
@@ -60,9 +60,11 @@ const validateParams = (language: string, level: string, amount: string) => {
 };
 
 const prepareUrl = (language: string, level: string) => {
-  const urlBase: string = `https://api.devfaq.pl/questions?category=${language}`;
+  const encodedLanguage = encodeURIComponent(language);
+  const urlBase: string = `https://api.devfaq.pl/questions?category=${encodedLanguage}`;
   if (level) {
-    return `${urlBase}&level=${level}`;
+    const encodedLevel = encodeURIComponent(level);
+    return `${urlBase}&level=${encodedLevel}`;
   }
 
   return urlBase;
