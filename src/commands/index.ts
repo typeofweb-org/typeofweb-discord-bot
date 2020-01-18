@@ -19,7 +19,7 @@ import xd from './xd';
 import youtube from './youtube';
 import typeofweb from './towarticle';
 
-const commandPattern = new RegExp(getConfig('PREFIX') + '([a-z]+)(?: (.*))?');
+const COMMAND_PATTERN = new RegExp(getConfig('PREFIX') + '([a-z]+)(?: (.*))?');
 
 const allCommands = {
   co,
@@ -120,10 +120,10 @@ function printHelp(msg: Discord.Message, member: Discord.GuildMember) {
 }
 
 export async function handleCommand(msg: Discord.Message) {
-  const [, maybeCommand, rest] = msg.content.match(commandPattern) || [null, null, null];
+  const [, maybeCommand, rest] = msg.content.match(COMMAND_PATTERN) || [null, null, null];
 
-  const member = await msg.guild.fetchMember(msg.author);
   if (maybeCommand === 'help') {
+    const member = await msg.guild.fetchMember(msg.author);
     return printHelp(msg, member);
   }
 
@@ -134,6 +134,7 @@ export async function handleCommand(msg: Discord.Message) {
   const commandName = maybeCommand as keyof typeof allCommands;
 
   const command = allCommands[commandName];
+  const member = await msg.guild.fetchMember(msg.author);
 
   if (command.permissions && !member.hasPermission(command.permissions)) {
     return undefined; // silence is golden
