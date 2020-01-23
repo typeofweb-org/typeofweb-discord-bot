@@ -11,6 +11,7 @@ import mongodb from './mongodb';
 import mydevil from './mydevil';
 import npm from './npm';
 import prune from './prune';
+import quiz from './quiz';
 import regulamin from './regulamin';
 import server from './server';
 import spotify from './spotify';
@@ -30,6 +31,7 @@ const allCommands = {
   mydevil,
   npm,
   prune,
+  quiz,
   regulamin,
   server,
   spotify,
