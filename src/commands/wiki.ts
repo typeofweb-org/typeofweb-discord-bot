@@ -1,7 +1,6 @@
 import Discord from 'discord.js';
 import { Command } from '../types';
 import fetch from 'node-fetch';
-import { URLSearchParams } from 'url';
 
 const wiki: Command = {
   name: 'wiki',
@@ -14,22 +13,25 @@ const wiki: Command = {
     const API_URL = 'https://pl.wikipedia.org/w/api.php';
     const params = {
       action: 'opensearch',
-      search: encodeURIComponent(args.join(' ')),
+      search: `${encodeURIComponent(args.join(' '))}`,
       limit: '1', // Limits to first search hit, add as argument in future?
       format: 'json',
     };
-
-    const query = new URLSearchParams(params).toString();
-
+    console.log(params.search);
+    const query = Object.entries(params)
+      .map(([k, v]) => `${k}=${v}`)
+      .join('&');
+    console.log(query);
     const res = await fetch(`${API_URL}?${query}`);
-
-    const [queryString, [articleTitle], [], [link]]: WikipediaResponse = await res.json();
+    const resp = await res.json();
+    console.log(resp);
+    const [queryString, [articleTitle], [], [link]]: WikipediaResponse = resp;
 
     if (!articleTitle.length && !link.length) {
       return msg.channel.send(`Nic nie znalazłam pod hasłem ${queryString}`);
     }
 
-    const message = `Pod hasłem ${queryString} znalazłam artykuł ${articleTitle} dostępny tutaj: ${link}`;
+    const message = `Pod hasłem: ${queryString}\n znalazłam artykuł: ${articleTitle}\n dostępny tutaj: ${link}`;
 
     return msg.channel.send(message);
   },
