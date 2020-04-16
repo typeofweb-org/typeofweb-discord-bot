@@ -19,24 +19,20 @@ const wiki: Command = {
     };
     console.log(params.search);
     const query = Object.entries(params)
-      .map(([k, v]) => `${k}=${v}`)
+      .map(([key, value]) => `${key}=${value}`)
       .join('&');
-    console.log(query);
     const res = await fetch(`${API_URL}?${query}`);
     const resp = await res.json();
-    console.log(resp);
     const [queryString, [articleTitle], [], [link]]: WikipediaResponse = resp;
 
     if (!articleTitle.length && !link.length) {
       return msg.channel.send(`Nic nie znalazłam pod hasłem ${queryString}`);
     }
-
     const message = `Pod hasłem: ${queryString}\n znalazłam artykuł: ${articleTitle}\n dostępny tutaj: ${link}`;
 
     return msg.channel.send(message);
   },
 };
-
 export default wiki;
 
 type WikipediaResponse = [string, string[], string[], string[]];
