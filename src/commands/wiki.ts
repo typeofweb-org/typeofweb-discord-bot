@@ -17,7 +17,6 @@ const wiki: Command = {
       limit: '1', // Limits to first search hit, add as argument in future?
       format: 'json',
     };
-    console.log(params.search);
     const query = Object.entries(params)
       .map(([key, value]) => `${key}=${value}`)
       .join('&');
