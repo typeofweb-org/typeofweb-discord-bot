@@ -13,7 +13,7 @@ const wiki: Command = {
     const API_URL = 'https://pl.wikipedia.org/w/api.php';
     const params = {
       action: 'opensearch',
-      search: `${encodeURIComponent(args.join(' '))}`,
+      search: encodeURIComponent(args.join(' ')),
       limit: '1', // Limits to first search hit, add as argument in future?
       format: 'json',
     };
@@ -24,10 +24,10 @@ const wiki: Command = {
     const resp = await res.json();
     const [queryString, [articleTitle], [], [link]]: WikipediaResponse = resp;
 
-    if (!articleTitle.length && !link.length) {
+    if (!articleTitle && !link) {
       return msg.channel.send(`Nic nie znalazłam pod hasłem ${queryString}`);
     }
-    const message = `Pod hasłem: ${queryString}\n znalazłam artykuł: ${articleTitle}\n dostępny tutaj: ${link}`;
+    const message = `Pod hasłem: ${queryString}\nZnalazłam artykuł: ${articleTitle}\nDostępny tutaj: ${link}`;
 
     return msg.channel.send(message);
   },
