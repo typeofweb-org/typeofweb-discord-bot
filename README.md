@@ -1,52 +1,10 @@
 # Type of Web Discord Bot
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-9-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
-
-## Getting Started
-
-#### Prepare project
-
-Run `npm install` to install all dependencies
-
-_[Based on windows system]_
-
-If an error with Python occurs open the system console with admin privileges and type:
-
-```
-npm --add-python-to-path='true' --debug install --global windows-build-tools
-```
-
-If that was the case run again `npm install` to install dependencies properly.
-
-#### Setup environmental variables
-
-Create `.env.dev` file based on `.env.dev-sample` (just copy and rename it). Fill the API keys with `0` if you don't have them.
-
-#### Connect to development bot
-
-Create a new discord server where you will be testing your bot.
-
-[Follow this tutorial to create a new bot.](https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token) Then add it to your server.
-
-Use the bot token in `.env.dev` file.
-
-#### Run the server
-
-Use `npm run dev` to start the server.
-
-You should get this in your console, which suggests that everything went ok.
-
-```
-Server running!
-Logged in as [Bot Name]!
-```
-
-_You will probably get some errors like "Failed to connect to database" as well. Don't worry about them if you don't need the database._
-
-When you log into the discord server you should see that your Bot is active.
-You can use one of the existing commands like `!co` to try it out :)
 
 ## Getting Started
 
@@ -117,6 +75,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
