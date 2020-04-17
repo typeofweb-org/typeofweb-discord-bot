@@ -5,14 +5,14 @@ set -e
 
 cd ~/domains/bot.typeofweb.com/public_nodejs
 echo "👉 Pulling from the server…"
-git fetch https
+git fetch origin
 
-if git diff --quiet remotes/https/master; then
+if git diff --quiet remotes/origin/master; then
   echo "👉 Up to date; nothing to do!"
   exit
 fi
 
-git pull https master
+git pull origin master
 
 echo "👉 Installing deps…"
 npm i
