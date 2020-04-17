@@ -13,7 +13,7 @@ const wiki: Command = {
     const API_URL = 'https://pl.wikipedia.org/w/api.php';
     const params = {
       action: 'opensearch',
-      search: `${encodeURIComponent(args.join(' '))}`,
+      search: encodeURIComponent(args.join(' ')),
       limit: '1', // Limits to first search hit, add as argument in future?
       format: 'json',
     };
