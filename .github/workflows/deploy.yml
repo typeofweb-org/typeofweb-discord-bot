@@ -1,0 +1,25 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      
+      
+    - name: Run a command remotely
+      run: |
+        mkdir -p ~/.ssh/
+        echo "$SSH_PRIVATE_KEY" > ../private.key
+        sudo chmod 600 ../private.key
+        echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+        ssh -i ../private.key typeofweb@s18.mydevil.net 'source ~/.bashrc && ssh-add ~/.ssh/github && bash -s' < ./ssh-script-deploy.sh
+      shell: bash
+      env:
+        SSH_PRIVATE_KEY: ${{secrets.SSH_PRIVATE_KEY}}
+        SSH_KNOWN_HOSTS: ${{secrets.SSH_KNOWN_HOSTS}}
