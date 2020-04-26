@@ -22,7 +22,7 @@ const typeofweb: Command = {
     const message = `Pokazuję pierwsze ${total} ${pluralize(total)}` + ':';
 
     const article = data.slice(0, total);
-    return msg.channel.send([message, ...article.map(doc => doc.url)]);
+    return msg.channel.send([message, ...article.map((doc) => doc.url)]);
   },
 };
 

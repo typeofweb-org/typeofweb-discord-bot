@@ -62,11 +62,11 @@ async function verifyCooldown(msg: Discord.Message, command: Command) {
   const cooldownAmount = command.cooldown * 1000;
   const id = msg.author.id;
 
-  if (timestamps.has(msg.author.id)) {
+  if (timestamps.has(msg.author.id) && msg.guild) {
     const expirationTime = timestamps.get(msg.author.id)! + cooldownAmount;
 
     if (now < expirationTime) {
-      const member = await msg.guild.fetchMember(msg.author);
+      const member = await msg.guild.members.fetch(msg.author);
       if (member.hasPermission(PERMISSION_TO_OVERRIDE_COOLDOWN)) {
         return;
       }
@@ -115,7 +115,7 @@ function printHelp(msg: Discord.Message, member: Discord.GuildMember) {
       }
       return msg.reply('Wysłałam Ci DM ze wszystkimi komendami! 🎉');
     })
-    .catch(error => {
+    .catch((error) => {
       console.error(`Could not send help DM to ${msg.author.tag}.\n`, error);
       return msg.reply(
         'Niestety nie mogłam Ci wysłać wiadomości prywatnej 😢 Może masz wyłączone DM?'
@@ -124,10 +124,13 @@ function printHelp(msg: Discord.Message, member: Discord.GuildMember) {
 }
 
 export async function handleCommand(msg: Discord.Message) {
+  if (!msg.guild) {
+    return undefined;
+  }
   const [, maybeCommand, rest] = msg.content.match(COMMAND_PATTERN) || [null, null, null];
 
   if (maybeCommand === 'help') {
-    const member = await msg.guild.fetchMember(msg.author);
+    const member = await msg.guild.members.fetch(msg.author);
     return printHelp(msg, member);
   }
 
@@ -138,13 +141,13 @@ export async function handleCommand(msg: Discord.Message) {
   const commandName = maybeCommand as keyof typeof allCommands;
 
   const command = allCommands[commandName];
-  const member = await msg.guild.fetchMember(msg.author);
+  const member = await msg.guild.members.fetch(msg.author);
 
   if (command.permissions && !member.hasPermission(command.permissions)) {
     return undefined; // silence is golden
   }
 
-  msg.channel.startTyping();
+  await msg.channel.startTyping();
 
   if (command.guildOnly && msg.channel.type !== 'text') {
     throw new InvalidUsageError(`to polecenie można wywołać tylko na kanałach.`);

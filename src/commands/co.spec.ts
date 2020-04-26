@@ -13,6 +13,6 @@ describe('co', () => {
 
     await co.execute((msg as unknown) as Discord.Message, []);
 
-    await expect(msg.channel.sendFile).to.have.been.calledOnce;
+    await expect(msg.channel.send).to.have.been.calledOnce;
   });
 });

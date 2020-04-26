@@ -118,7 +118,7 @@ export async function executeCode(source: string, language: string): Promise<Exe
       transferIn: true,
     }) as ResultType[][];
     const end = new Date().getTime();
-    const stdout = rawStdout.map(row => row.map(parseArg).join(', '));
+    const stdout = rawStdout.map((row) => row.map(parseArg).join(', '));
     return {
       stdout,
       result,
@@ -138,10 +138,7 @@ function wrapText(text: string, lang = '') {
 
 export function prepareOutput(result: ExecutionResult) {
   return {
-    text: result.stdout
-      .slice(0, MAX_OUTPUT_LINES)
-      .join('\n')
-      .slice(0, MAX_OUTPUT_CHARACTERS),
+    text: result.stdout.slice(0, MAX_OUTPUT_LINES).join('\n').slice(0, MAX_OUTPUT_CHARACTERS),
     lines: result.stdout.length,
   };
 }

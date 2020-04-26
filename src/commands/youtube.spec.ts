@@ -12,7 +12,7 @@ import * as Discord from 'discord.js';
 
 describe('youtube', () => {
   beforeEach(() => {
-    void Sinon.stub(Config, 'getConfig').callsFake(name => {
+    void Sinon.stub(Config, 'getConfig').callsFake((name) => {
       if (name === 'YOUTUBE_API_KEY') {
         return 'FAKE_YOUTUBE_KEY';
       }

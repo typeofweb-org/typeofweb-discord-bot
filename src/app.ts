@@ -26,20 +26,20 @@ const drss = new DiscordRSS.Client({
 });
 
 client.on('ready', () => {
-  console.log(`Logged in as ${client.user.tag}!`);
+  console.log(`Logged in as ${client.user!.tag}!`);
 });
 
 const errors: Error[] = [];
-client.on('error', error => {
+client.on('error', (error) => {
   errors.push(error);
 });
 
 const warnings: string[] = [];
-client.on('warn', warning => {
+client.on('warn', (warning) => {
   warnings.push(warning);
 });
 
-client.on('message', async msg => {
+client.on('message', async (msg) => {
   if (msg.author.bot) {
     return;
   }

@@ -6,7 +6,13 @@ const link: Command = {
   args: false,
   cooldown: 60,
   execute(msg) {
-    return msg.channel.sendFile('https://i.imgur.com/vbyc7yL.gif');
+    return msg.channel.send({
+      files: [
+        {
+          attachment: 'https://i.imgur.com/vbyc7yL.gif',
+        },
+      ],
+    });
   },
 };
 

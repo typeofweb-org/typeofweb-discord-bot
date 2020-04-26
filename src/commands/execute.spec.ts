@@ -29,7 +29,7 @@ describe('Command: execute', () => {
       '!execute ```js5\n`',
       '!execute js\n5',
     ];
-    messages.forEach(message => {
+    messages.forEach((message) => {
       expect(() => execute.parseMessage(message)).to.throw();
     });
   });

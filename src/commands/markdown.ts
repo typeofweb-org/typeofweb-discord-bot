@@ -16,9 +16,9 @@ const markdownCodes = [
 const sourceExample = ['\\`\\`\\`js (html, css, json, cp, md, py, xml etc.)', 'kod', '\\`\\`\\`'];
 
 function codesToInstruction(codes: string[]) {
-  const maxLength = Math.max(...codes.map(x => x.length));
+  const maxLength = Math.max(...codes.map((x) => x.length));
 
-  return codes.map(code => {
+  return codes.map((code) => {
     return '`' + code.padEnd(maxLength) + ' 👉` ' + code;
   });
 }
