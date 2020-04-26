@@ -147,7 +147,7 @@ export async function handleCommand(msg: Discord.Message) {
     return undefined; // silence is golden
   }
 
-  await msg.channel.startTyping();
+  void msg.channel.startTyping();
 
   if (command.guildOnly && msg.channel.type !== 'text') {
     throw new InvalidUsageError(`to polecenie można wywołać tylko na kanałach.`);
