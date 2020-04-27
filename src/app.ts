@@ -7,7 +7,7 @@ import { getConfig } from './config';
 import { InvalidUsageError } from './types';
 
 const client = new Discord.Client();
-const drss = new DiscordRSS.Client({
+const drss = new DiscordRSS.ClientManager({
   database: {
     uri: getConfig('MONGO_URL'),
     connection: {
@@ -68,7 +68,8 @@ client.on('message', async (msg) => {
 
 async function init() {
   await client.login(getConfig('DISCORD_BOT_TOKEN'));
-  drss._defineBot(client);
+  // drss._defineBot(client);
+  drss.login(client);
 }
 
 void init();

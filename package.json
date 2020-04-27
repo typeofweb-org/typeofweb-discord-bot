@@ -30,6 +30,8 @@
     "isolated-vm": "3.3.3",
     "node-fetch": "2.6.0",
     "polish-plurals": "1.1.0",
+    "request": "2.88.2",
+    "request-promise": "4.2.5",
     "typescript": "3.8.3",
     "zlib-sync": "0.1.6"
   },
