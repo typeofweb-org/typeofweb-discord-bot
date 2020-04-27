@@ -24,7 +24,7 @@
   "dependencies": {
     "bufferutil": "4.0.1",
     "discord.js": "12.2.0",
-    "discord.rss": "5.0.6",
+    "discord.rss": "github:synzen/Discord.RSS#72895ca297bccf58f26dbd2bf7a72cf8177c3ee4",
     "dotenv": "8.2.0",
     "erlpack": "github:discordapp/erlpack",
     "isolated-vm": "3.3.3",
