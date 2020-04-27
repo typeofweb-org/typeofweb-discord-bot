@@ -66,7 +66,7 @@ async function verifyCooldown(msg: Discord.Message, command: Command) {
     const expirationTime = timestamps.get(msg.author.id)! + cooldownAmount;
 
     if (now < expirationTime) {
-      const member = await msg.guild.members.fetch(msg.author);
+      const member = await msg.guild.fetchMember(msg.author);
       if (member.hasPermission(PERMISSION_TO_OVERRIDE_COOLDOWN)) {
         return;
       }
@@ -130,7 +130,7 @@ export async function handleCommand(msg: Discord.Message) {
   const [, maybeCommand, rest] = msg.content.match(COMMAND_PATTERN) || [null, null, null];
 
   if (maybeCommand === 'help') {
-    const member = await msg.guild.members.fetch(msg.author);
+    const member = await msg.guild.fetchMember(msg.author);
     return printHelp(msg, member);
   }
 
@@ -141,7 +141,7 @@ export async function handleCommand(msg: Discord.Message) {
   const commandName = maybeCommand as keyof typeof allCommands;
 
   const command = allCommands[commandName];
-  const member = await msg.guild.members.fetch(msg.author);
+  const member = await msg.guild.fetchMember(msg.author);
 
   if (command.permissions && !member.hasPermission(command.permissions)) {
     return undefined; // silence is golden

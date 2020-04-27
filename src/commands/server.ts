@@ -6,7 +6,7 @@ const server: Command = {
   description: 'Zwraca nazwę serwera.',
   args: false,
   execute(msg: Discord.Message) {
-    return msg.channel.send(`Nazwa tego serwera to: ${msg.guild!.name}`);
+    return msg.channel.send(`Nazwa tego serwera to: ${msg.guild.name}`);
   },
 };
 

@@ -93,12 +93,12 @@ declare module 'discord.rss' {
 
   export type CustomSchedules = Array<CustomSchedule>;
 
-  class ClientManager extends EventEmitter {
+  class Client extends EventEmitter {
     constructor(config: ClientConfig, customSchedules?: CustomSchedules);
 
     login(token: string | Discord.Client | Discord.ShardingManager, noChildren?: boolean): void;
 
-    // _defineBot(client: Discord.Client): void;
+    _defineBot(client: Discord.Client): void;
 
     listenToShardedEvents(bot: Discord.Client);
 
@@ -112,6 +112,6 @@ declare module 'discord.rss' {
   }
 
   export default {
-    ClientManager,
+    Client,
   };
 }

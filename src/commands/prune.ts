@@ -25,7 +25,7 @@ const prune: Command = {
     }
 
     await msg.delete();
-    const messages = await msg.channel.messages.fetch({ limit: num });
+    const messages = await msg.channel.fetchMessages({ limit: num });
     await messages.clear();
     return null;
   },
