@@ -2,6 +2,9 @@
 source ~/.bash_profile
 set -e
 
+node -v
+npm -v
+
 
 cd ~/domains/bot.typeofweb.com/public_nodejs
 echo "👉 Pulling from the server…"
