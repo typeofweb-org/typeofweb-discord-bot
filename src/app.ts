@@ -41,7 +41,7 @@ client.on('warn', (warning) => {
 
 const debugs: string[] = [];
 client.on('debug', (debug) => {
-  debugs.push(debug);
+  debugs.push(debug.replace(getConfig('DISCORD_BOT_TOKEN'), 'DISCORD_BOT_TOKEN'));
 });
 
 client.on('message', async (msg) => {
