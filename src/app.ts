@@ -39,6 +39,11 @@ client.on('warn', (warning) => {
   warnings.push(warning);
 });
 
+const debugs: string[] = [];
+client.on('debug', (debug) => {
+  debugs.push(debug);
+});
+
 client.on('message', async (msg) => {
   if (msg.author.bot) {
     return;
@@ -71,13 +76,13 @@ async function init() {
   drss._defineBot(client);
 }
 
-void init();
+init().catch((err) => errors.push(err));
 
 const server = Http.createServer((_req, res) => {
   // tslint:disable-next-line:no-magic-numbers
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify({ errors, warnings }));
+  res.end(JSON.stringify({ uptime: client.uptime, errors, warnings, debugs }));
 });
 
 server.listen(getConfig('PORT'), () => {
