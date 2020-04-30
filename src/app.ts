@@ -40,8 +40,12 @@ client.on('warn', (warning) => {
 });
 
 const debugs: string[] = [];
+const MAX_DEBUG_LENGTH = 100;
 client.on('debug', (debug) => {
   debugs.push(debug.replace(getConfig('DISCORD_BOT_TOKEN'), 'DISCORD_BOT_TOKEN'));
+  if (debugs.length > MAX_DEBUG_LENGTH) {
+    debugs.shift();
+  }
 });
 
 client.on('message', async (msg) => {
