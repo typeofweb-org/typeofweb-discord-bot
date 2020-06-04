@@ -33,7 +33,7 @@ export function rollDices(content: string) {
   };
 }
 
-const instruction =
+export const instruction =
   'Wpisz `!roll [liczba kości]d[liczba ścian]`, aby rzucić kośćmi, np `!roll 2d6+1`';
 
 const roll: Command = {
