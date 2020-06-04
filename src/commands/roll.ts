@@ -14,7 +14,7 @@ export function parseDice(arg: string) {
     notation,
     count: parseInt(count, 10),
     dice: parseInt(dice, 10),
-    modifier: parseInt(modifier, 10),
+    modifier: parseInt(modifier ?? 0, 10),
   };
 }
 
