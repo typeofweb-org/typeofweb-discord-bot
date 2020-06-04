@@ -37,12 +37,17 @@ describe('prune', () => {
 
   it('should fetch messages and delete them', async () => {
     const msg = getMessageMock('msg');
+    const memberMock = {
+      hasPermission: Sinon.spy(),
+    };
     // tslint:disable-next-line: no-any
     const messagesCollectionMock = { clear: Sinon.spy() };
-    msg.channel.messages.fetch.resolves(messagesCollectionMock);
+    // msg.channel.messages.fetch.resolves(messagesCollectionMock);
+    msg.channel.fetchMessages.resolves(messagesCollectionMock);
+    msg.guild.fetchMember.resolves(memberMock);
 
     await expect(prune.execute((msg as unknown) as Discord.Message, ['2'])).to.be.fulfilled;
-    await expect(msg.channel.messages.fetch).to.have.been.calledOnceWithExactly({ limit: 2 });
+    await expect(msg.channel.fetchMessages).to.have.been.calledOnceWithExactly({ limit: 2 });
     await expect(messagesCollectionMock.clear).to.have.been.calledOnce;
   });
 
@@ -50,7 +55,7 @@ describe('prune', () => {
     const msg = getMessageMock('msg');
     // tslint:disable-next-line: no-any
     const messagesCollectionMock = { clear: Sinon.spy() } as any;
-    msg.channel.messages.fetch.resolves(messagesCollectionMock);
+    msg.channel.fetchMessages.resolves(messagesCollectionMock);
 
     await prune.execute((msg as unknown) as Discord.Message, ['2']);
 
