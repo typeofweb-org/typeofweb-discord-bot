@@ -14,6 +14,7 @@ import odpowiedz from './odpowiedz';
 import prune from './prune';
 import quiz from './quiz';
 import regulamin from './regulamin';
+import roll from './roll';
 import server from './server';
 import spotify from './spotify';
 import xd from './xd';
@@ -36,6 +37,7 @@ const allCommands = {
   prune,
   quiz,
   regulamin,
+  roll,
   server,
   spotify,
   xd,
