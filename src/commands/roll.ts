@@ -18,12 +18,12 @@ export function parseDice(arg: string) {
   };
 }
 
-export function roll(content: string) {
+export function rollDices(content: string) {
   const parsed = parseDice(content);
   if (parsed.count <= 0 || parsed.count > MAX_COUNT || parsed.dice <= 0 || parsed.dice > MAX_DICE) {
     throw new Error('Invalid argument values');
   }
-  const rolls = Array.apply(null, Array(parsed.count))
+  const rolls = Array.from({ length: parsed.count })
     .map(() => Math.random() * parsed.dice + 1)
     .map(Math.floor);
   return {
@@ -34,15 +34,15 @@ export function roll(content: string) {
 }
 
 const instruction =
-  'Wpisz `!roll [ilość kości]d[ilość ścian]`, aby rzucić kośćmi, np `!roll 2d6+1`';
+  'Wpisz `!roll [liczba kości]d[liczba ścian]`, aby rzucić kośćmi, np `!roll 2d6+1`';
 
-const server: Command = {
+const roll: Command = {
   name: 'roll',
   description: 'Rzuca kośćmi.',
   args: true,
   execute(msg, args) {
     try {
-      const result = roll(args[0]);
+      const result = rollDices(args[0]);
       const rollsResult = `${result.rolls.join('+')}`;
       const response = `:game_die: [${result.notation}] **${result.value}** = ${rollsResult}`;
       return msg.channel.send(response);
@@ -52,4 +52,4 @@ const server: Command = {
   },
 };
 
-export default server;
+export default roll;
