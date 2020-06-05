@@ -64,7 +64,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm run tslint && pretty-quick --staged"
+      "pre-commit": "pretty-quick --staged"
     }
   }
 }
