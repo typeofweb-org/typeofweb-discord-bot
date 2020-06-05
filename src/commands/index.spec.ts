@@ -15,7 +15,7 @@ describe('index', () => {
       const memberMock = {
         hasPermission: Sinon.spy(),
       };
-      msg.guild.members.fetch.resolves(memberMock);
+      msg.guild.fetchMember.resolves(memberMock);
       msg.author.send.resolves();
       await handleCommand((msg as unknown) as Discord.Message);
       expect(msg.reply).to.have.been.calledOnceWith('Wysłałam Ci DM ze wszystkimi komendami! 🎉');
