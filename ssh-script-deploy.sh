@@ -28,7 +28,6 @@ echo `git rev-parse HEAD` > .version
 # npm prune
 
 echo "👉 Restarting the server…"
-devil www restart bot.typeofweb.com
-curl -I bot.typeofweb.com
+pm2 restart bot
 
 echo "👉 Done! 😱 👍"
