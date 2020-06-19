@@ -5,6 +5,7 @@ import Http from 'http';
 import { handleCommand } from './commands';
 import { getConfig } from './config';
 import { InvalidUsageError } from './types';
+import handleGithubWebhook from './handle-github-webhook';
 
 const client = new Discord.Client();
 const drss = new DiscordRSS.Client({
@@ -82,7 +83,29 @@ async function init() {
 
 init().catch((err) => errors.push(err));
 
-const server = Http.createServer((_req, res) => {
+const server = Http.createServer(async (_req, res) => {
+  if (_req.url?.startsWith('/githubWebhook')) {
+    const chunks = [];
+    for await (let chunk of _req) {
+      chunks.push(chunk);
+    }
+
+    try {
+      const body = JSON.parse(Buffer.concat(chunks).toString());
+
+      const { statusCode } = await handleGithubWebhook(_req.url, body);
+
+      res.statusCode = statusCode;
+      res.end();
+    } catch (error) {
+      console.log(error);
+      res.statusCode = 400;
+      res.end();
+    }
+
+    return;
+  }
+
   // tslint:disable-next-line:no-magic-numbers
   res.statusCode = 200;
   res.setHeader('Content-Type', 'application/json');
