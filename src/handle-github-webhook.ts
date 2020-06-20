@@ -27,7 +27,10 @@ async function handleGithubWebhook(
 
   const discordWebhookUrl = getConfig('DISCORD_RECEIVE_GITHUB_WEBHOOK_URL');
 
-  const { status } = await fetch(discordWebhookUrl);
+  const { status } = await fetch(discordWebhookUrl, {
+    method: 'POST',
+    body: JSON.stringify(body),
+  });
 
   return { statusCode: status };
 }

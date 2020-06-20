@@ -43,9 +43,11 @@ describe('handleGithubWebhook - unit tests', () => {
   });
 
   it('should return status code from discord if the webhook was forwarded', async () => {
-    nock('https://discord.com').get('/api/webhooks/12345/s3creTk3Y').reply(599);
+    const payload = { sender: { login: 'kbkk' } };
 
-    const result = await handleGithubWebhook('/githubWebhook/s3creTk3Y', {});
+    nock('https://discord.com').post('/api/webhooks/12345/s3creTk3Y', payload).reply(599);
+
+    const result = await handleGithubWebhook('/githubWebhook/s3creTk3Y', payload);
 
     expect(result).to.eql({ statusCode: 599 });
   });
