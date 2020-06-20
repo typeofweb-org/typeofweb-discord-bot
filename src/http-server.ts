@@ -10,7 +10,7 @@ function createHttpServer(
   errors: Error[],
   warnings: string[],
   debugs: string[]
-) {
+): Http.Server {
   return Http.createServer(async (req, res) => {
     if (req.url?.startsWith('/githubWebhook')) {
       const chunks = [];
