@@ -83,10 +83,11 @@ async function init() {
 
 init().catch((err) => errors.push(err));
 
+const BAD_REQUEST = 400;
 const server = Http.createServer(async (_req, res) => {
   if (_req.url?.startsWith('/githubWebhook')) {
     const chunks = [];
-    for await (let chunk of _req) {
+    for await (const chunk of _req) {
       chunks.push(chunk);
     }
 
@@ -99,7 +100,7 @@ const server = Http.createServer(async (_req, res) => {
       res.end();
     } catch (error) {
       console.log(error);
-      res.statusCode = 400;
+      res.statusCode = BAD_REQUEST;
       res.end();
     }
 
