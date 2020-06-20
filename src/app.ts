@@ -1,11 +1,10 @@
 import Discord from 'discord.js';
 import DiscordRSS from 'discord.rss';
-import Http from 'http';
 
 import { handleCommand } from './commands';
 import { getConfig } from './config';
 import { InvalidUsageError } from './types';
-import handleGithubWebhook from './handle-github-webhook';
+import createHttpServer from './http-server';
 
 const client = new Discord.Client();
 const drss = new DiscordRSS.Client({
@@ -83,36 +82,8 @@ async function init() {
 
 init().catch((err) => errors.push(err));
 
-const BAD_REQUEST = 400;
-const server = Http.createServer(async (req, res) => {
-  if (req.url?.startsWith('/githubWebhook')) {
-    const chunks = [];
-    for await (const chunk of req) {
-      chunks.push(chunk);
-    }
+const httpServer = createHttpServer(client, errors, warnings, debugs);
 
-    try {
-      const body = JSON.parse(Buffer.concat(chunks).toString());
-
-      const { statusCode } = await handleGithubWebhook(req.url, body);
-
-      res.statusCode = statusCode;
-      res.end();
-    } catch (error) {
-      console.log(error);
-      res.statusCode = BAD_REQUEST;
-      res.end();
-    }
-
-    return;
-  }
-
-  // tslint:disable-next-line:no-magic-numbers
-  res.statusCode = 200;
-  res.setHeader('Content-Type', 'application/json');
-  res.end(JSON.stringify({ uptime: client.uptime, errors, warnings, debugs }));
-});
-
-server.listen(getConfig('PORT'), () => {
+httpServer.listen(getConfig('PORT'), () => {
   console.log(`Server running!`);
 });
