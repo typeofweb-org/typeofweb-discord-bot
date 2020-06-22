@@ -10,12 +10,12 @@ cd ~/domains/bot.typeofweb.com/public_nodejs
 echo "👉 Pulling from the server…"
 git fetch origin
 
-if git diff --quiet remotes/origin/master; then
+if git diff --quiet remotes/origin/main; then
   echo "👉 Up to date; nothing to do!"
   exit
 fi
 
-git pull origin master
+git pull origin main
 
 echo "👉 Installing deps…"
 npm ci
