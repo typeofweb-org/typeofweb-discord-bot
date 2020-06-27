@@ -1,3 +1,5 @@
+import * as crypto from 'crypto';
+import { IncomingHttpHeaders } from 'http';
 import fetch from 'node-fetch';
 import { getConfig } from './config';
 
@@ -14,10 +16,11 @@ interface GithubWebhookPullRequest {
 }
 
 async function handleGithubWebhook(
-  requestPath: string,
+  headers: IncomingHttpHeaders,
+  rawBody: Buffer,
   body: object
 ): Promise<{ statusCode: number }> {
-  if (!checkWebhookSecret(requestPath)) {
+  if (!validateGithubSignature((headers['x-hub-signature'] ?? '') as string, rawBody)) {
     return { statusCode: 401 };
   }
 
@@ -25,7 +28,7 @@ async function handleGithubWebhook(
     return { statusCode: 200 };
   }
 
-  const discordWebhookUrl = getConfig('DISCORD_RECEIVE_GITHUB_WEBHOOK_URL');
+  const discordWebhookUrl = getConfig('GITHUB_WEBHOOK_DISCORD_URL');
 
   const { status } = await fetch(discordWebhookUrl, {
     method: 'POST',
@@ -43,16 +46,15 @@ function shouldSendWebhook(body: object | GithubWebhookPullRequest) {
   return true;
 }
 
-/**
- * Given the configured webhook url is https://discord.com/api/webhooks/12345/s3creTk3Y
- * then the bot should be called with https://tow-bot/githubWebhook/s3creTk3Y
- */
-function checkWebhookSecret(requestPath: string): boolean {
-  const discordWebhookUrl = getConfig('DISCORD_RECEIVE_GITHUB_WEBHOOK_URL');
+function validateGithubSignature(receivedSignature: string, rawBody: Buffer) {
+  const githubSecret = getConfig('GITHUB_WEBHOOK_SECRET');
+  const hmacString = crypto.createHmac('sha1', githubSecret).update(rawBody).digest('hex');
+  const expectedSignature = `sha1=${hmacString}`;
 
-  const secret = discordWebhookUrl.split('/').pop() ?? '';
-
-  return requestPath.includes(secret);
+  return (
+    receivedSignature.length === expectedSignature.length &&
+    crypto.timingSafeEqual(Buffer.from(receivedSignature), Buffer.from(expectedSignature))
+  );
 }
 
 export default handleGithubWebhook;

@@ -19,9 +19,11 @@ function createHttpServer(
       }
 
       try {
-        const body = JSON.parse(Buffer.concat(chunks).toString());
+        const rawBody = Buffer.concat(chunks);
+        const body = JSON.parse(rawBody.toString());
+        const headers = req.headers;
 
-        const { statusCode } = await handleGithubWebhook(req.url, body);
+        const { statusCode } = await handleGithubWebhook(headers, rawBody, body);
 
         res.statusCode = statusCode;
         res.end();

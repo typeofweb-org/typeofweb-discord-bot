@@ -14,30 +14,36 @@ import handleGithubWebhook from './handle-github-webhook';
 import * as handleGithubWebhookModule from './handle-github-webhook';
 import * as Config from './config';
 import createHttpServer from './http-server';
+import * as crypto from 'crypto';
 
-const MOCK_DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/12345/s3creTk3Y';
+const GITHUB_WEBHOOK_SECRET = 's3creTk3Y';
+const GITHUB_WEBHOOK_DISCORD_URL = 'https://discord.com/api/webhooks/12345/key';
 
 describe('handleGithubWebhook - unit tests', () => {
   beforeEach(() => {
-    Sinon.stub(Config, 'getConfig').returns(MOCK_DISCORD_WEBHOOK_URL);
+    const getConfigStub = Sinon.stub(Config, 'getConfig');
+    getConfigStub.withArgs('GITHUB_WEBHOOK_SECRET').returns(GITHUB_WEBHOOK_SECRET);
+    getConfigStub.withArgs('GITHUB_WEBHOOK_DISCORD_URL').returns(GITHUB_WEBHOOK_DISCORD_URL);
   });
 
   afterEach(() => {
     Sinon.restore();
   });
 
-  it('should return 401 if webhook secret is not provided', async () => {
-    const result = await handleGithubWebhook('/githubWebhook/wrong-secret', {});
+  it('should return 401 if webhook signature is invalid', async () => {
+    const result = await handleGithubWebhook({}, Buffer.from(''), {});
 
     expect(result).to.eql({ statusCode: 401 });
   });
 
   it('should return 200 if webhook was filtered out', async () => {
-    const result = await handleGithubWebhook('/githubWebhook/s3creTk3Y', {
-      sender: {
-        login: 'dependabot',
-      },
-    });
+    const result = await handleGithubWebhook(
+      ...makeHandleGithubWebhookParams({
+        sender: {
+          login: 'dependabot',
+        },
+      })
+    );
 
     expect(result).to.eql({ statusCode: 200 });
   });
@@ -45,15 +51,15 @@ describe('handleGithubWebhook - unit tests', () => {
   it('should return status code from discord if the webhook was forwarded', async () => {
     const payload = { sender: { login: 'kbkk' } };
 
-    nock('https://discord.com').post('/api/webhooks/12345/s3creTk3Y', payload).reply(599);
+    nock('https://discord.com').post('/api/webhooks/12345/key', payload).reply(599);
 
-    const result = await handleGithubWebhook('/githubWebhook/s3creTk3Y', payload);
+    const result = await handleGithubWebhook(...makeHandleGithubWebhookParams(payload));
 
     expect(result).to.eql({ statusCode: 599 });
   });
 });
 
-describe('handleGithubWebhook - integration tests', () => {
+describe.only('handleGithubWebhook - integration tests', () => {
   let httpServer: Http.Server;
   let baseUrl: string;
 
@@ -79,7 +85,7 @@ describe('handleGithubWebhook - integration tests', () => {
   it('should respond with 400 on invalid request', async () => {
     const jsonParseSpy = Sinon.spy(JSON, 'parse');
 
-    const { status } = await fetch(`${baseUrl}/githubWebhook/test`, {
+    const { status } = await fetch(`${baseUrl}/githubWebhook`, {
       method: 'POST',
       body: 'invalid json',
     });
@@ -88,18 +94,23 @@ describe('handleGithubWebhook - integration tests', () => {
     expect(status).to.eql(400);
   });
 
-  it('should call handleGithubWebhook with url and body', async () => {
+  it('should call handleGithubWebhook with headers, rawBody and body', async () => {
     const handleGithubWebhookStub = Sinon.stub(handleGithubWebhookModule, 'default');
     handleGithubWebhookStub.resolves({ statusCode: 200 });
 
-    await fetch(`${baseUrl}/githubWebhook/test`, {
+    await fetch(`${baseUrl}/githubWebhook`, {
       method: 'POST',
       body: '{"a":1}',
+      headers: {
+        'x-hub-signature': 'test-signature',
+      },
     });
 
-    expect(handleGithubWebhookStub).to.have.been.calledOnceWithExactly('/githubWebhook/test', {
-      a: 1,
-    });
+    expect(handleGithubWebhookStub).to.have.been.calledOnceWithExactly(
+      Sinon.match({ 'x-hub-signature': 'test-signature' }),
+      Buffer.from('{"a":1}'),
+      { a: 1 }
+    );
   });
 
   it('should respond with status code from handleGithubWebhook', async () => {
@@ -114,3 +125,23 @@ describe('handleGithubWebhook - integration tests', () => {
     expect(status).eql(599);
   });
 });
+
+function forgeSignature(rawBody: Buffer): string {
+  const hmacString = crypto.createHmac('sha1', GITHUB_WEBHOOK_SECRET).update(rawBody).digest('hex');
+  const signature = `sha1=${hmacString}`;
+
+  return signature;
+}
+
+function makeHandleGithubWebhookParams(body: object): Parameters<typeof handleGithubWebhook> {
+  const rawBody = Buffer.from(JSON.stringify(body));
+  const signature = forgeSignature(rawBody);
+
+  return [
+    {
+      'x-hub-signature': signature,
+    },
+    rawBody,
+    body,
+  ];
+}
