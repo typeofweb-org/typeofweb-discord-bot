@@ -59,7 +59,7 @@ describe('handleGithubWebhook - unit tests', () => {
   });
 });
 
-describe.only('handleGithubWebhook - integration tests', () => {
+describe('handleGithubWebhook - integration tests', () => {
   let httpServer: Http.Server;
   let baseUrl: string;
 
