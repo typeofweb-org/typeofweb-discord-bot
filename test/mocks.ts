@@ -39,6 +39,7 @@ export const getMessageMock = (name: string, params: any = {}) => {
   const mockMessage = {
     ...params,
     channel: {
+      bulkDelete: Sinon.stub(),
       send: Sinon.stub(),
       fetchMessages: Sinon.stub(),
       type: '',

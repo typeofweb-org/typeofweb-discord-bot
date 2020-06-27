@@ -48,7 +48,7 @@ describe('prune', () => {
 
     await expect(prune.execute((msg as unknown) as Discord.Message, ['2'])).to.be.fulfilled;
     await expect(msg.channel.fetchMessages).to.have.been.calledOnceWithExactly({ limit: 2 });
-    await expect(messagesCollectionMock.clear).to.have.been.calledOnce;
+    await expect(msg.channel.bulkDelete).to.have.been.calledOnceWithExactly(messagesCollectionMock);
   });
 
   it('should delete itself', async () => {
