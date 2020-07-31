@@ -30,12 +30,30 @@ async function handleGithubWebhook(
 
   const discordWebhookUrl = getConfig('GITHUB_WEBHOOK_DISCORD_URL');
 
-  const { status } = await fetch(discordWebhookUrl, {
+  const newHeaders = {
+    // 'x-real-ip': headers['x-real-ip'],
+    // 'x-forwarded-for': headers['x-forwarded-for'],
+    // host: headers.host,
+    // 'x-forwarded-proto': headers['x-forwarded-proto'],
+    // connection: headers.connection,
+    // 'content-length': headers['content-length'],
+    // 'x-nginx-ssl': headers['x-nginx-ssl'],
+    // 'user-agent': headers['user-agent'],
+    // accept: headers.accept,
+    'x-github-delivery': headers['x-github-delivery'],
+    'x-github-event': headers['x-github-event'],
+    'x-hub-signature': headers['x-hub-signature'],
+    'content-type': headers['content-type'],
+    // 'x-forwarded-https': headers['x-forwarded-https'],
+  } as Record<string, string>;
+
+  const res = await fetch(discordWebhookUrl, {
     method: 'POST',
-    body: JSON.stringify(body),
+    body: rawBody,
+    headers: newHeaders,
   });
 
-  return { statusCode: status };
+  return { statusCode: res.status };
 }
 
 function shouldSendWebhook(body: object | GithubWebhookPullRequest) {
