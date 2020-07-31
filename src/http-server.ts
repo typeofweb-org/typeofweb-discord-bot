@@ -1,9 +1,22 @@
 import Http from 'http';
 import handleGithubWebhook from './handle-github-webhook';
 import type { Client } from 'discord.js';
+import JsonParse from 'secure-json-parse';
 
 const BAD_REQUEST = 400;
 const OK = 200;
+
+async function parseBody<T = object>(
+  req: Http.IncomingMessage
+): Promise<{ rawBody: Buffer; body: T }> {
+  const chunks = [];
+  for await (const chunk of req) {
+    chunks.push(chunk);
+  }
+  const rawBody = Buffer.concat(chunks);
+  const body = JsonParse.parse(rawBody.toString()) as T;
+  return { rawBody, body };
+}
 
 function createHttpServer(
   discordClient: Client,
@@ -13,22 +26,16 @@ function createHttpServer(
 ): Http.Server {
   return Http.createServer(async (req, res) => {
     if (req.url?.startsWith('/githubWebhook')) {
-      const chunks = [];
-      for await (const chunk of req) {
-        chunks.push(chunk);
-      }
-
       try {
-        const rawBody = Buffer.concat(chunks);
-        const body = JSON.parse(rawBody.toString());
-        const headers = req.headers;
+        const { headers } = req;
+        const { rawBody, body } = await parseBody(req);
 
         const { statusCode } = await handleGithubWebhook(headers, rawBody, body);
 
         res.statusCode = statusCode;
         res.end();
       } catch (error) {
-        console.log(error);
+        errors.push(error);
         res.statusCode = BAD_REQUEST;
         res.end();
       }
