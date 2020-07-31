@@ -24,7 +24,7 @@ import wiki from './wiki';
 
 const COMMAND_PATTERN = new RegExp(getConfig('PREFIX') + '([a-z]+)(?: (.*))?');
 
-const allCommands = {
+const allCommands = [
   co,
   execute,
   link,
@@ -44,7 +44,7 @@ const allCommands = {
   youtube,
   typeofweb,
   wiki,
-};
+];
 
 const cooldowns = new Discord.Collection<string, Discord.Collection<string, number>>();
 const PERMISSION_TO_OVERRIDE_COOLDOWN: PermissionString = 'ADMINISTRATOR';
@@ -86,16 +86,11 @@ async function verifyCooldown(msg: Discord.Message, command: Command) {
 }
 
 function printHelp(msg: Discord.Message, member: Discord.GuildMember) {
-  const commands = Object.entries(allCommands)
-    .sort(([a], [b]) => {
-      if (a > b) {
-        return 1;
-      } else if (a < b) {
-        return -1;
-      }
-      return 1;
+  const commands = allCommands
+    .sort((a, b) => {
+      return a.name.localeCompare(b.name);
     })
-    .filter(([, command]) => {
+    .filter((command) => {
       if (command.permissions && !member.hasPermission(command.permissions)) {
         return false;
       }
@@ -104,8 +99,8 @@ function printHelp(msg: Discord.Message, member: Discord.GuildMember) {
 
   const data = [
     `**Oto lista wszystkich komend:**`,
-    ...commands.map(([name, command]) => {
-      return `**\`${getConfig('PREFIX')}${name}\`** — ${command.description}`;
+    ...commands.map((command) => {
+      return `**\`${getConfig('PREFIX')}${command.name}\`** — ${command.description}`;
     }),
   ];
 
@@ -136,20 +131,19 @@ export async function handleCommand(msg: Discord.Message) {
     return printHelp(msg, member);
   }
 
-  if (!maybeCommand || !(maybeCommand in allCommands)) {
+  const command = allCommands.find((c) => maybeCommand === c.name);
+
+  if (!command || !maybeCommand) {
     return undefined;
   }
 
-  const commandName = maybeCommand as keyof typeof allCommands;
-
-  const command = allCommands[commandName];
   const member = await msg.guild.fetchMember(msg.author);
 
   if (command.permissions && !member.hasPermission(command.permissions)) {
     return undefined; // silence is golden
   }
 
-  void msg.channel.startTyping();
+  msg.channel.startTyping();
 
   if (command.guildOnly && msg.channel.type !== 'text') {
     throw new InvalidUsageError(`to polecenie można wywołać tylko na kanałach.`);

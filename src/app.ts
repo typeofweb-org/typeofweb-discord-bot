@@ -6,6 +6,10 @@ import { handleCommand } from './commands';
 import { getConfig } from './config';
 import { InvalidUsageError } from './types';
 
+import Cache from 'node-cache';
+const ONE_HOUR_S = 3600;
+const cache = new Cache({ stdTTL: ONE_HOUR_S });
+
 const client = new Discord.Client();
 const drss = new DiscordRSS.Client({
   database: {
@@ -48,6 +52,10 @@ client.on('debug', (debug) => {
   }
 });
 
+function isCommand(msg: Discord.Message) {
+  return msg.content.startsWith(getConfig('PREFIX'));
+}
+
 client.on('message', async (msg) => {
   if (msg.author.bot) {
     return;
@@ -57,9 +65,15 @@ client.on('message', async (msg) => {
     return msg.channel.send(`┬─┬ノ( ◕◡◕ ノ)`);
   }
 
-  if (msg.content.startsWith(getConfig('PREFIX'))) {
+  if (isCommand(msg)) {
     try {
+      const collector = msg.channel.createMessageCollector(
+        (m: Discord.Message) => m.author.id === client.user.id
+      );
       await handleCommand(msg);
+      const ids = collector.collected.map((m) => m.id);
+      cache.set(msg.id, ids);
+      collector.stop();
     } catch (err) {
       if (err instanceof InvalidUsageError) {
         void msg.reply(err.message);
@@ -69,6 +83,30 @@ client.on('message', async (msg) => {
       }
     } finally {
       await msg.channel.stopTyping(true);
+    }
+  }
+
+  return;
+});
+
+async function revertCommand(msg: Discord.Message) {
+  if (!cache.has(msg.id)) {
+    return undefined;
+  }
+  const messagesToDelete = cache.get<string[]>(msg.id)!;
+  return msg.channel.bulkDelete(messagesToDelete);
+}
+
+client.on('messageDelete', async (msg) => {
+  if (msg.author.bot) {
+    return;
+  }
+
+  if (isCommand(msg)) {
+    try {
+      await revertCommand(msg);
+    } catch (err) {
+      errors.push(err);
     }
   }
 
