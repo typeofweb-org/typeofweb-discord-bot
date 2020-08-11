@@ -40,7 +40,7 @@ describe('handleGithubWebhook - unit tests', () => {
     const result = await handleGithubWebhook(
       ...makeHandleGithubWebhookParams({
         sender: {
-          login: 'dependabot',
+          login: 'dependabot[bot]',
         },
       })
     );

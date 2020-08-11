@@ -3,7 +3,7 @@ import { IncomingHttpHeaders } from 'http';
 import fetch from 'node-fetch';
 import { getConfig } from './config';
 
-const SENDER_LOGIN_BLOCKLIST = ['dependabot', 'dependabot-preview'];
+const SENDER_LOGIN_BLOCKLIST = ['dependabot[bot]', 'dependabot-preview[bot]', 'sonarcloud[bot]'];
 
 // see https://developer.github.com/webhooks/event-payloads/ for full github webhooks reference
 
