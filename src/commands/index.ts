@@ -21,13 +21,15 @@ import xd from './xd';
 import youtube from './youtube';
 import typeofweb from './towarticle';
 import wiki from './wiki';
+import m1 from './m1';
 
-const COMMAND_PATTERN = new RegExp(getConfig('PREFIX') + '([a-z]+)(?: (.*))?');
+const COMMAND_PATTERN = new RegExp(getConfig('PREFIX') + '([a-z1-9]+)(?: (.*))?');
 
 const allCommands = [
   co,
   execute,
   link,
+  m1,
   markdown,
   mdn,
   mongodb,
