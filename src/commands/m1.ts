@@ -1,9 +1,7 @@
 import { Command } from '../types';
 
-const nameA = 'm1';
-
 const m1: Command = {
-  name: `${nameA}`,
+  name: 'm1',
   description: 'Apple silicon m1',
   args: false,
   cooldown: 10,
