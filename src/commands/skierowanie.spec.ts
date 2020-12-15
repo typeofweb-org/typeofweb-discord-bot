@@ -29,6 +29,8 @@ describe('skierowanie', () => {
       'https://developer.mozilla.org/en-US/docs/Learn',
       'https://typeofweb.com',
       'https://frontlive.pl',
+      'https://javascript30.com/',
+      'https://developer.mozilla.org/en-US/docs/Learn/JavaScript',
     ];
 
     await expect(msg.channel.send).to.have.been.calledWithExactly(linksMessageMock);
