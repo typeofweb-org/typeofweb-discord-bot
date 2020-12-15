@@ -22,6 +22,7 @@ import youtube from './youtube';
 import typeofweb from './towarticle';
 import wiki from './wiki';
 import m1 from './m1';
+import skierowanie from './skierowanie';
 
 const COMMAND_PATTERN = new RegExp(getConfig('PREFIX') + '([a-z1-9]+)(?: (.*))?');
 
@@ -46,6 +47,7 @@ const allCommands = [
   youtube,
   typeofweb,
   wiki,
+  skierowanie,
 ];
 
 const cooldowns = new Discord.Collection<string, Discord.Collection<string, number>>();
