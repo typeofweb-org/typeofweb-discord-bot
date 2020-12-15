@@ -102,6 +102,15 @@
         "code",
         "ideas"
       ]
+    },
+    {
+      "login": "AdamSiekierski",
+      "name": "Adam Siekierski",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/24841038?v=4",
+      "profile": "http://siekierski.ml",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
