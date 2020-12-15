@@ -1,19 +1,14 @@
 import Discord from 'discord.js';
 import { Command } from '../types';
 
-type Link = {
-  address: string;
-  category?: 'js' | 'react';
-};
-
-const links: Link[] = [
-  { address: 'https://kursjs.pl', category: 'js' },
-  { address: 'https://javascript.info', category: 'js' },
-  { address: 'https://reactjs.org/docs', category: 'react' },
-  { address: 'https://developer.mozilla.org/en-US/docs/Learn/JavaScript', category: 'js' },
-  { address: 'https://developer.mozilla.org/en-US/docs/Learn' },
-  { address: 'https://typeofweb.com' },
-  { address: 'https://frontlive.pl' },
+const links = [
+  { url: 'https://kursjs.pl', category: 'js' },
+  { url: 'https://javascript.info', category: 'js' },
+  { url: 'https://reactjs.org/docs', category: 'react' },
+  { url: 'https://developer.mozilla.org/en-US/docs/Learn/JavaScript', category: 'js' },
+  { url: 'https://developer.mozilla.org/en-US/docs/Learn' },
+  { url: 'https://typeofweb.com' },
+  { url: 'https://frontlive.pl' },
 ];
 
 const skierowanie: Command = {
@@ -46,14 +41,14 @@ const skierowanie: Command = {
       );
 
     const categoryFilter = args[1]?.toLowerCase();
-    const linksFiltered = categoryFilter ? links.filter(
-      ({ category }) => category === categoryFilter
-    ) : links;
+    const linksFiltered = categoryFilter
+      ? links.filter(({ category }) => category === categoryFilter)
+      : links;
 
     const linksMessage = 'Z powyższym skierowaniem należy udać się na poniższe strony internetowe:';
 
     await msg.channel.send(skierowanieEmbed);
-    return msg.channel.send([linksMessage, ...linksFiltered.map((link) => link.address)]);
+    return msg.channel.send([linksMessage, ...linksFiltered.map((link) => link.url)]);
   },
 };
 
