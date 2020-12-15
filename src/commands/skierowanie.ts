@@ -42,7 +42,7 @@ const skierowanie: Command = {
 
     const categoryFilter = args[1]?.toLowerCase();
     const linksFiltered = categoryFilter
-      ? links.filter(({ category }) => category === categoryFilter)
+      ? links.filter(({ category }) => !category || category === categoryFilter)
       : links;
 
     const linksMessage = 'Z powyższym skierowaniem należy udać się na poniższe strony internetowe:';
