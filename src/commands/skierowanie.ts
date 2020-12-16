@@ -22,7 +22,7 @@ const links = [
   { url: 'https://www.smashingmagazine.com/guides/accessibility/', category: 'a11y' },
   { url: 'https://www.scottohara.me/writing/', category: 'a11y' },
   { url: 'https://webaim.org/', category: 'a11y' },
-  { url: 'https://typescriptnapowaznie.pl/'. category: 'ts' },
+  { url: 'https://typescriptnapowaznie.pl/', category: 'ts' },
   { url: 'https://www.typescriptlang.org/docs/', category: 'ts' },
   { url: 'https://github.com/typescript-cheatsheets', category: 'ts' },
   { url: 'https://developer.mozilla.org/en-US/docs/Learn' },
