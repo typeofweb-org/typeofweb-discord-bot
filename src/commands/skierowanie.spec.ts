@@ -10,7 +10,13 @@ import * as Discord from 'discord.js';
 describe('skierowanie', () => {
   const mockAuthor = { username: 'user', avatarURL: 'url' };
 
-  it('it should send a message', async () => {
+  const mockLinksEmbed = (links: string[]) =>
+    new Discord.RichEmbed().addField(
+      'Z powyższym skierowaniem należy udać się na poniższe strony internetowe:',
+      links.join('\n')
+    );
+
+  it('it should send two messages', async () => {
     const msg = getMessageMock('msg', { author: mockAuthor });
 
     await skierowanie.execute((msg as unknown) as Discord.Message, ['user']);
@@ -24,13 +30,12 @@ describe('skierowanie', () => {
     await skierowanie.execute((msg as unknown) as Discord.Message, ['user', 'react']);
 
     const linksMessageMock = [
-      'Z powyższym skierowaniem należy udać się na poniższe strony internetowe:',
       'https://reactjs.org/docs',
       'https://developer.mozilla.org/en-US/docs/Learn',
       'https://typeofweb.com',
       'https://frontlive.pl',
     ];
 
-    await expect(msg.channel.send).to.have.been.calledWithExactly(linksMessageMock);
+    await expect(msg.channel.send).to.have.been.calledWithExactly(mockLinksEmbed(linksMessageMock));
   });
 });
