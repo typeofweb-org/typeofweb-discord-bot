@@ -27,11 +27,11 @@ const skierowanie: Command = {
         msg.author.avatarURL,
         'https://typeofweb.com'
       )
-      .setTitle('Skierowanie na naukę podstaw \uD83D\uDE91')
+      .setTitle('Skierowanie na naukę podstaw 🚑')
       .setThumbnail('https://typeofweb.com/wp-content/uploads/2020/04/logo_kwadrat11.png')
       .addField(
         'Działając na podstawie mojej intuicji oraz wiadomości wysłanych przez osobę skierowaną, kieruję użytkownika/użytkowniczkę',
-        `${args[0]},`
+        args[0]
       )
       .addField(
         `na naukę podstaw wybranej przez siebie technologii,`,
