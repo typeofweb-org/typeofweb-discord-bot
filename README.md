@@ -1,7 +1,7 @@
 # Type of Web Discord Bot
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-10-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-11-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ## Getting Started
@@ -69,6 +69,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/D0man"><img src="https://avatars2.githubusercontent.com/u/22179216?v=4" width="100px;" alt=""/><br /><sub><b>Kuba Domański</b></sub></a><br /><a href="https://github.com/typeofweb/typeofweb-discord-bot/commits?author=D0man" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/Survikrowa"><img src="https://avatars2.githubusercontent.com/u/35381167?v=4" width="100px;" alt=""/><br /><sub><b>Survikrowa</b></sub></a><br /><a href="https://github.com/typeofweb/typeofweb-discord-bot/commits?author=Survikrowa" title="Code">💻</a> <a href="#ideas-Survikrowa" title="Ideas, Planning, & Feedback">🤔</a></td>
     <td align="center"><a href="http://siekierski.ml"><img src="https://avatars0.githubusercontent.com/u/24841038?v=4" width="100px;" alt=""/><br /><sub><b>Adam Siekierski</b></sub></a><br /><a href="https://github.com/typeofweb/typeofweb-discord-bot/commits?author=AdamSiekierski" title="Code">💻</a> <a href="#ideas-AdamSiekierski" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="http://frontlive.pl"><img src="https://avatars1.githubusercontent.com/u/46969484?v=4" width="100px;" alt=""/><br /><sub><b>Olaf Sulich</b></sub></a><br /><a href="https://github.com/typeofweb/typeofweb-discord-bot/commits?author=olafsulich" title="Code">💻</a></td>
   </tr>
 </table>
 
