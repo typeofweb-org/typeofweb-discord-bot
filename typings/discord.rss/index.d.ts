@@ -79,7 +79,7 @@ declare module 'discord.rss' {
   export interface ClientConfig {
     log?: Log;
     bot?: Bot;
-    database: Database;
+    database?: Database;
     feeds?: Feeds;
     advanced?: Advanced;
     suppressLogLevels?: Array<LogLevel>;

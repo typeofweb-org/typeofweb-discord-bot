@@ -1,5 +1,5 @@
 import Discord from 'discord.js';
-import DiscordRSS from 'discord.rss';
+// import DiscordRSS from 'discord.rss';
 
 import { handleCommand } from './commands';
 import { getConfig } from './config';
@@ -11,23 +11,23 @@ const ONE_HOUR_S = 3600;
 const cache = new Cache({ stdTTL: ONE_HOUR_S });
 
 const client = new Discord.Client();
-const drss = new DiscordRSS.Client({
-  database: {
-    uri: getConfig('MONGO_URL'),
-    connection: {
-      useNewUrlParser: true,
-    },
-  },
-  feeds: {
-    refreshTimeMinutes: 10,
-    timezone: 'Europe/Warsaw',
-    dateFormat: 'LLL',
-    dateLanguage: 'pl',
-    dateLanguageList: ['pl'],
-    sendOldOnFirstCycle: true,
-    cycleMaxAge: 5,
-  },
-});
+// const drss = new DiscordRSS.Client({
+//   database: {
+//     uri: getConfig('MONGO_URL'),
+//     connection: {
+//       useNewUrlParser: true,
+//     },
+//   },
+//   feeds: {
+//     refreshTimeMinutes: 10,
+//     timezone: 'Europe/Warsaw',
+//     dateFormat: 'LLL',
+//     dateLanguage: 'pl',
+//     dateLanguageList: ['pl'],
+//     sendOldOnFirstCycle: true,
+//     cycleMaxAge: 5,
+//   },
+// });
 
 client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
@@ -115,7 +115,7 @@ client.on('messageDelete', async (msg) => {
 
 async function init() {
   await client.login(getConfig('DISCORD_BOT_TOKEN'));
-  drss._defineBot(client);
+  // drss._defineBot(client);
 }
 
 init().catch((err) => errors.push(err));

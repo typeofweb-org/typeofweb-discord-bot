@@ -4,50 +4,50 @@ import { InvalidUsageError, Command } from '../types';
 
 import co from './co';
 import execute from './execute';
-import link from './link';
 import markdown from './markdown';
 import mdn from './mdn';
 import mongodb from './mongodb';
-import mydevil from './mydevil';
 import npm from './npm';
 import odpowiedz from './odpowiedz';
 import prune from './prune';
 import quiz from './quiz';
-import regulamin from './regulamin';
 import roll from './roll';
 import server from './server';
 import spotify from './spotify';
 import xd from './xd';
 import youtube from './youtube';
-import typeofweb from './towarticle';
 import wiki from './wiki';
-import m1 from './m1';
 import skierowanie from './skierowanie';
+import welcoded from './welcoded';
+import rozwuj from './rozwuj';
+import kalwi from './kalwi';
+import odbierz from './odbierz';
+import szybkiewypo from './szybkiewypo';
 
 const COMMAND_PATTERN = new RegExp(getConfig('PREFIX') + '([a-z1-9]+)(?: (.*))?');
 
 const allCommands = [
   co,
   execute,
-  link,
-  m1,
   markdown,
   mdn,
   mongodb,
-  mydevil,
   npm,
   odpowiedz,
   prune,
   quiz,
-  regulamin,
+  rozwuj,
   roll,
   server,
   spotify,
   xd,
   youtube,
-  typeofweb,
+  welcoded,
   wiki,
   skierowanie,
+  kalwi,
+  odbierz,
+  szybkiewypo,
 ];
 
 const cooldowns = new Discord.Collection<string, Discord.Collection<string, number>>();
@@ -114,13 +114,11 @@ function printHelp(msg: Discord.Message, member: Discord.GuildMember) {
       if (msg.channel.type === 'dm') {
         return undefined;
       }
-      return msg.reply('Wysłałam Ci DM ze wszystkimi komendami! 🎉');
+      return msg.reply('Sprawdź DM mordo! 🎉');
     })
     .catch((error) => {
       console.error(`Could not send help DM to ${msg.author.tag}.\n`, error);
-      return msg.reply(
-        'Niestety nie mogłam Ci wysłać wiadomości prywatnej 😢 Może masz wyłączone DM?'
-      );
+      return msg.reply('Mordo ogarnij, bo nie mogę Ci wysłać DM!');
     });
 }
 

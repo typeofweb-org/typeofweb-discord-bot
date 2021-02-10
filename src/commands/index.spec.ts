@@ -18,7 +18,7 @@ describe('index', () => {
       msg.guild.fetchMember.resolves(memberMock);
       msg.author.send.resolves();
       await handleCommand((msg as unknown) as Discord.Message);
-      expect(msg.reply).to.have.been.calledOnceWith('Wysłałam Ci DM ze wszystkimi komendami! 🎉');
+      expect(msg.reply).to.have.been.calledOnceWith('Sprawdź DM mordo! 🎉');
     });
   });
 });
