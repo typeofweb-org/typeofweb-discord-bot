@@ -22,6 +22,8 @@ import kalwi from './kalwi';
 import odbierz from './odbierz';
 import szybkiewypo from './szybkiewypo';
 import execute from './execute';
+import dzk from './dzk';
+import cze from './cze';
 
 const COMMAND_PATTERN = new RegExp(`(?:${getPrefixes().join('|')})` + '([a-z1-9]+)(?: (.*))?');
 
@@ -46,6 +48,8 @@ const allCommands = [
   kalwi,
   odbierz,
   szybkiewypo,
+  dzk,
+  cze,
 ];
 
 const cooldowns = new Discord.Collection<string, Discord.Collection<string, number>>();
