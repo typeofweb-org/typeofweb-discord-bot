@@ -21,11 +21,13 @@ import rozwuj from './rozwuj';
 import kalwi from './kalwi';
 import odbierz from './odbierz';
 import szybkiewypo from './szybkiewypo';
+import execute from './execute';
 
 const COMMAND_PATTERN = new RegExp(getConfig('PREFIX') + '([a-z1-9]+)(?: (.*))?');
 
 const allCommands = [
   co,
+  execute,
   markdown,
   mdn,
   mongodb,
