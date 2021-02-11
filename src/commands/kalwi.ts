@@ -6,7 +6,7 @@ const kalwi: Command = {
   args: false,
   cooldown: 60,
   execute(msg) {
-    return msg.channel.send(':kalwi:');
+    return msg.channel.send('<:kalwi:802610843354267738>');
   },
 };
 

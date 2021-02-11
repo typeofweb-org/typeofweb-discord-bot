@@ -6,7 +6,7 @@ const rozwuj: Command = {
   args: false,
   cooldown: 60,
   execute(msg) {
-    return msg.channel.send(':welcoded: <https://rozwuj.pl>');
+    return msg.channel.send('<:welcoded:808389167682945115> <https://rozwuj.pl>');
   },
 };
 

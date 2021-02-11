@@ -6,7 +6,7 @@ const welcoded: Command = {
   args: false,
   cooldown: 60,
   execute(msg) {
-    return msg.channel.send(':welcoded: <https://welcoded.com>');
+    return msg.channel.send('<:welcoded:808389167682945115> <https://welcoded.com>');
   },
 };
 
