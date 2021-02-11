@@ -17,7 +17,6 @@ import spotify from './spotify';
 import xd from './xd';
 import youtube from './youtube';
 import wiki from './wiki';
-import skierowanie from './skierowanie';
 import welcoded from './welcoded';
 import rozwuj from './rozwuj';
 import kalwi from './kalwi';
@@ -44,7 +43,6 @@ const allCommands = [
   youtube,
   welcoded,
   wiki,
-  skierowanie,
   kalwi,
   odbierz,
   szybkiewypo,
