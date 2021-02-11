@@ -3,6 +3,7 @@ export function getConfig(name: 'NODE_ENV'): 'production' | 'development';
 export function getConfig(name: string): string;
 export function getConfig(name: string): string {
   const val = process.env[name];
+  const prefixes = ['!', 'panie Rysiu', 'Ryszard draniu', 'Kierowniku'];
 
   switch (name) {
     case 'NODE_ENV':
@@ -12,7 +13,7 @@ export function getConfig(name: string): string {
     case 'PORT':
       return val || '3000';
     case 'PREFIX':
-      return 'panie Rysiu ';
+      return prefixes.join(',');
   }
 
   if (!val) {
