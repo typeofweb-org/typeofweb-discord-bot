@@ -53,7 +53,7 @@ client.on('debug', (debug) => {
 });
 
 function isCommand(msg: Discord.Message) {
-  return msg.content.startsWith(getConfig('PREFIX'));
+  return msg.content.toLowerCase().startsWith(getConfig('PREFIX'));
 }
 
 client.on('message', async (msg) => {

@@ -12,7 +12,7 @@ export function getConfig(name: string): string {
     case 'PORT':
       return val || '3000';
     case 'PREFIX':
-      return '!';
+      return 'panie Rysiu ';
   }
 
   if (!val) {
