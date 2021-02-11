@@ -1,5 +1,5 @@
 import Discord, { PermissionString } from 'discord.js';
-import { getConfig, getPrefixes } from '../config';
+import { getPrefixes } from '../config';
 import { InvalidUsageError, Command } from '../types';
 
 import co from './co';
@@ -100,9 +100,11 @@ function printHelp(msg: Discord.Message, member: Discord.GuildMember) {
     });
 
   const data = [
+    `**Dostępne prefixy:**`,
+    `**${getPrefixes()}**\n`,
     `**Oto lista wszystkich komend:**`,
     ...commands.map((command) => {
-      return `**\`${getConfig('PREFIX')}${command.name}\`** — ${command.description}`;
+      return `**\`${command.name}\`** — ${command.description}`;
     }),
   ];
 
@@ -124,10 +126,8 @@ export async function handleCommand(msg: Discord.Message) {
   if (!msg.guild) {
     return undefined;
   }
-  console.log(COMMAND_PATTERN);
   const msgContentMatch = msg.content.match(COMMAND_PATTERN);
   const [, maybeCommand, rest] = msgContentMatch || [null, null, null, null];
-  console.log(msgContentMatch);
 
   if (maybeCommand === 'help') {
     const member = await msg.guild.fetchMember(msg.author);
