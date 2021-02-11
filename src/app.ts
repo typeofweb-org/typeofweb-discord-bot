@@ -2,7 +2,7 @@ import Discord from 'discord.js';
 // import DiscordRSS from 'discord.rss';
 
 import { handleCommand } from './commands';
-import { getConfig } from './config';
+import { getConfig, getPrefixes } from './config';
 import { InvalidUsageError } from './types';
 import createHttpServer from './http-server';
 
@@ -53,8 +53,8 @@ client.on('debug', (debug) => {
 });
 
 function isCommand(msg: Discord.Message) {
-  const prefixes = getConfig('PREFIX').split(',');
-  return prefixes.filter((prefix) => msg.content.toLowerCase().startsWith(prefix)).length;
+  const prefixes = getPrefixes();
+  return prefixes.some((prefix) => msg.content.toLowerCase().startsWith(prefix));
 }
 
 client.on('message', async (msg) => {

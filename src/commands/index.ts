@@ -1,5 +1,5 @@
 import Discord, { PermissionString } from 'discord.js';
-import { getConfig } from '../config';
+import { getConfig, getPrefixes } from '../config';
 import { InvalidUsageError, Command } from '../types';
 
 import co from './co';
@@ -23,7 +23,7 @@ import odbierz from './odbierz';
 import szybkiewypo from './szybkiewypo';
 import execute from './execute';
 
-const COMMAND_PATTERN = new RegExp(getConfig('PREFIX') + '([a-z1-9]+)(?: (.*))?');
+const COMMAND_PATTERN = new RegExp(`(?:${getPrefixes().join('|')})` + '([a-z1-9]+)(?: (.*))?');
 
 const allCommands = [
   co,
@@ -124,7 +124,10 @@ export async function handleCommand(msg: Discord.Message) {
   if (!msg.guild) {
     return undefined;
   }
-  const [, maybeCommand, rest] = msg.content.match(COMMAND_PATTERN) || [null, null, null];
+  console.log(COMMAND_PATTERN);
+  const msgContentMatch = msg.content.match(COMMAND_PATTERN);
+  const [, maybeCommand, rest] = msgContentMatch || [null, null, null, null];
+  console.log(msgContentMatch);
 
   if (maybeCommand === 'help') {
     const member = await msg.guild.fetchMember(msg.author);
