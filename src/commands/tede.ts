@@ -6,7 +6,7 @@ const dlaczegoTede: Command = {
   args: false,
   cooldown: 60,
   execute(msg) {
-    return msg.channel.send('<https://www.youtube.com/watch?v=NGX-QxR8dbc>');
+    return msg.channel.send('https://www.youtube.com/watch?v=NGX-QxR8dbc');
   },
 };
 
