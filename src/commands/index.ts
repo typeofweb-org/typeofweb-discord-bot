@@ -24,6 +24,7 @@ import szybkiewypo from './szybkiewypo';
 import execute from './execute';
 import dzk from './dzk';
 import cze from './cze';
+import dlaczegoTede from './tede';
 
 const COMMAND_PATTERN = new RegExp(`(?:${getPrefixes().join('|')})` + '([a-z1-9]+)(?: (.*))?');
 
@@ -50,6 +51,7 @@ const allCommands = [
   szybkiewypo,
   dzk,
   cze,
+  dlaczegoTede,
 ];
 
 const cooldowns = new Discord.Collection<string, Discord.Collection<string, number>>();
