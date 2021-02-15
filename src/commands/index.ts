@@ -25,6 +25,7 @@ import execute from './execute';
 import dzk from './dzk';
 import cze from './cze';
 import dlaczegoTede from './tede';
+import boli from './boli'
 
 const COMMAND_PATTERN = new RegExp(`(?:${getPrefixes().join('|')})` + '([a-z1-9]+)(?: (.*))?');
 
@@ -52,6 +53,7 @@ const allCommands = [
   dzk,
   cze,
   dlaczegoTede,
+  boli,
 ];
 
 const cooldowns = new Discord.Collection<string, Discord.Collection<string, number>>();
