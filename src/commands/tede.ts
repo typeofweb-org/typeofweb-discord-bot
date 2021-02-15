@@ -1,7 +1,7 @@
 import { Command } from '../types';
 
 const dlaczegoTede: Command = {
-  name: 'dlaczego tede',
+  name: 'tede',
   description: 'dlaczego tede',
   args: false,
   cooldown: 60,
