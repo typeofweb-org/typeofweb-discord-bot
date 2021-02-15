@@ -134,7 +134,7 @@ export async function handleCommand(msg: Discord.Message) {
   if (!msg.guild) {
     return undefined;
   }
-  const msgContentMatch = msg.content.match(COMMAND_PATTERN);
+  const msgContentMatch = msg.content.toLowerCase().match(COMMAND_PATTERN);
   const [, maybeCommand, rest] = msgContentMatch || [null, null, null, null];
   const lowerizeCommand = maybeCommand!.toLowerCase();
   if (lowerizeCommand === 'help') {
