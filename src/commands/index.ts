@@ -25,7 +25,7 @@ import execute from './execute';
 import dzk from './dzk';
 import cze from './cze';
 import dlaczegoTede from './tede';
-import boli from './boli'
+import boli from './boli';
 
 const COMMAND_PATTERN = new RegExp(`(?:${getPrefixes().join('|')})` + '([a-z1-9]+)(?: (.*))?');
 
@@ -136,15 +136,15 @@ export async function handleCommand(msg: Discord.Message) {
   }
   const msgContentMatch = msg.content.match(COMMAND_PATTERN);
   const [, maybeCommand, rest] = msgContentMatch || [null, null, null, null];
-
-  if (maybeCommand === 'help') {
+  const lowerizeCommand = maybeCommand!.toLowerCase();
+  if (lowerizeCommand === 'help') {
     const member = await msg.guild.fetchMember(msg.author);
     return printHelp(msg, member);
   }
 
-  const command = allCommands.find((c) => maybeCommand === c.name);
+  const command = allCommands.find((c) => lowerizeCommand === c.name.toLowerCase());
 
-  if (!command || !maybeCommand) {
+  if (!command || !lowerizeCommand) {
     return undefined;
   }
 

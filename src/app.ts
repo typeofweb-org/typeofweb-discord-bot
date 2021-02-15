@@ -54,7 +54,7 @@ client.on('debug', (debug) => {
 
 function isCommand(msg: Discord.Message) {
   const prefixes = getPrefixes();
-  return prefixes.some((prefix) => msg.content.toLowerCase().startsWith(prefix));
+  return prefixes.some((prefix) => msg.content.toLowerCase().startsWith(prefix.toLowerCase()));
 }
 
 client.on('message', async (msg) => {
