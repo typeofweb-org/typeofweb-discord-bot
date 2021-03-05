@@ -20,7 +20,7 @@ export function getConfig(name: string): string {
   return val;
 }
 export function getPrefixes(): string[] {
-  return ['!', 'panie rysiu ', 'ryszard draniu ', 'kierowniku '];
+  return ['!', 'panie rysiu ', 'ryszard draniu ', 'kierowniku ', 'panie łysiu '];
 }
 
 export const isProd = () => getConfig('ENV') === 'production';
