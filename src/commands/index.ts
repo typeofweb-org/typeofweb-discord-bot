@@ -27,7 +27,7 @@ import cze from './cze';
 import dlaczegoTede from './tede';
 import boli from './boli';
 
-const COMMAND_PATTERN = new RegExp(`(?:${getPrefixes().join('|')})` + '([a-z1-9]+)(?: (.*))?');
+const COMMAND_PATTERN = new RegExp(`(?:${getPrefixes().join('|')})` + '([a-z1-9ł]+)(?: (.*))?');
 
 const allCommands = [
   co,
@@ -142,7 +142,12 @@ export async function handleCommand(msg: Discord.Message) {
     return printHelp(msg, member);
   }
 
-  const command = allCommands.find((c) => lowerizeCommand === c.name.toLowerCase());
+  const withoutForbiddenLetter = lowerizeCommand.replace('ł', 'r');
+
+  const command = allCommands.find(
+    (c) =>
+      lowerizeCommand === c.name.toLowerCase() || withoutForbiddenLetter === c.name.toLowerCase()
+  );
 
   if (!command || !lowerizeCommand) {
     return undefined;
