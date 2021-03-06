@@ -142,7 +142,7 @@ export async function handleCommand(msg: Discord.Message) {
     return printHelp(msg, member);
   }
 
-  const withoutForbiddenLetter = lowerizeCommand.replace('ł', 'r');
+  const withoutForbiddenLetter = lowerizeCommand.replace(/ł/g, 'r');
 
   const command = allCommands.find(
     (c) =>
