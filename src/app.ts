@@ -7,6 +7,9 @@ import { InvalidUsageError } from './types';
 import createHttpServer from './http-server';
 
 import Cache from 'node-cache';
+
+import { getEłMode } from './eł-mode';
+
 const ONE_HOUR_S = 3600;
 const cache = new Cache({ stdTTL: ONE_HOUR_S });
 
@@ -84,6 +87,13 @@ client.on('message', async (msg) => {
       }
     } finally {
       await msg.channel.stopTyping(true);
+    }
+  } else {
+    if (getEłMode()) {
+      msg.delete();
+      return msg.channel.send(
+        `<@${msg.author.id}>: ` + msg.content.replace(/r(?!z)/g, 'ł').replace(/R(?!z)/g, 'Ł')
+      );
     }
   }
 
