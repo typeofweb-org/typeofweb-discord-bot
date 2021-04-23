@@ -9,7 +9,7 @@ interface CommandCommon {
 }
 
 type CommandWithArgs = {
-  args: true;
+  args: true | 'optional';
   execute(
     msg: Discord.Message,
     args: string[]

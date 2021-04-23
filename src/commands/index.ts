@@ -23,6 +23,7 @@ import typeofweb from './towarticle';
 import wiki from './wiki';
 import m1 from './m1';
 import skierowanie from './skierowanie';
+import yesno from './yesno';
 
 const COMMAND_PATTERN = new RegExp(getConfig('PREFIX') + '([a-z1-9]+)(?: (.*))?');
 
@@ -48,6 +49,7 @@ const allCommands = [
   typeofweb,
   wiki,
   skierowanie,
+  yesno,
 ];
 
 const cooldowns = new Discord.Collection<string, Discord.Collection<string, number>>();
@@ -155,12 +157,12 @@ export async function handleCommand(msg: Discord.Message) {
 
   await verifyCooldown(msg, command);
 
-  if (!command.args) {
+  if (command.args === false) {
     return command.execute(msg);
   }
 
   const args = rest ? rest.split(/\s+/g) : [];
-  if (!args.length) {
+  if (!args.length && command.args === true) {
     throw new InvalidUsageError(`nie podano argumentów!`);
   }
 
