@@ -27,7 +27,7 @@
     "discord.rss": "5.0.6",
     "dotenv": "8.2.0",
     "erlpack": "github:discordapp/erlpack",
-    "isolated-vm": "3.3.7",
+    "isolated-vm": "4.0.0",
     "node-cache": "5.1.2",
     "node-fetch": "2.6.1",
     "polish-plurals": "1.1.0",
