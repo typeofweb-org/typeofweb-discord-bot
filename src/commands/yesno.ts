@@ -1,33 +1,39 @@
 import Discord from 'discord.js';
 import { Command } from '../types';
 import fetch from 'node-fetch';
-import { capitalizeFirst } from "../utils";
+import { capitalizeFirst } from '../utils';
+
+const answerToColor = {
+  yes: '#5ab783',
+  no: '#e91e63',
+  maybe: '#eb8921',
+} as const;
 
 const yesno: Command = {
-	name: 'yesno',
-	description: 'Podejmie decyzję za ciebie',
-	args: true,
-	async execute(msg: Discord.Message, args: string[]) {
-		const URL = args[0] ? `https://yesno.wtf/api?force=${args[0]}` : 'https://yesno.wtf/api';
+  name: 'yesno',
+  description: 'Podejmie decyzję za ciebie',
+  args: 'optional',
+  async execute(msg, [force]) {
+    const url = ['yes', 'no', 'maybe'].includes(force)
+      ? `https://yesno.wtf/api?force=${force}`
+      : 'https://yesno.wtf/api';
 
-		const res = await fetch(URL);
-		const { answer, image } = (await res.json()) as ApiResponse;
+    const res = await fetch(url);
+    const { answer, image } = (await res.json()) as YesNoApiResponse;
 
-		const answerEmbed = new Discord.MessageEmbed()
-			.setTitle(capitalizeFirst(answer))
-			.setImage(image);
+    const answerEmbed = new Discord.RichEmbed()
+      .setTitle(capitalizeFirst(answer))
+      .setImage(image)
+      .setColor(answerToColor[answer]);
 
-		if(answer === 'yes') answerEmbed.setColor('#5ab783');
-		if(answer === 'no') answerEmbed.setColor('#e91e63');
-
-		return msg.channel.send(answerEmbed);
-	},
+    return msg.channel.send(answerEmbed);
+  },
 };
 
 export default yesno;
 
-interface ApiResponse {
-	answer: string;
-	forced: boolean;
-	image: string;
+interface YesNoApiResponse {
+  answer: 'yes' | 'no' | 'maybe';
+  forced: boolean;
+  image: string;
 }

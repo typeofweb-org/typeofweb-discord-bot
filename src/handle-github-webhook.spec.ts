@@ -6,7 +6,6 @@ import { expect } from 'chai';
 import Sinon from 'sinon';
 import nock from 'nock';
 import Http from 'http';
-import { promisify } from 'util';
 import { AddressInfo } from 'net';
 import Discord from 'discord.js';
 import fetch from 'node-fetch';
@@ -72,7 +71,7 @@ describe('handleGithubWebhook - integration tests', () => {
     } as Discord.Client;
 
     httpServer = createHttpServer(discordClientMock, [], [], []);
-    await promisify(httpServer.listen.bind(httpServer))(0);
+    await new Promise<void>((resolve) => httpServer.listen(0, resolve));
 
     baseUrl = `http://localhost:${(httpServer.address() as AddressInfo).port}`;
   });

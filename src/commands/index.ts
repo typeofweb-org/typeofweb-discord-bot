@@ -157,12 +157,12 @@ export async function handleCommand(msg: Discord.Message) {
 
   await verifyCooldown(msg, command);
 
-  if (!command.args) {
+  if (command.args === false) {
     return command.execute(msg);
   }
 
   const args = rest ? rest.split(/\s+/g) : [];
-  if (!args.length) {
+  if (!args.length && command.args === true) {
     throw new InvalidUsageError(`nie podano argumentów!`);
   }
 
