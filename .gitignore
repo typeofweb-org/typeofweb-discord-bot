@@ -1,12 +1,9 @@
 node_modules
 .tmp
 .idea
-.idea/
 .DS_Store
-.env
 .version
 dist
-.vscode
 .history
 
 # Logs
@@ -69,8 +66,5 @@ jspm_packages/
 .env
 .env.dev
 
-yarn.lock
-
+package-lock.json
 *.tsbuildinfo
-
-/sources
