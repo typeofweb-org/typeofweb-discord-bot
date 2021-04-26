@@ -24,8 +24,7 @@
   "license": "ISC",
   "dependencies": {
     "bufferutil": "4.0.3",
-    "discord.js": "11.6.4",
-    "discord.rss": "5.0.6",
+    "discord.js": "12.5.3",
     "dotenv": "8.2.0",
     "isolated-vm": "4.1.0",
     "monitorss": "6.12.7",

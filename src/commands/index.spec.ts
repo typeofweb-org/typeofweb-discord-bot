@@ -1,7 +1,3 @@
-/* eslint no-implicit-dependencies: "off" */
-/* eslint no-magic-numbers: "off" */
-/* tslint:disable:no-implicit-dependencies no-magic-numbers */
-
 import { getMessageMock } from '../../test/mocks';
 import { handleCommand } from '.';
 import * as Discord from 'discord.js';

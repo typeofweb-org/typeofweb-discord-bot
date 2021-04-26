@@ -1,5 +1,6 @@
 import Discord from 'discord.js';
-import { Command } from '../types';
+
+import type { Command } from '../types';
 
 const links = [
   { url: 'https://kursjs.pl', category: 'js' },
@@ -35,15 +36,15 @@ const skierowanie: Command = {
   description: 'Skierowanie na naukę podstaw (+ dobre materiały do nauki)',
   args: true,
   cooldown: 10,
-  async execute(msg, args) {
+  async execute(msg, av) {
     // Filter out the empty args (whitespaces, etc)
-    args = args.filter((val) => val);
+    const args = av.filter((val) => val);
 
-    const skierowanieEmbed = new Discord.RichEmbed()
+    const skierowanieEmbed = new Discord.MessageEmbed()
       .setColor('#5ab783')
       .setAuthor(
         `Type of Web oraz ${msg.author.username}`,
-        msg.author.avatarURL,
+        msg.author.avatarURL() ?? undefined,
         'https://typeofweb.com',
       )
       .setTitle('Skierowanie na naukę podstaw 🚑')
@@ -69,7 +70,7 @@ const skierowanie: Command = {
 
     const linksMessage = 'Z powyższym skierowaniem należy udać się na poniższe strony internetowe:';
 
-    const linksEmbed = new Discord.RichEmbed().addField(
+    const linksEmbed = new Discord.MessageEmbed().addField(
       linksMessage,
       linksFiltered.map((l) => l.url).join('\n'),
     );

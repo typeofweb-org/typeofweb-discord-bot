@@ -37,7 +37,7 @@ const settings = {
 };
 
 client.on('ready', () => {
-  console.log(`Logged in as ${client.user.tag}!`);
+  console.log(`Logged in as ${client.user?.tag}!`);
 });
 
 // eslint-disable-next-line functional/prefer-readonly-type
@@ -78,7 +78,7 @@ client.on('message', async (msg) => {
   if (isCommand(msg)) {
     try {
       const collector = msg.channel.createMessageCollector(
-        (m: Discord.Message) => m.author.id === client.user.id,
+        (m: Discord.Message) => m.author.id === client.user?.id,
       );
       await handleCommand(msg);
       const ids = collector.collected.map((m) => m.id);
@@ -100,7 +100,7 @@ client.on('message', async (msg) => {
 });
 
 function revertCommand(msg: Discord.Message) {
-  if (!cache.has(msg.id)) {
+  if (!cache.has(msg.id) || msg.channel.type === 'dm') {
     return undefined;
   }
   // eslint-disable-next-line functional/prefer-readonly-type
@@ -109,13 +109,15 @@ function revertCommand(msg: Discord.Message) {
 }
 
 client.on('messageDelete', async (msg) => {
-  if (msg.author.bot) {
+  if (msg.author?.bot || !msg.content) {
     return;
   }
 
-  if (isCommand(msg)) {
+  const message = msg as Discord.Message;
+
+  if (isCommand(message)) {
     try {
-      await revertCommand(msg);
+      await revertCommand(message);
     } catch (err) {
       errors.push(err);
     }
