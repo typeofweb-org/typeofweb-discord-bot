@@ -1,24 +1,26 @@
 # Type of Web Discord Bot
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-12-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ## Getting Started
 
 #### Prepare project
 
-Run `npm install` to install all dependencies
+Run `yarn` to install all dependencies
 
 _[Based on windows system]_
 
 If an error with Python occurs open the system console with admin privileges and type:
 
 ```
-npm --add-python-to-path='true' --debug install --global windows-build-tools
+yarn --add-python-to-path='true' --debug install --global windows-build-tools
 ```
 
-If that was the case run again `npm install` to install dependencies properly.
+If that was the case run again `yarn` to install dependencies properly.
 
 #### Setup environmental variables
 
@@ -34,7 +36,7 @@ Use the bot token in `.env.dev` file.
 
 #### Run the server
 
-Use `npm run dev` to start the server.
+Use `yarn dev` to start the server.
 
 You should get this in your console, which suggests that everything went ok.
 

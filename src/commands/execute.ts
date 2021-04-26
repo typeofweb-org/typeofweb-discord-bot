@@ -1,8 +1,9 @@
-import { Command } from '../types';
-import { Message } from 'discord.js';
+import type { Message } from 'discord.js';
+import ivm from 'isolated-vm';
 import { polishPlurals } from 'polish-plurals';
 import * as ts from 'typescript';
-import ivm from 'isolated-vm';
+
+import type { Command } from '../types';
 
 const pluralize = (count: number) => polishPlurals('linia', 'linie', 'linii', count);
 
@@ -14,34 +15,37 @@ const TIMEOUT = 10;
 const MEMORY_LIMIT = 32;
 const COOLDOWN = 60;
 
-const jsTranspilers: { [key: string]: (code: string) => Promise<string> } = {
-  async js(code: string) {
-    return code;
-  },
-  async ts(code: string) {
-    const out = ts.transpileModule(code, {
-      compilerOptions: {
-        module: ts.ModuleKind.CommonJS,
-        alwaysStrict: true,
-      },
-    });
-    return out.outputText;
-  },
+const javascript = (code: string) => {
+  return code;
 };
-jsTranspilers.javascript = jsTranspilers.js;
-jsTranspilers.typescript = jsTranspilers.ts;
+const typescript = (code: string) => {
+  const out = ts.transpileModule(code, {
+    compilerOptions: {
+      module: ts.ModuleKind.CommonJS,
+      alwaysStrict: true,
+    },
+  });
+  return out.outputText;
+};
+
+const jsTranspilers: { readonly [key: string]: (code: string) => string | Promise<string> } = {
+  javascript,
+  typescript,
+  js: javascript,
+  ts: typescript,
+};
 
 type ResultType = number | string | object | null | undefined;
 
 export interface ExecutionResult {
-  stdout: string[];
-  result: ResultType;
-  time?: number;
+  readonly stdout: readonly string[];
+  readonly result: ResultType;
+  readonly time?: number;
 }
 
 export interface Stdout {
-  text: string;
-  lines: number;
+  readonly text: string;
+  readonly lines: number;
 }
 
 export function parseArg(arg: ResultType) {
@@ -73,7 +77,7 @@ export function parseMessage(msg: string) {
   };
 }
 
-const consoleWrapCode = /*JavaScript*/ `
+const consoleWrapCode = /*javascript*/ `
 __logs = [];
 eval = void 0;
 console = {
@@ -105,18 +109,19 @@ export async function executeCode(source: string, language: string): Promise<Exe
   const config = {
     timeout: TIMEOUT,
     promise: false,
-    copy: false,
     externalCopy: true,
-    reference: false,
-  };
+  } as const;
 
   try {
     const begin = new Date().getTime();
     const exeResult = await context.eval(code, config);
-    const result = exeResult.result.copy({ transferIn: true });
-    const rawStdout = (await context.eval('__logs', config)).result.copy({
+    const result = exeResult.copy({ transferIn: true }) as ResultType;
+    const rawLogs = (await context.eval('__logs', config)) as ivm.ExternalCopy<
+      ReadonlyArray<ReadonlyArray<ResultType>>
+    >;
+    const rawStdout = rawLogs.copy({
       transferIn: true,
-    }) as ResultType[][];
+    });
     const end = new Date().getTime();
     const stdout = rawStdout.map((row) => row.map(parseArg).join(', '));
     return {
@@ -153,13 +158,13 @@ export function writeResponse(result: ExecutionResult): string {
           stdout.text + (isCut ? '\n...' : '')
         )}\n`;
   const codeResult =
-    `Wynik (${result.time} ms): ` +
+    `Wynik (${result.time ?? 0} ms): ` +
     wrapText(parseArg(result.result).substr(0, MAX_RESULT_CHARACTERS), 'json');
   return stdoutText + codeResult;
 }
 
 const errorMessage = (error: Error | string) =>
-  `Błąd: ${error}\n` +
+  `Błąd: ${String(error)}\n` +
   'Poprawna składnia to:\n ' +
   '> !execute \\`\\`\\`js\n' +
   '> // kod\n' +
@@ -179,7 +184,7 @@ const execute: Command = {
         const response = writeResponse(result);
         return msg.channel.send(response);
       } catch (error) {
-        return msg.channel.send(`Błąd wykonania: \`\`\`\n${error}\n\`\`\``);
+        return msg.channel.send(`Błąd wykonania: \`\`\`\n${String(error)}\n\`\`\``);
       }
     } catch (error) {
       return msg.channel.send(errorMessage(error));

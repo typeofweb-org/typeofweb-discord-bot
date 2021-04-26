@@ -1,12 +1,12 @@
 import Discord from 'discord.js';
 import DiscordRSS from 'discord.rss';
+import Cache from 'node-cache';
 
 import { handleCommand } from './commands';
 import { getConfig } from './config';
+import { createHttpServer } from './http-server';
 import { InvalidUsageError } from './types';
-import createHttpServer from './http-server';
 
-import Cache from 'node-cache';
 const ONE_HOUR_S = 3600;
 const cache = new Cache({ stdTTL: ONE_HOUR_S });
 
@@ -33,16 +33,19 @@ client.on('ready', () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
+// eslint-disable-next-line functional/prefer-readonly-type
 const errors: Error[] = [];
 client.on('error', (error) => {
   errors.push(error);
 });
 
+// eslint-disable-next-line functional/prefer-readonly-type
 const warnings: string[] = [];
 client.on('warn', (warning) => {
   warnings.push(warning);
 });
 
+// eslint-disable-next-line functional/prefer-readonly-type
 const debugs: string[] = [];
 const MAX_DEBUG_LENGTH = 100;
 client.on('debug', (debug) => {
@@ -82,17 +85,18 @@ client.on('message', async (msg) => {
         void msg.reply('przepraszam, ale coś poszło nie tak…');
       }
     } finally {
-      await msg.channel.stopTyping(true);
+      return msg.channel.stopTyping(true);
     }
   }
 
   return;
 });
 
-async function revertCommand(msg: Discord.Message) {
+function revertCommand(msg: Discord.Message) {
   if (!cache.has(msg.id)) {
     return undefined;
   }
+  // eslint-disable-next-line functional/prefer-readonly-type
   const messagesToDelete = cache.get<string[]>(msg.id)!;
   return msg.channel.bulkDelete(messagesToDelete);
 }

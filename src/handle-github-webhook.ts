@@ -1,6 +1,8 @@
 import * as crypto from 'crypto';
-import { IncomingHttpHeaders } from 'http';
+import type { IncomingHttpHeaders } from 'http';
+
 import fetch from 'node-fetch';
+
 import { getConfig } from './config';
 
 const SENDER_LOGIN_BLOCKLIST = ['dependabot[bot]', 'dependabot-preview[bot]', 'sonarcloud[bot]'];
@@ -8,18 +10,18 @@ const SENDER_LOGIN_BLOCKLIST = ['dependabot[bot]', 'dependabot-preview[bot]', 's
 // see https://developer.github.com/webhooks/event-payloads/ for full github webhooks reference
 
 interface GithubWebhookSender {
-  login: string;
+  readonly login: string;
 }
 
 interface GithubWebhookPullRequest {
-  sender: GithubWebhookSender;
+  readonly sender: GithubWebhookSender;
 }
 
-async function handleGithubWebhook(
+export async function handleGithubWebhook(
   headers: IncomingHttpHeaders,
   rawBody: Buffer,
   body: object
-): Promise<{ statusCode: number }> {
+): Promise<{ readonly statusCode: number }> {
   if (!validateGithubSignature((headers['x-hub-signature'] ?? '') as string, rawBody)) {
     return { statusCode: 401 };
   }
@@ -74,5 +76,3 @@ function validateGithubSignature(receivedSignature: string, rawBody: Buffer) {
     crypto.timingSafeEqual(Buffer.from(receivedSignature), Buffer.from(expectedSignature))
   );
 }
-
-export default handleGithubWebhook;

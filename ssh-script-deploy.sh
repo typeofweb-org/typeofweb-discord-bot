@@ -4,6 +4,7 @@ set -e
 
 node -v
 npm -v
+yarn -v
 
 
 cd ~/domains/bot.typeofweb.com/public_nodejs
@@ -18,10 +19,10 @@ fi
 git pull origin main
 
 echo "👉 Installing deps…"
-# npm ci
+yarn --frozen-lockfile
 
 echo "👉 Bulding…"
-NODE_ENV=production ENV=production npm run build
+NODE_ENV=production ENV=production yarn build
 echo `git rev-parse HEAD` > .version
 
 # echo "👉 Pruning…"

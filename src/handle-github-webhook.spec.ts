@@ -1,19 +1,20 @@
-/* eslint no-implicit-dependencies: "off" */
 /* eslint no-magic-numbers: "off" */
 /* tslint:disable:no-implicit-dependencies no-magic-numbers no-let no-duplicate-imports */
 
-import { expect } from 'chai';
-import Sinon from 'sinon';
-import nock from 'nock';
-import Http from 'http';
-import { AddressInfo } from 'net';
-import Discord from 'discord.js';
-import fetch from 'node-fetch';
-import handleGithubWebhook from './handle-github-webhook';
-import * as handleGithubWebhookModule from './handle-github-webhook';
-import * as Config from './config';
-import createHttpServer from './http-server';
 import * as crypto from 'crypto';
+import type Http from 'http';
+import type { AddressInfo } from 'net';
+
+import { expect } from 'chai';
+import type Discord from 'discord.js';
+import nock from 'nock';
+import fetch from 'node-fetch';
+import Sinon from 'sinon';
+
+import * as Config from './config';
+import { handleGithubWebhook } from './handle-github-webhook';
+import * as handleGithubWebhookModule from './handle-github-webhook';
+import { createHttpServer } from './http-server';
 
 const GITHUB_WEBHOOK_SECRET = 's3creTk3Y';
 const GITHUB_WEBHOOK_DISCORD_URL = 'https://discord.com/api/webhooks/12345/key';
@@ -94,7 +95,7 @@ describe('handleGithubWebhook - integration tests', () => {
   });
 
   it('should call handleGithubWebhook with headers, rawBody and body', async () => {
-    const handleGithubWebhookStub = Sinon.stub(handleGithubWebhookModule, 'default');
+    const handleGithubWebhookStub = Sinon.stub(handleGithubWebhookModule, 'handleGithubWebhook');
     handleGithubWebhookStub.resolves({ statusCode: 200 });
 
     await fetch(`${baseUrl}/githubWebhook`, {
@@ -113,7 +114,7 @@ describe('handleGithubWebhook - integration tests', () => {
   });
 
   it('should respond with status code from handleGithubWebhook', async () => {
-    const handleGithubWebhookStub = Sinon.stub(handleGithubWebhookModule, 'default');
+    const handleGithubWebhookStub = Sinon.stub(handleGithubWebhookModule, 'handleGithubWebhook');
     handleGithubWebhookStub.resolves({ statusCode: 599 });
 
     const { status } = await fetch(`${baseUrl}/githubWebhook/test`, {
