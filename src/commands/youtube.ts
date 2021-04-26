@@ -10,7 +10,7 @@ const youtube: Command = {
     const query = encodeURIComponent(args.join(' '));
     const YOUTUBE_API_KEY = getConfig('YOUTUBE_API_KEY');
     const result = await fetch(
-      `https://www.googleapis.com/youtube/v3/search?part=id&type=video&key=${YOUTUBE_API_KEY}&q=${query}`
+      `https://www.googleapis.com/youtube/v3/search?part=id&type=video&key=${YOUTUBE_API_KEY}&q=${query}`,
     );
     const data = (await result.json()) as YoutubeResponse;
 

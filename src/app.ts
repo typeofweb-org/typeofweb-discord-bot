@@ -1,48 +1,58 @@
 import Discord from 'discord.js';
-import DiscordRSS from 'discord.rss';
+import MonitoRSS from 'monitorss';
+import Cache from 'node-cache';
 
 import { handleCommand } from './commands';
 import { getConfig } from './config';
+import { createHttpServer } from './http-server';
 import { InvalidUsageError } from './types';
-import createHttpServer from './http-server';
 
-import Cache from 'node-cache';
 const ONE_HOUR_S = 3600;
 const cache = new Cache({ stdTTL: ONE_HOUR_S });
 
 const client = new Discord.Client();
-const drss = new DiscordRSS.Client({
-  database: {
-    uri: getConfig('MONGO_URL'),
-    connection: {
-      useNewUrlParser: true,
+
+const settings = {
+  setPresence: true,
+  config: {
+    bot: {
+      token: getConfig('DISCORD_BOT_TOKEN'),
+    },
+    database: {
+      uri: getConfig('MONGO_URL'),
+      connection: {
+        useNewUrlParser: true,
+      },
+    },
+    feeds: {
+      refreshRateMinutes: 10,
+      timezone: 'Europe/Warsaw',
+      dateFormat: 'LLL',
+      dateLanguage: 'pl',
+      dateLanguageList: ['pl'],
+      sendFirstCycle: true,
+      cycleMaxAge: 5,
     },
   },
-  feeds: {
-    refreshTimeMinutes: 10,
-    timezone: 'Europe/Warsaw',
-    dateFormat: 'LLL',
-    dateLanguage: 'pl',
-    dateLanguageList: ['pl'],
-    sendOldOnFirstCycle: true,
-    cycleMaxAge: 5,
-  },
-});
+};
 
 client.on('ready', () => {
-  console.log(`Logged in as ${client.user.tag}!`);
+  console.log(`Logged in as ${client.user?.tag}!`);
 });
 
+// eslint-disable-next-line functional/prefer-readonly-type
 const errors: Error[] = [];
 client.on('error', (error) => {
   errors.push(error);
 });
 
+// eslint-disable-next-line functional/prefer-readonly-type
 const warnings: string[] = [];
 client.on('warn', (warning) => {
   warnings.push(warning);
 });
 
+// eslint-disable-next-line functional/prefer-readonly-type
 const debugs: string[] = [];
 const MAX_DEBUG_LENGTH = 100;
 client.on('debug', (debug) => {
@@ -68,7 +78,7 @@ client.on('message', async (msg) => {
   if (isCommand(msg)) {
     try {
       const collector = msg.channel.createMessageCollector(
-        (m: Discord.Message) => m.author.id === client.user.id
+        (m: Discord.Message) => m.author.id === client.user?.id,
       );
       await handleCommand(msg);
       const ids = collector.collected.map((m) => m.id);
@@ -82,29 +92,32 @@ client.on('message', async (msg) => {
         void msg.reply('przepraszam, ale coś poszło nie tak…');
       }
     } finally {
-      await msg.channel.stopTyping(true);
+      return msg.channel.stopTyping(true);
     }
   }
 
   return;
 });
 
-async function revertCommand(msg: Discord.Message) {
-  if (!cache.has(msg.id)) {
+function revertCommand(msg: Discord.Message) {
+  if (!cache.has(msg.id) || msg.channel.type === 'dm') {
     return undefined;
   }
+  // eslint-disable-next-line functional/prefer-readonly-type
   const messagesToDelete = cache.get<string[]>(msg.id)!;
   return msg.channel.bulkDelete(messagesToDelete);
 }
 
 client.on('messageDelete', async (msg) => {
-  if (msg.author.bot) {
+  if (msg.author?.bot || !msg.content) {
     return;
   }
 
-  if (isCommand(msg)) {
+  const message = msg as Discord.Message;
+
+  if (isCommand(message)) {
     try {
-      await revertCommand(msg);
+      await revertCommand(message);
     } catch (err) {
       errors.push(err);
     }
@@ -115,7 +128,8 @@ client.on('messageDelete', async (msg) => {
 
 async function init() {
   await client.login(getConfig('DISCORD_BOT_TOKEN'));
-  drss._defineBot(client);
+  const rssClient = new MonitoRSS.ClientManager(settings);
+  rssClient.start();
 }
 
 init().catch((err) => errors.push(err));

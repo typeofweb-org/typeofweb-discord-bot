@@ -1,24 +1,24 @@
-import Discord from 'discord.js';
+import type Discord from 'discord.js';
 
 interface CommandCommon {
-  name: string;
-  description: string;
-  guildOnly?: boolean;
-  permissions?: Discord.PermissionResolvable;
-  cooldown?: number;
+  readonly name: string;
+  readonly description: string;
+  readonly guildOnly?: boolean;
+  readonly permissions?: Discord.PermissionResolvable;
+  readonly cooldown?: number;
 }
 
 type CommandWithArgs = {
-  args: true | 'optional';
+  readonly args: true | 'optional';
   execute(
     msg: Discord.Message,
-    args: string[]
-  ): Promise<Discord.Message | Discord.Message[] | null>;
+    args: readonly string[],
+  ): Promise<Discord.Message | readonly Discord.Message[] | null>;
 } & CommandCommon;
 
 type CommandWithoutArgs = {
-  args: false;
-  execute(msg: Discord.Message): Promise<Discord.Message | Discord.Message[]>;
+  readonly args: false;
+  execute(msg: Discord.Message): Promise<Discord.Message | readonly Discord.Message[]>;
 } & CommandCommon;
 
 export type Command = CommandWithArgs | CommandWithoutArgs;

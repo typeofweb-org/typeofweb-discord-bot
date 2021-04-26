@@ -60,7 +60,7 @@ describe('Command: execute', () => {
   it('receives json as result', async () => {
     const executeResult = await execute.executeCode(
       'const foo = () => ({foo: "bar"}); foo()',
-      'js'
+      'js',
     );
     expect(executeResult.stdout.length).to.equal(0);
     expect(JSON.stringify(executeResult.result)).to.equal('{"foo":"bar"}');
@@ -83,7 +83,7 @@ describe('Command: execute', () => {
   it('grabs console.log', async () => {
     const executeResult = await execute.executeCode(
       'console.log(1, null, void 0);console.info(3, 4);',
-      'js'
+      'js',
     );
     expect(executeResult.stdout.length).to.equal(2);
     expect(executeResult.stdout[0]).to.be.equal('1, null, undefined');
@@ -94,7 +94,7 @@ describe('Command: execute', () => {
     const iters = 2000;
     const executeResult = await execute.executeCode(
       `for(let i=0; i<${iters}; i++) console.log(1)`,
-      'js'
+      'js',
     );
     const stdout = execute.prepareOutput(executeResult);
     expect(stdout.text.length).is.not.greaterThan(execute.MAX_OUTPUT_CHARACTERS);

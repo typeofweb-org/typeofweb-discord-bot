@@ -130,8 +130,35 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "kbkk",
+      "name": "Jakub Kisielewski",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6276426?v=4",
+      "profile": "https://github.com/kbkk",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "drillprop",
+      "name": "Bartosz Dryl",
+      "avatar_url": "https://avatars.githubusercontent.com/u/51168865?v=4",
+      "profile": "https://github.com/drillprop",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "jundymek",
+      "name": "Łukasz Dymek",
+      "avatar_url": "https://avatars.githubusercontent.com/u/24244872?v=4",
+      "profile": "https://jundymek.com/",
+      "contributions": [
+        "code"
+      ]
     }
   ],
-  "contributorsPerLine": 7,
+  "contributorsPerLine": 3,
   "skipCi": true
 }

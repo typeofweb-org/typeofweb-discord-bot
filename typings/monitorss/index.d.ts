@@ -1,4 +1,4 @@
-declare module 'discord.rss' {
+declare module 'monitorss' {
   import EventEmitter from 'events';
   import Discord from 'discord.js';
 
@@ -41,7 +41,7 @@ declare module 'discord.rss' {
   interface Decode {}
 
   interface Feeds {
-    refreshTimeMinutes?: number;
+    refreshRateMinutes?: number;
     checkTitles?: boolean;
     timezone?: string;
     dateFormat?: string;
@@ -51,7 +51,7 @@ declare module 'discord.rss' {
     timeFallback?: boolean;
     failLimit?: number;
     notifyFail?: boolean;
-    sendOldOnFirstCycle?: boolean;
+    sendFirstCycle?: boolean;
     cycleMaxAge?: number;
     defaultMessage?: string;
     imgPreviews?: boolean;
@@ -93,8 +93,11 @@ declare module 'discord.rss' {
 
   export type CustomSchedules = Array<CustomSchedule>;
 
-  class Client extends EventEmitter {
-    constructor(config: ClientConfig, customSchedules?: CustomSchedules);
+  class ClientManager extends EventEmitter {
+    constructor(
+      config: { setPresence: boolean; config: ClientConfig },
+      customSchedules?: CustomSchedules,
+    );
 
     login(token: string | Discord.Client | Discord.ShardingManager, noChildren?: boolean): void;
 
@@ -112,6 +115,6 @@ declare module 'discord.rss' {
   }
 
   export default {
-    Client,
+    ClientManager,
   };
 }

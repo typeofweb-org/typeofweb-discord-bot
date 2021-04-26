@@ -21,7 +21,7 @@ const yesno: Command = {
     const res = await fetch(url);
     const { answer, image } = (await res.json()) as YesNoApiResponse;
 
-    const answerEmbed = new Discord.RichEmbed()
+    const answerEmbed = new Discord.MessageEmbed()
       .setTitle(capitalizeFirst(answer))
       .setImage(image)
       .setColor(answerToColor[answer]);

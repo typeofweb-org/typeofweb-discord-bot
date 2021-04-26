@@ -8,7 +8,7 @@ const mdn: Command = {
   async execute(msg, args) {
     const query = encodeURIComponent(args.join(' '));
     const res = await fetch(
-      `https://developer.mozilla.org/en-US/search.json?locale=en-US&highlight=false&q=${query}`
+      `https://developer.mozilla.org/en-US/search.json?locale=en-US&highlight=false&q=${query}`,
     );
     const data = (await res.json()) as MDNResponse;
     if (!data.documents.length) {

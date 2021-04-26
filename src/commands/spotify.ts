@@ -10,7 +10,7 @@ const spotify: Command = {
   args: true,
   async execute(msg: Discord.Message, args: string[]) {
     const secret = Buffer.from(
-      `${getConfig('SPOTIFY_CLIENT_ID')}:${getConfig('SPOTIFY_SECRET')}`
+      `${getConfig('SPOTIFY_CLIENT_ID')}:${getConfig('SPOTIFY_SECRET')}`,
     ).toString('base64');
 
     const query = encodeURIComponent(args.join(' '));
@@ -32,7 +32,7 @@ const spotify: Command = {
         headers: {
           Authorization: `Bearer ${access_token}`,
         },
-      }
+      },
     );
 
     const {

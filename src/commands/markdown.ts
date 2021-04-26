@@ -24,7 +24,7 @@ function codesToInstruction(codes: string[]) {
 }
 
 const formattedMarkdownManual = [...codesToInstruction(markdownCodes), '', ...sourceExample].join(
-  '\n'
+  '\n',
 );
 
 const markdown: Command = {

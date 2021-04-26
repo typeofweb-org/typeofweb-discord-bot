@@ -1,19 +1,19 @@
-/* eslint no-implicit-dependencies: "off" */
 /* eslint no-magic-numbers: "off" */
-/* tslint:disable:no-implicit-dependencies no-magic-numbers */
 
-import skierowanie from './skierowanie';
-import { getMessageMock } from '../../test/mocks';
 import { expect } from 'chai';
 import * as Discord from 'discord.js';
 
-describe('skierowanie', () => {
-  const mockAuthor = { username: 'user', avatarURL: 'url' };
+import { getMessageMock } from '../../test/mocks';
 
-  const mockLinksEmbed = (links: string[]) =>
-    new Discord.RichEmbed().addField(
+import skierowanie from './skierowanie';
+
+describe('skierowanie', () => {
+  const mockAuthor = { username: 'user', avatarURL: () => 'url' };
+
+  const mockLinksEmbed = (links: readonly string[]) =>
+    new Discord.MessageEmbed().addField(
       'Z powyższym skierowaniem należy udać się na poniższe strony internetowe:',
-      links.join('\n')
+      links.join('\n'),
     );
 
   it('it should send two messages', async () => {
@@ -21,7 +21,7 @@ describe('skierowanie', () => {
 
     await skierowanie.execute((msg as unknown) as Discord.Message, ['user']);
 
-    await expect(msg.channel.send).to.have.been.calledTwice;
+    return expect(msg.channel.send).to.have.been.calledTwice;
   });
 
   it('it should send the links for the passed category', async () => {
@@ -36,6 +36,8 @@ describe('skierowanie', () => {
       'https://frontlive.pl',
     ];
 
-    await expect(msg.channel.send).to.have.been.calledWithExactly(mockLinksEmbed(linksMessageMock));
+    return expect(msg.channel.send).to.have.been.calledWithExactly(
+      mockLinksEmbed(linksMessageMock),
+    );
   });
 });

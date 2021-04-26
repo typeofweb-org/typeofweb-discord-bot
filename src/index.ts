@@ -1,4 +1,5 @@
-// tslint:disable:no-var-requires
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 if (process.env.NODE_ENV === 'production') {
   require('dotenv').config({ path: '.env' });
 } else {

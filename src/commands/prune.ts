@@ -1,4 +1,5 @@
-import { Command, InvalidUsageError } from '../types';
+import type { Command } from '../types';
+import { InvalidUsageError } from '../types';
 
 const MIN_MESSAGES = 1;
 const MAX_MESSAGES = 10;
@@ -20,13 +21,15 @@ const prune: Command = {
     }
     if (num > MAX_MESSAGES) {
       throw new InvalidUsageError(
-        `Ze względów bezpieczeństwa, możesz usunąć tylko ${MAX_MESSAGES} wiadomości na raz.`
+        `Ze względów bezpieczeństwa, możesz usunąć tylko ${MAX_MESSAGES} wiadomości na raz.`,
       );
     }
 
     await msg.delete();
-    const messages = await msg.channel.fetchMessages({ limit: num });
-    await msg.channel.bulkDelete(messages);
+    if (msg.channel.type !== 'dm') {
+      const messages = await msg.channel.messages.fetch({ limit: num });
+      await msg.channel.bulkDelete(messages);
+    }
     return null;
   },
 };
