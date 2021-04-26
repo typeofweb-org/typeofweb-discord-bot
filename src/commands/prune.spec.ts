@@ -42,12 +42,11 @@ describe('prune', () => {
     };
     // tslint:disable-next-line: no-any
     const messagesCollectionMock = { clear: Sinon.spy() };
-    // msg.channel.messages.fetch.resolves(messagesCollectionMock);
-    msg.channel.fetchMessages.resolves(messagesCollectionMock);
-    msg.guild.fetchMember.resolves(memberMock);
+    msg.channel.messages.fetch.resolves(messagesCollectionMock);
+    msg.guild.member.returns(memberMock);
 
     await expect(prune.execute((msg as unknown) as Discord.Message, ['2'])).to.be.fulfilled;
-    await expect(msg.channel.fetchMessages).to.have.been.calledOnceWithExactly({ limit: 2 });
+    await expect(msg.channel.messages.fetch).to.have.been.calledOnceWithExactly({ limit: 2 });
     await expect(msg.channel.bulkDelete).to.have.been.calledOnceWithExactly(messagesCollectionMock);
   });
 
@@ -55,7 +54,7 @@ describe('prune', () => {
     const msg = getMessageMock('msg');
     // tslint:disable-next-line: no-any
     const messagesCollectionMock = { clear: Sinon.spy() } as any;
-    msg.channel.fetchMessages.resolves(messagesCollectionMock);
+    msg.channel.messages.fetch.resolves(messagesCollectionMock);
 
     await prune.execute((msg as unknown) as Discord.Message, ['2']);
 

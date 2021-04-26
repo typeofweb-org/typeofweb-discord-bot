@@ -8,7 +8,7 @@ import { getMessageMock } from '../../test/mocks';
 import skierowanie from './skierowanie';
 
 describe('skierowanie', () => {
-  const mockAuthor = { username: 'user', avatarURL: 'url' };
+  const mockAuthor = { username: 'user', avatarURL: () => 'url' };
 
   const mockLinksEmbed = (links: readonly string[]) =>
     new Discord.MessageEmbed().addField(

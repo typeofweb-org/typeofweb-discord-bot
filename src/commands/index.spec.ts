@@ -1,8 +1,9 @@
-import { getMessageMock } from '../../test/mocks';
-import { handleCommand } from '.';
 import * as Discord from 'discord.js';
 import Sinon from 'sinon';
 import { expect } from 'chai';
+
+import { getMessageMock } from '../../test/mocks';
+import { handleCommand } from '.';
 
 describe('index', () => {
   describe('handleCommand', () => {
@@ -11,7 +12,7 @@ describe('index', () => {
       const memberMock = {
         hasPermission: Sinon.spy(),
       };
-      msg.guild.fetchMember.resolves(memberMock);
+      msg.guild.member.returns(memberMock);
       msg.author.send.resolves();
       await handleCommand((msg as unknown) as Discord.Message);
       expect(msg.reply).to.have.been.calledOnceWith('Wysłałam Ci DM ze wszystkimi komendami! 🎉');

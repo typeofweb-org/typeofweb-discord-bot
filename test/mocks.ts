@@ -45,13 +45,13 @@ export const getMessageMock = <T extends Message>(
     channel: {
       bulkDelete: Sinon.stub(),
       send: Sinon.stub(),
-      fetchMessages: Sinon.stub(),
+      messages: { fetch: Sinon.stub() },
       type: '',
       [Symbol.toStringTag]: () => 'MOCK CHANNEL',
       ...params.channel,
     },
     guild: {
-      fetchMember: Sinon.stub(),
+      member: Sinon.stub(),
       ...params.guild,
     },
     delete: Sinon.stub(),
