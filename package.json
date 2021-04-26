@@ -28,6 +28,7 @@
     "discord.rss": "5.0.6",
     "dotenv": "8.2.0",
     "isolated-vm": "4.1.0",
+    "monitorss": "6.12.7",
     "node-cache": "5.1.2",
     "node-fetch": "2.6.1",
     "polish-plurals": "1.1.0",
