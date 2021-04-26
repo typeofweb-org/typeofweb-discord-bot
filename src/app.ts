@@ -71,7 +71,7 @@ client.on('message', async (msg) => {
   if (isCommand(msg)) {
     try {
       const collector = msg.channel.createMessageCollector(
-        (m: Discord.Message) => m.author.id === client.user.id
+        (m: Discord.Message) => m.author.id === client.user.id,
       );
       await handleCommand(msg);
       const ids = collector.collected.map((m) => m.id);

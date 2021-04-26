@@ -70,7 +70,6 @@
   },
   "lint-staged": {
     "**/*.ts": [
-      "yarn lint",
       "yarn prettier --write"
     ],
     "**/*.{md,js,json}": [

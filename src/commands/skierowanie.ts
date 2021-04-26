@@ -44,22 +44,22 @@ const skierowanie: Command = {
       .setAuthor(
         `Type of Web oraz ${msg.author.username}`,
         msg.author.avatarURL,
-        'https://typeofweb.com'
+        'https://typeofweb.com',
       )
       .setTitle('Skierowanie na naukę podstaw 🚑')
       .setThumbnail('https://typeofweb.com/wp-content/uploads/2020/04/logo_kwadrat11.png')
       .addField(
         'Działając na podstawie mojej intuicji oraz wiadomości wysłanych przez osobę skierowaną, kieruję użytkownika/użytkowniczkę',
-        args[0]
+        args[0],
       )
       .addField(
         `na naukę podstaw wybranej przez siebie technologii,`,
-        `w celu lepszego zrozumienia fundamentów jej działania oraz poznania informacji niezbędnych do rozszerzania swojej wiedzy o bardziej zaawansowane zagadnienia`
+        `w celu lepszego zrozumienia fundamentów jej działania oraz poznania informacji niezbędnych do rozszerzania swojej wiedzy o bardziej zaawansowane zagadnienia`,
       )
       .setTimestamp()
       .setFooter(
         'Type of Web, Discord, Polska',
-        'https://cdn.discordapp.com/avatars/574682557988470825/6b0fab28093e6020f497fda41bdd3219.png?size=64'
+        'https://cdn.discordapp.com/avatars/574682557988470825/6b0fab28093e6020f497fda41bdd3219.png?size=64',
       );
 
     const categoryFilter = args[1]?.toLowerCase();
@@ -71,7 +71,7 @@ const skierowanie: Command = {
 
     const linksEmbed = new Discord.RichEmbed().addField(
       linksMessage,
-      linksFiltered.map((l) => l.url).join('\n')
+      linksFiltered.map((l) => l.url).join('\n'),
     );
 
     await msg.channel.send(skierowanieEmbed);

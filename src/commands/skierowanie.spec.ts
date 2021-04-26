@@ -13,7 +13,7 @@ describe('skierowanie', () => {
   const mockLinksEmbed = (links: string[]) =>
     new Discord.RichEmbed().addField(
       'Z powyższym skierowaniem należy udać się na poniższe strony internetowe:',
-      links.join('\n')
+      links.join('\n'),
     );
 
   it('it should send two messages', async () => {

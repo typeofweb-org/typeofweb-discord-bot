@@ -23,7 +23,7 @@ describe('youtube', () => {
   it('should show error message when nothing found on youtube', async () => {
     nock('https://www.googleapis.com')
       .get(
-        `/youtube/v3/search?part=id&type=video&key=FAKE_YOUTUBE_KEY&q=moja%20ulubiona%20piosenka`
+        `/youtube/v3/search?part=id&type=video&key=FAKE_YOUTUBE_KEY&q=moja%20ulubiona%20piosenka`,
       )
       .reply(200, { items: [] });
 
@@ -37,7 +37,7 @@ describe('youtube', () => {
   it('should show link when found on youtube', async () => {
     nock('https://www.googleapis.com')
       .get(
-        `/youtube/v3/search?part=id&type=video&key=FAKE_YOUTUBE_KEY&q=moja%20ulubiona%20piosenka`
+        `/youtube/v3/search?part=id&type=video&key=FAKE_YOUTUBE_KEY&q=moja%20ulubiona%20piosenka`,
       )
       .reply(200, { items: [{ id: { videoId: 'aaa123' } }] });
 
@@ -46,7 +46,7 @@ describe('youtube', () => {
     await youtube.execute((msg as unknown) as Discord.Message, ['moja', 'ulubiona', 'piosenka']);
 
     await expect(msg.channel.send).to.have.been.calledOnceWith(
-      'https://www.youtube.com/watch?v=aaa123'
+      'https://www.youtube.com/watch?v=aaa123',
     );
   });
 });

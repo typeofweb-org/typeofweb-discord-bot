@@ -9,7 +9,7 @@ const BAD_REQUEST = 400;
 const OK = 200;
 
 async function parseBody<T = object>(
-  req: Http.IncomingMessage
+  req: Http.IncomingMessage,
 ): Promise<{ readonly rawBody: Buffer; readonly body: T }> {
   const chunks = [];
   // eslint-disable-next-line functional/no-loop-statement
@@ -28,7 +28,7 @@ export function createHttpServer(
   // eslint-disable-next-line functional/prefer-readonly-type
   warnings: string[],
   // eslint-disable-next-line functional/prefer-readonly-type
-  debugs: string[]
+  debugs: string[],
 ): Http.Server {
   // eslint-disable-next-line @typescript-eslint/no-misused-promises
   return Http.createServer(async (req, res) => {

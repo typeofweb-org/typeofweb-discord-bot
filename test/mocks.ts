@@ -26,7 +26,7 @@ const proxyExistenceMutating = <T extends object>(obj: T, prefix = ''): T => {
       const err = new Error(
         `The following property is missing in your mock: ${
           prefix ? prefix + '.' + String(prop) : String(prop)
-        }`
+        }`,
       );
       console.error(err);
       throw err;

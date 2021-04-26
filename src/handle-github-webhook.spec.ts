@@ -42,7 +42,7 @@ describe('handleGithubWebhook - unit tests', () => {
         sender: {
           login: 'dependabot[bot]',
         },
-      })
+      }),
     );
 
     expect(result).to.eql({ statusCode: 200 });
@@ -109,7 +109,7 @@ describe('handleGithubWebhook - integration tests', () => {
     expect(handleGithubWebhookStub).to.have.been.calledOnceWithExactly(
       Sinon.match({ 'x-hub-signature': 'test-signature' }),
       Buffer.from('{"a":1}'),
-      { a: 1 }
+      { a: 1 },
     );
   });
 

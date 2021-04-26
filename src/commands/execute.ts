@@ -155,7 +155,7 @@ export function writeResponse(result: ExecutionResult): string {
     stdout.lines === 0
       ? ''
       : `Wyjście (${stdout.lines} ${pluralize(stdout.lines)}): ${wrapText(
-          stdout.text + (isCut ? '\n...' : '')
+          stdout.text + (isCut ? '\n...' : ''),
         )}\n`;
   const codeResult =
     `Wynik (${result.time ?? 0} ms): ` +

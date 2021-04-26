@@ -20,7 +20,7 @@ interface GithubWebhookPullRequest {
 export async function handleGithubWebhook(
   headers: IncomingHttpHeaders,
   rawBody: Buffer,
-  body: object
+  body: object,
 ): Promise<{ readonly statusCode: number }> {
   if (!validateGithubSignature((headers['x-hub-signature'] ?? '') as string, rawBody)) {
     return { statusCode: 401 };

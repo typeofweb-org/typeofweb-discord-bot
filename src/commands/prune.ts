@@ -20,7 +20,7 @@ const prune: Command = {
     }
     if (num > MAX_MESSAGES) {
       throw new InvalidUsageError(
-        `Ze względów bezpieczeństwa, możesz usunąć tylko ${MAX_MESSAGES} wiadomości na raz.`
+        `Ze względów bezpieczeństwa, możesz usunąć tylko ${MAX_MESSAGES} wiadomości na raz.`,
       );
     }
 

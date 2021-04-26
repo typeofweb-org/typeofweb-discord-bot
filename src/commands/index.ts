@@ -82,7 +82,7 @@ async function verifyCooldown(msg: Discord.Message, command: Command) {
       // tslint:disable-next-line:no-magic-numbers
       const timeLeft = Math.ceil((expirationTime - now) / 1000);
       throw new InvalidUsageError(
-        `musisz poczekać jeszcze ${timeLeft}s, żeby znowu użyć \`${command.name}\`!.`
+        `musisz poczekać jeszcze ${timeLeft}s, żeby znowu użyć \`${command.name}\`!.`,
       );
     }
   } else {
@@ -121,7 +121,7 @@ function printHelp(msg: Discord.Message, member: Discord.GuildMember) {
     .catch((error) => {
       console.error(`Could not send help DM to ${msg.author.tag}.\n`, error);
       return msg.reply(
-        'Niestety nie mogłam Ci wysłać wiadomości prywatnej 😢 Może masz wyłączone DM?'
+        'Niestety nie mogłam Ci wysłać wiadomości prywatnej 😢 Może masz wyłączone DM?',
       );
     });
 }

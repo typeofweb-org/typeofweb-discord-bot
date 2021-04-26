@@ -36,7 +36,7 @@ describe('wiki', () => {
     await wiki.execute((msg as unknown) as Discord.Message, ['moja', 'ulubiona', 'piosenka']);
 
     await expect(msg.channel.send).to.have.been.calledOnceWith(
-      'Pod hasłem: moja ulubiona piosenka\nZnalazłam artykuł: Moja ulubiona piosenka\nDostępny tutaj: https://pl.wikipedia.org/wiki/Moja_ulubiona_piosenka'
+      'Pod hasłem: moja ulubiona piosenka\nZnalazłam artykuł: Moja ulubiona piosenka\nDostępny tutaj: https://pl.wikipedia.org/wiki/Moja_ulubiona_piosenka',
     );
   });
 });

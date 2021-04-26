@@ -11,7 +11,7 @@ const typeofweb: Command = {
   async execute(msg, args) {
     const query = encodeURIComponent(args.join(' '));
     const res = await fetch(
-      `https://typeofweb.com/wp-json/wp/v2/search?search=${query}&per_page=3`
+      `https://typeofweb.com/wp-json/wp/v2/search?search=${query}&per_page=3`,
     );
 
     const data = (await res.json()) as ToWSearchResponse[];

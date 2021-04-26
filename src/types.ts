@@ -12,7 +12,7 @@ type CommandWithArgs = {
   readonly args: true | 'optional';
   execute(
     msg: Discord.Message,
-    args: readonly string[]
+    args: readonly string[],
   ): Promise<Discord.Message | readonly Discord.Message[] | null>;
 } & CommandCommon;
 
