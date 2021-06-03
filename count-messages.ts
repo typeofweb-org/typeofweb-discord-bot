@@ -17,6 +17,13 @@ const GUILD_ID = `440163731704643589`;
 
 const personalToken = getConfig('PERSONAL_TOKEN');
 
+type StatsCollection = {
+  readonly memberId: string;
+  readonly memberName: string;
+  readonly messagesCount: number | undefined;
+  readonly updatedAt: Date;
+};
+
 async function init() {
   const intents = new Intents([
     Intents.NON_PRIVILEGED, // include all non-privileged intents, would be better to specify which ones you actually need
@@ -26,18 +33,37 @@ async function init() {
   await client.login(getConfig('DISCORD_BOT_TOKEN'));
 
   const guild = await client.guilds.fetch(GUILD_ID);
-  const members = await guild.members.fetch({ limit: 100 });
+  const members = await guild.members.fetch({});
 
   const mongoUrl = getConfig('MONGO_URL');
   const dbName = mongoUrl.split('/').pop();
   const mongoClient = new MongoClient(mongoUrl);
   await mongoClient.connect();
   const db = mongoClient.db(dbName);
-  const statsCollection = db.collection('stats');
+  const statsCollection = db.collection<StatsCollection>('stats');
 
   await members.reduce(async (acc, member) => {
     await acc;
+
+    if (member.deleted) {
+      // console.log(`Skipping… member.deleted`);
+      return acc;
+    }
+
+    const existing = await statsCollection.count({
+      memberId: member.id,
+    });
+    if (existing) {
+      // console.log(`Skipping… existing`);
+      return acc;
+    }
+
     const messagesCount = await getMemberMessagesCount(member.id);
+    if (!messagesCount) {
+      // console.log(`Skipping… !messagesCount`);
+      return acc;
+    }
+
     const result = await statsCollection.updateOne(
       { memberId: member.id },
       {
@@ -52,30 +78,28 @@ async function init() {
     );
     console.log({ memberId: member.id, memberName: member.displayName, messagesCount, result });
   }, Promise.resolve());
-  // console.log({ guild: guild.toJSON() });
-  // console.log(guild.members.cache.toJSON());
-  // await guild.members.fetch({ force: true });
-  // console.log({ members: members.toJSON() });
-
-  process.exit(0);
 }
 
-init().catch((err) => console.error(err));
+init()
+  .then(() => {
+    process.exit(0);
+  })
+  .catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
 
 type Response =
   | { readonly total_results?: number; readonly retry_after?: undefined }
   | { readonly total_results?: undefined; readonly retry_after: number };
 
-async function getMemberMessagesCount(memberId: string): Promise<number | undefined> {
-  const res = await fetch(
-    `${API_URL}/guilds/440163731704643589/messages/search?author_id=${memberId}`,
-    {
-      headers: {
-        authorization: personalToken,
-      },
-      method: 'GET',
+export async function getMemberMessagesCount(memberId: string): Promise<number | undefined> {
+  const res = await fetch(`${API_URL}/guilds/${GUILD_ID}/messages/search?author_id=${memberId}`, {
+    headers: {
+      authorization: personalToken,
     },
-  );
+    method: 'GET',
+  });
   const json = (await res.json()) as Response;
 
   if (json.retry_after) {
