@@ -28,9 +28,11 @@ async function init() {
   const guild = await client.guilds.fetch(GUILD_ID);
   const members = await guild.members.fetch({ limit: 100 });
 
-  const mongoClient = new MongoClient(getConfig('MONGO_URL'));
+  const mongoUrl = getConfig('MONGO_URL');
+  const dbName = mongoUrl.split('/').pop();
+  const mongoClient = new MongoClient(mongoUrl);
   await mongoClient.connect();
-  const db = mongoClient.db('bot');
+  const db = mongoClient.db(dbName);
   const statsCollection = db.collection('stats');
 
   await members.reduce(async (acc, member) => {
