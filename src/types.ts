@@ -13,12 +13,12 @@ type CommandWithArgs = {
   execute(
     msg: Discord.Message,
     args: readonly string[],
-  ): Promise<Discord.Message | readonly Discord.Message[] | null>;
+  ): Promise<null | Discord.Message | readonly Discord.Message[] | null>;
 } & CommandCommon;
 
 type CommandWithoutArgs = {
   readonly args: false;
-  execute(msg: Discord.Message): Promise<Discord.Message | readonly Discord.Message[]>;
+  execute(msg: Discord.Message): Promise<null | Discord.Message | readonly Discord.Message[]>;
 } & CommandCommon;
 
 export type Command = CommandWithArgs | CommandWithoutArgs;

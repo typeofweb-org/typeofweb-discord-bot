@@ -3,6 +3,7 @@ import MonitoRSS from 'monitorss';
 import Cache from 'node-cache';
 
 import { handleCommand } from './commands';
+import { KARMA_REGEX } from './commands/karma';
 import { getConfig } from './config';
 import { createHttpServer } from './http-server';
 import { InvalidUsageError } from './types';
@@ -63,7 +64,7 @@ client.on('debug', (debug) => {
 });
 
 function isCommand(msg: Discord.Message) {
-  return msg.content.startsWith(getConfig('PREFIX'));
+  return msg.content.startsWith(getConfig('PREFIX')) || KARMA_REGEX.test(msg.content);
 }
 
 client.on('message', async (msg) => {
