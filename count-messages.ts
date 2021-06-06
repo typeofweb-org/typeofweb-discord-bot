@@ -1,9 +1,9 @@
 import Discord, { Intents } from 'discord.js';
 import fetch from 'node-fetch';
-import { getWeekNumber } from 'src/utils';
 
 import { getConfig } from './src/config';
 import { getStatsCollection, initDb } from './src/db';
+import { getWeekNumber } from './src/utils';
 
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
