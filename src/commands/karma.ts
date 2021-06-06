@@ -1,19 +1,20 @@
-import type Discord from 'discord.js';
+import Discord from 'discord.js';
 import type { Db } from 'mongodb';
 
 import { getKarmaCollection, initDb } from '../db';
 import type { Command } from '../types';
 import { InvalidUsageError } from '../types';
 
-export const KARMA_REGEX = /^(?<mention><@!?(?<memberId>\d{17,19})>)\s*\+\+\s*(?<description>.*)$/;
+export const KARMA_REGEX = new RegExp(
+  `^${Discord.MessageMentions.USERS_PATTERN.source}\\s*\\+\\+\\s*(?<description>.*)$`,
+);
 
 const addKarma: Command = {
   name: 'addKarma',
   description: 'Podziękuj użytkownikom wpisując `@nazwa ++`',
   args: false,
   cooldown: 10,
-  async execute(msg: Discord.Message) {
-    console.log(msg.content);
+  async execute(msg) {
     const member = await msg.mentions.members?.first()?.fetch();
     if (!member) {
       return null;
