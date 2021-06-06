@@ -7,7 +7,7 @@ import { InvalidUsageError } from '../types';
 
 import co from './co';
 import execute from './execute';
-import karma, { KARMA_REGEX } from './karma';
+import { addKarma, karma, KARMA_REGEX } from './karma';
 import link from './link';
 import m1 from './m1';
 import markdown from './markdown';
@@ -35,6 +35,7 @@ export const COMMAND_PATTERN = new RegExp(getConfig('PREFIX') + '([a-z1-9]+)(?: 
 const allCommands = [
   co,
   execute,
+  karma,
   link,
   m1,
   markdown,
@@ -135,8 +136,9 @@ export function handleCommand(msg: Discord.Message) {
   if (!msg.guild) {
     return undefined;
   }
+
   if (KARMA_REGEX.test(msg.content)) {
-    return processCommand(msg, karma, null);
+    return processCommand(msg, addKarma, null);
   }
 
   const [, maybeCommand, rest] = COMMAND_PATTERN.exec(msg.content) || [null, null, null];
