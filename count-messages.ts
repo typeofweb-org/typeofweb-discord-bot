@@ -1,8 +1,9 @@
 import Discord, { Intents } from 'discord.js';
-import { MongoClient } from 'mongodb';
 import fetch from 'node-fetch';
+import { getWeekNumber } from 'src/utils';
 
 import { getConfig } from './src/config';
+import { getStatsCollection, initDb } from './src/db';
 
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
@@ -17,13 +18,6 @@ const GUILD_ID = `440163731704643589`;
 
 const personalToken = getConfig('PERSONAL_TOKEN');
 
-type StatsCollection = {
-  readonly memberId: string;
-  readonly memberName: string;
-  readonly messagesCount: number | undefined;
-  readonly updatedAt: Date;
-};
-
 async function init() {
   const intents = new Intents([
     Intents.NON_PRIVILEGED, // include all non-privileged intents, would be better to specify which ones you actually need
@@ -35,12 +29,11 @@ async function init() {
   const guild = await client.guilds.fetch(GUILD_ID);
   const members = await guild.members.fetch({});
 
-  const mongoUrl = getConfig('MONGO_URL');
-  const dbName = mongoUrl.split('/').pop();
-  const mongoClient = new MongoClient(mongoUrl);
-  await mongoClient.connect();
-  const db = mongoClient.db(dbName);
-  const statsCollection = db.collection<StatsCollection>('stats');
+  const db = await initDb();
+  const statsCollection = getStatsCollection(db);
+
+  const [year, week] = getWeekNumber(new Date());
+  const yearWeek = `${year}-${week}`;
 
   await members.reduce(async (acc, member) => {
     await acc;
@@ -50,10 +43,10 @@ async function init() {
       return acc;
     }
 
-    const existing = await statsCollection.count({
+    const existingMember = await statsCollection.findOne({
       memberId: member.id,
     });
-    if (existing) {
+    if (existingMember && !existingMember.messagesCount) {
       // console.log(`Skipping… existing`);
       return acc;
     }
@@ -65,13 +58,17 @@ async function init() {
     }
 
     const result = await statsCollection.updateOne(
-      { memberId: member.id },
+      {
+        memberId: member.id,
+        yearWeek,
+      },
       {
         $set: {
           memberId: member.id,
           memberName: member.displayName,
           messagesCount,
           updatedAt: new Date(),
+          yearWeek,
         },
       },
       { upsert: true },

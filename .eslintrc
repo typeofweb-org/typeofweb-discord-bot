@@ -29,6 +29,10 @@
     "@typescript-eslint/no-unsafe-return": "off",
     "@typescript-eslint/consistent-type-imports": "error",
     "@typescript-eslint/no-misused-promises": "off",
+    "@typescript-eslint/restrict-template-expressions": [
+      "error",
+      { "allowNumber": true, "allowBoolean": true }
+    ],
     "functional/no-let": [
       "error",
       {

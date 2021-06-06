@@ -22,6 +22,7 @@ import roll from './roll';
 import server from './server';
 import skierowanie from './skierowanie';
 import spotify from './spotify';
+import stats from './stats';
 import typeofweb from './towarticle';
 import wiki from './wiki';
 import xd from './xd';
@@ -48,6 +49,7 @@ const allCommands = [
   server,
   skierowanie,
   spotify,
+  stats,
   typeofweb,
   wiki,
   xd,
@@ -114,7 +116,7 @@ function printHelp(msg: Discord.Message, member: Discord.GuildMember) {
 
   return msg.author
     .send(data, { split: true })
-    .then(async () => {
+    .then(() => {
       if (msg.channel.type === 'dm') {
         return undefined;
       }
@@ -128,7 +130,7 @@ function printHelp(msg: Discord.Message, member: Discord.GuildMember) {
     });
 }
 
-export async function handleCommand(msg: Discord.Message) {
+export function handleCommand(msg: Discord.Message) {
   if (!msg.guild) {
     return undefined;
   }
