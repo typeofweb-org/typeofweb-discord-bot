@@ -5,7 +5,7 @@ import { getKarmaCollection, initDb } from '../db';
 import type { Command } from '../types';
 import { InvalidUsageError } from '../types';
 
-export const KARMA_REGEX = /^(?<mention><@!(?<memberId>\d+)>)\s*\+\+\s*(?<description>.*)$/;
+export const KARMA_REGEX = /^(?<mention><@!?(?<memberId>\d{17,19})>)\s*\+\+\s*(?<description>.*)$/;
 
 const addKarma: Command = {
   name: 'addKarma',
@@ -13,6 +13,7 @@ const addKarma: Command = {
   args: false,
   cooldown: 10,
   async execute(msg: Discord.Message) {
+    console.log(msg.content);
     const member = await msg.mentions.members?.first()?.fetch();
     if (!member) {
       return null;
@@ -70,7 +71,7 @@ const karma: Command = {
     const value = agg?.value ?? 0;
 
     return msg.channel.send(
-      `${member.nickname ?? ''} ma ${value} punktów karmy ${getEmojiForValue(value)}`,
+      `${member.displayName} ma ${value} punktów karmy ${getEmojiForValue(value)}`,
     );
   },
 };

@@ -68,6 +68,9 @@ function isCommand(msg: Discord.Message) {
 }
 
 client.on('message', async (msg) => {
+  if (msg.content.includes('++')) {
+    console.log(msg.content, msg);
+  }
   if (msg.author.bot) {
     return;
   }
