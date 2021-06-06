@@ -9,6 +9,7 @@ const stats: Command = {
   name: 'stats',
   description: 'Stats',
   args: false,
+  permissions: 'ADMINISTRATOR',
   async execute(msg) {
     const db = await initDb();
 
