@@ -7,6 +7,7 @@ import { InvalidUsageError } from '../types';
 
 import co from './co';
 import execute from './execute';
+import karma, { KARMA_REGEX } from './karma';
 import link from './link';
 import m1 from './m1';
 import markdown from './markdown';
@@ -29,7 +30,7 @@ import xd from './xd';
 import yesno from './yesno';
 import youtube from './youtube';
 
-const COMMAND_PATTERN = new RegExp(getConfig('PREFIX') + '([a-z1-9]+)(?: (.*))?');
+export const COMMAND_PATTERN = new RegExp(getConfig('PREFIX') + '([a-z1-9]+)(?: (.*))?');
 
 const allCommands = [
   co,
@@ -134,6 +135,10 @@ export function handleCommand(msg: Discord.Message) {
   if (!msg.guild) {
     return undefined;
   }
+  if (KARMA_REGEX.test(msg.content)) {
+    return processCommand(msg, karma, null);
+  }
+
   const [, maybeCommand, rest] = COMMAND_PATTERN.exec(msg.content) || [null, null, null];
 
   if (maybeCommand === 'help') {
@@ -149,7 +154,11 @@ export function handleCommand(msg: Discord.Message) {
     return undefined;
   }
 
-  const member = msg.guild.member(msg.author);
+  return processCommand(msg, command, rest);
+}
+
+function processCommand(msg: Discord.Message, command: Command, rest: string | null) {
+  const member = msg.guild?.member(msg.author);
 
   if (!member || (command.permissions && !member.hasPermission(command.permissions))) {
     return undefined; // silence is golden

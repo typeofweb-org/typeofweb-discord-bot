@@ -1,5 +1,6 @@
-import Discord from 'discord.js';
-import { Command } from '../types';
+import type Discord from 'discord.js';
+
+import type { Command } from '../types';
 
 const link: Command = {
   name: 'link',
