@@ -3,7 +3,14 @@ import type { Db } from 'mongodb';
 import type { StatsCollection } from '../db';
 import { getStatsCollection, initDb } from '../db';
 import type { Command } from '../types';
-import { getWeekNumber } from '../utils';
+import { getDateForWeekNumber, getWeekNumber } from '../utils';
+
+const formatDate = (d: Date) =>
+  String(d.getUTCFullYear()) +
+  '-' +
+  String(d.getUTCMonth() + 1).padStart(2, '0') +
+  '-' +
+  String(d.getUTCDate()).padStart(2, '0');
 
 const stats: Command = {
   name: 'stats',
@@ -13,11 +20,15 @@ const stats: Command = {
   async execute(msg) {
     const db = await initDb();
 
-    const { totalStats, statsChangeThisWeek } = await getStatsChangeThisWeek(db);
+    const { totalStats, statsChangeThisWeek, year1, year2, week1, week2 } =
+      await getStatsChangeThisWeek(db);
+
+    const d1 = formatDate(getDateForWeekNumber(year2, week2 + 1));
+    const d2 = formatDate(getDateForWeekNumber(year1, week1 + 1));
 
     return msg.channel.send(
       [
-        format('Najbardziej aktywne w tym tygodniu:', statsChangeThisWeek),
+        format(`Najbardziej aktywne w tym tygodniu (${d1} – ${d2}):`, statsChangeThisWeek),
         '\n',
         format('Najbardziej aktywne osoby od początku istnienia serwera:', totalStats),
       ].join('\n'),
@@ -50,7 +61,7 @@ async function getStatsChangeThisWeek(db: Db) {
 
   const now = new Date();
   const [year1, week1] = getWeekNumber(now);
-  const thisweek = `${year1}-${week1}`;
+  const thisWeek = `${year1}-${week1}`;
 
   now.setDate(now.getDate() - 7);
   const [year2, week2] = getWeekNumber(now);
@@ -66,7 +77,7 @@ async function getStatsChangeThisWeek(db: Db) {
       )
       .toArray(),
 
-    statsCollection.find({ yearWeek: thisweek }).toArray(),
+    statsCollection.find({ yearWeek: thisWeek }).toArray(),
 
     statsCollection.find({ yearWeek: previousWeek }).toArray(),
   ]);
@@ -88,7 +99,14 @@ async function getStatsChangeThisWeek(db: Db) {
     .filter((obj): obj is Stats => !!obj)
     .sort((a, b) => b.messagesCount - a.messagesCount);
 
-  return { statsChangeThisWeek, totalStats: totalStats as readonly Stats[] };
+  return {
+    statsChangeThisWeek,
+    totalStats: totalStats as readonly Stats[],
+    year1,
+    year2,
+    week1,
+    week2,
+  };
 }
 
 function resultToMessagesByMemberId(stats: readonly StatsCollection[]) {

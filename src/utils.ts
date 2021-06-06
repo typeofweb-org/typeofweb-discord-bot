@@ -15,7 +15,12 @@ export function getWeekNumber(d: Date): readonly [year: number, week: number] {
   // Get first day of year
   const yearStart = new Date(Date.UTC(date.getUTCFullYear(), 0, 1));
   // Calculate full weeks to nearest Thursday
-  const weekNo = Math.ceil(((Number(d) - Number(yearStart)) / 86400000 + 1) / 7);
+  const weekNo = Math.ceil(((Number(date) - Number(yearStart)) / 86400000 + 1) / 7);
 
-  return [d.getUTCFullYear(), weekNo];
+  return [date.getUTCFullYear(), weekNo];
+}
+
+export function getDateForWeekNumber(year: number, weekNo: number): Date {
+  const yearStart = new Date(year, 0, 1);
+  return new Date((weekNo * 7 - 1) * 86400000 + Number(yearStart));
 }
