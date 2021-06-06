@@ -13,15 +13,13 @@ const addKarma: Command = {
   args: false,
   cooldown: 10,
   async execute(msg: Discord.Message) {
-    const result = KARMA_REGEX.exec(msg.content);
-    if (!result?.groups) {
+    const member = await msg.mentions.members?.first()?.fetch();
+    if (!member) {
       return null;
     }
 
-    const { mention, memberId } = result.groups;
-
     const from = msg.author.id;
-    const to = memberId;
+    const to = member.id;
 
     if (from === to) {
       return null;
@@ -50,7 +48,7 @@ const addKarma: Command = {
     const value = agg?.value ?? 0;
 
     return msg.channel.send(
-      `${msg.author.toString()} podziękował ${mention}! Karma ${mention} wynosi ${value} ${getEmojiForValue(
+      `${msg.author.toString()} podziękował ${member.toString()}! Karma ${member.toString()} wynosi ${value} ${getEmojiForValue(
         value,
       )}`,
     );
@@ -62,7 +60,7 @@ const karma: Command = {
   description: 'Sprawdź ile kto ma pkt. karmy.',
   args: true,
   async execute(msg) {
-    const member = msg.mentions.members?.first();
+    const member = await msg.mentions.members?.first()?.fetch();
     if (!member) {
       throw new InvalidUsageError(`Podaj nazwę użytkownika.`);
     }
