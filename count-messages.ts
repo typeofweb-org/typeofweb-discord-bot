@@ -19,6 +19,12 @@ const GUILD_ID = `440163731704643589`;
 const personalToken = getConfig('PERSONAL_TOKEN');
 
 async function init() {
+  // Monday
+  if (new Date().getDay() !== 1) {
+    console.log('Not Monday – nothing to do here!');
+    process.exit(0);
+  }
+
   const intents = new Intents([
     Intents.NON_PRIVILEGED, // include all non-privileged intents, would be better to specify which ones you actually need
     'GUILD_MEMBERS', // lets you request guild members (i.e. fixes the issue)
