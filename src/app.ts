@@ -67,10 +67,9 @@ function isCommand(msg: Discord.Message) {
   return msg.content.startsWith(getConfig('PREFIX')) || KARMA_REGEX.test(msg.content);
 }
 
+const thxTimeoutRef = { ref: Date.now() };
+
 client.on('message', async (msg) => {
-  if (msg.content.includes('++')) {
-    console.log(msg.content, msg);
-  }
   if (msg.author.bot) {
     return;
   }
@@ -97,6 +96,13 @@ client.on('message', async (msg) => {
       }
     } finally {
       return msg.channel.stopTyping(true);
+    }
+  }
+
+  if (/thx|thanks|dzięki|dziękuję|dzieki|dziekuje/i.test(msg.content)) {
+    if (Date.now() > thxTimeoutRef.ref) {
+      thxTimeoutRef.ref = Date.now() + 15 * 60 * 1000;
+      return msg.reply('protip: napisz `@nazwa ++`, żeby komuś podziękować!');
     }
   }
 
