@@ -51,6 +51,15 @@ async function init() {
       return acc;
     }
 
+    const countedThisWeek = await statsCollection.count({
+      memberId: member.id,
+      yearWeek,
+    });
+    if (countedThisWeek) {
+      // console.log(`Skipping… countedThisWeek`);
+      return acc;
+    }
+
     const messagesCount = await getMemberMessagesCount(member.id);
     if (!messagesCount) {
       // console.log(`Skipping… !messagesCount`);

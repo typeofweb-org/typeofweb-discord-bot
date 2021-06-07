@@ -10,7 +10,7 @@ export const KARMA_REGEX = new RegExp(
 );
 
 const addKarma: Command = {
-  name: 'addKarma',
+  name: '++',
   description: 'Podziękuj użytkownikom wpisując `@nazwa ++`',
   args: false,
   cooldown: 10,
