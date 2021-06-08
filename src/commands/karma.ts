@@ -1,5 +1,6 @@
 import Discord from 'discord.js';
 import type { Db } from 'mongodb';
+import { polishPlurals } from 'polish-plurals';
 
 import { getKarmaCollection, initDb } from '../db';
 import type { Command } from '../types';
@@ -50,7 +51,7 @@ const addKarma: Command = {
     const value = agg?.value ?? 0;
 
     return msg.channel.send(
-      `${msg.author.toString()} podziękował ${member.toString()}! Karma ${member.toString()} wynosi ${value} ${getEmojiForValue(
+      `${msg.author.toString()} podziękował(a) ${member.toString()}! Karma ${member.toString()} wynosi ${value} ${getEmojiForValue(
         value,
       )}`,
     );
@@ -71,8 +72,10 @@ const karma: Command = {
     const agg = await getKarmaForMember(member.id, db);
     const value = agg?.value ?? 0;
 
+    const pkt = polishPlurals('punkt', 'punkty', 'punktów', value);
+
     return msg.channel.send(
-      `${member.displayName} ma ${value} punktów karmy ${getEmojiForValue(value)}`,
+      `${member.displayName} ma ${value} ${pkt} karmy ${getEmojiForValue(value)}`,
     );
   },
 };

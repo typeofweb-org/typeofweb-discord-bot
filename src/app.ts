@@ -1,5 +1,6 @@
 import Discord from 'discord.js';
 import MonitoRSS from 'monitorss';
+import type { ClientConfig } from 'monitorss';
 import Cache from 'node-cache';
 
 import { handleCommand } from './commands';
@@ -8,12 +9,15 @@ import { getConfig } from './config';
 import { createHttpServer } from './http-server';
 import { InvalidUsageError } from './types';
 
-const ONE_HOUR_S = 3600;
-const cache = new Cache({ stdTTL: ONE_HOUR_S });
+const MESSAGE_COLLECTOR_CACHE_S = 60 * 60;
+const messageCollectorCache = new Cache({ stdTTL: MESSAGE_COLLECTOR_CACHE_S });
+
+const THX_TIMEOUT_S = 15 * 60;
+const thxTimeoutCache = new Cache({ stdTTL: THX_TIMEOUT_S });
 
 const client = new Discord.Client();
 
-const settings = {
+const settings: { readonly setPresence: boolean; readonly config: ClientConfig } = {
   setPresence: true,
   config: {
     bot: {
@@ -67,8 +71,6 @@ function isCommand(msg: Discord.Message) {
   return msg.content.startsWith(getConfig('PREFIX')) || KARMA_REGEX.test(msg.content);
 }
 
-const thxTimeoutRef = { ref: Date.now() };
-
 client.on('message', async (msg) => {
   if (msg.author.bot) {
     return;
@@ -85,7 +87,7 @@ client.on('message', async (msg) => {
       );
       await handleCommand(msg);
       const ids = collector.collected.map((m) => m.id);
-      cache.set(msg.id, ids);
+      messageCollectorCache.set(msg.id, ids);
       collector.stop();
     } catch (err) {
       if (err instanceof InvalidUsageError) {
@@ -99,9 +101,12 @@ client.on('message', async (msg) => {
     }
   }
 
-  if (/thx|thanks|dzięki|dziękuję|dzieki|dziekuje/i.test(msg.content)) {
-    if (Date.now() > thxTimeoutRef.ref) {
-      thxTimeoutRef.ref = Date.now() + 15 * 60 * 1000;
+  if (/thx|thank|dzięki|dziękuję|dzieki|dziekuje/i.test(msg.content)) {
+    if (
+      (thxTimeoutCache.get<Date>(msg.channel.id)?.getTime() ?? 0) <
+      Date.now() - THX_TIMEOUT_S * 1000
+    ) {
+      thxTimeoutCache.set(msg.channel.id, new Date());
       return msg.reply('protip: napisz `@nazwa ++`, żeby komuś podziękować!');
     }
   }
@@ -110,11 +115,11 @@ client.on('message', async (msg) => {
 });
 
 function revertCommand(msg: Discord.Message) {
-  if (!cache.has(msg.id) || msg.channel.type === 'dm') {
+  if (!messageCollectorCache.has(msg.id) || msg.channel.type === 'dm') {
     return undefined;
   }
   // eslint-disable-next-line functional/prefer-readonly-type
-  const messagesToDelete = cache.get<string[]>(msg.id)!;
+  const messagesToDelete = messageCollectorCache.get<string[]>(msg.id)!;
   return msg.channel.bulkDelete(messagesToDelete);
 }
 
@@ -139,7 +144,8 @@ client.on('messageDelete', async (msg) => {
 async function init() {
   await client.login(getConfig('DISCORD_BOT_TOKEN'));
   const rssClient = new MonitoRSS.ClientManager(settings);
-  rssClient.start();
+  await new Promise((resolve) => rssClient.start(() => resolve(undefined)));
+  console.log('MonitoRSS started!');
 }
 
 init().catch((err) => errors.push(err));
