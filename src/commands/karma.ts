@@ -1,7 +1,7 @@
 import Discord from 'discord.js';
-import type { Db } from 'mongodb';
 import { polishPlurals } from 'polish-plurals';
 
+import { getEmojiForKarmaValue, getKarmaForMember } from '../data/karma';
 import { getKarmaCollection, initDb } from '../db';
 import type { Command } from '../types';
 import { InvalidUsageError } from '../types';
@@ -51,7 +51,7 @@ const addKarma: Command = {
     const value = agg?.value ?? 0;
 
     return msg.channel.send(
-      `${msg.author.toString()} podziękował(a) ${member.toString()}! Karma ${member.toString()} wynosi ${value} ${getEmojiForValue(
+      `${msg.author.toString()} podziękował(a) ${member.toString()}! Karma ${member.toString()} wynosi ${value} ${getEmojiForKarmaValue(
         value,
       )}`,
     );
@@ -75,47 +75,9 @@ const karma: Command = {
     const pkt = polishPlurals('punkt', 'punkty', 'punktów', value);
 
     return msg.channel.send(
-      `${member.displayName} ma ${value} ${pkt} karmy ${getEmojiForValue(value)}`,
+      `${member.displayName} ma ${value} ${pkt} karmy ${getEmojiForKarmaValue(value)}`,
     );
   },
 };
 
 export { addKarma, karma };
-
-const getKarmaForMember = async (memberId: string, db: Db) => {
-  const karmaCollection = getKarmaCollection(db);
-
-  type KarmaAgg = {
-    readonly _id: string;
-    readonly from: readonly string[];
-    readonly value: number;
-  };
-
-  const [agg] = await karmaCollection
-    .aggregate<KarmaAgg | undefined>([
-      { $match: { to: memberId } },
-      { $group: { _id: '$to', from: { $push: '$from' }, value: { $sum: '$value' } } },
-    ])
-    .toArray();
-  return agg;
-};
-
-const getEmojiForValue = (value: number) => {
-  const adjustedValue = Math.floor(Math.sqrt(value + 1) - 1);
-  const idx = Math.min(karmaEmojis.length, adjustedValue);
-  return karmaEmojis[idx];
-};
-const karmaEmojis = [
-  '👋',
-  '👍',
-  '👌',
-  '💪',
-  '🎖',
-  '🥉',
-  '🥈',
-  '🥇',
-  '🏅',
-  '🙌',
-  '🥰',
-  '😍',
-] as const;

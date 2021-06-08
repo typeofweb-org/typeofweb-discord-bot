@@ -17,6 +17,7 @@ import mydevil from './mydevil';
 import npm from './npm';
 import odpowiedz from './odpowiedz';
 import prune from './prune';
+import ranking from './ranking';
 import quiz from './quiz';
 import regulamin from './regulamin';
 import roll from './roll';
@@ -45,6 +46,7 @@ const allCommands = [
   npm,
   odpowiedz,
   prune,
+  ranking,
   quiz,
   regulamin,
   roll,

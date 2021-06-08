@@ -26,11 +26,32 @@ const stats: Command = {
     const d1 = formatDate(getDateForWeekNumber(year2, week2 + 1));
     const d2 = formatDate(getDateForWeekNumber(year1, week1 + 1));
 
+    const ids = [
+      ...new Set([
+        ...totalStats.map(({ memberId }) => memberId),
+        ...statsChangeThisWeek.map(({ memberId }) => memberId),
+      ]),
+    ];
+
+    await Promise.allSettled(ids.map((memberId) => msg.guild?.members.fetch(memberId)));
+
     return msg.channel.send(
       [
-        format(`Najbardziej aktywne w tym tygodniu (${d1} – ${d2}):`, statsChangeThisWeek),
+        format(
+          `Najbardziej aktywne w tym tygodniu (${d1} – ${d2}):`,
+          statsChangeThisWeek.map((data) => ({
+            ...data,
+            displayName: msg.guild?.members.cache.get(data.memberId)?.displayName,
+          })),
+        ),
         '\n',
-        format('Najbardziej aktywne osoby od początku istnienia serwera:', totalStats),
+        format(
+          'Najbardziej aktywne osoby od początku istnienia serwera:',
+          totalStats.map((data) => ({
+            ...data,
+            displayName: msg.guild?.members.cache.get(data.memberId)?.displayName,
+          })),
+        ),
       ].join('\n'),
     );
   },
@@ -41,6 +62,7 @@ export default stats;
 type Stats = {
   readonly memberId: string;
   readonly messagesCount: number;
+  readonly displayName?: string;
 };
 
 function format(title: string, stats: readonly Stats[]) {
@@ -49,8 +71,10 @@ function format(title: string, stats: readonly Stats[]) {
     ...stats
       .slice(0, 10)
       .map(
-        ({ messagesCount, memberId }, index) =>
-          `\`${(index + 1).toString().padStart(2, ' ')}\`. <@${memberId}> – ${messagesCount ?? 0}`,
+        ({ messagesCount, displayName }, index) =>
+          `\`${(index + 1).toString().padStart(2, ' ')}\`. ${displayName ?? ''} – ${
+            messagesCount ?? 0
+          }`,
       ),
   ];
   return messages.join('\n');
@@ -100,8 +124,8 @@ async function getStatsChangeThisWeek(db: Db) {
     .sort((a, b) => b.messagesCount - a.messagesCount);
 
   return {
-    statsChangeThisWeek,
-    totalStats: totalStats as readonly Stats[],
+    statsChangeThisWeek: statsChangeThisWeek.slice(0, 10),
+    totalStats: totalStats.slice(0, 10) as readonly Stats[],
     year1,
     year2,
     week1,

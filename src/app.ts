@@ -71,10 +71,22 @@ function isCommand(msg: Discord.Message) {
   return msg.content.startsWith(getConfig('PREFIX')) || KARMA_REGEX.test(msg.content);
 }
 
+// const ROLE_MUTED_NAME = 'muted' as const;
+// const MAX_MENTIONS_PER_MESSAGE = 10;
+
 client.on('message', async (msg) => {
   if (msg.author.bot) {
     return;
   }
+
+  // if ((msg.mentions.members?.size ?? 0) > MAX_MENTIONS_PER_MESSAGE) {
+  //   const roleManager = await msg.guild?.roles.fetch();
+  //   const roleMuted = roleManager?.cache.find((v) => v.name === ROLE_MUTED_NAME);
+  //   console.log(roleMuted);
+  //   // if (roleMuted) {
+  //   //   msg.member?.roles.add(roleMuted);
+  //   // }
+  // }
 
   if (msg.content === `(╯°□°）╯︵ ┻━┻`) {
     return msg.channel.send(`┬─┬ノ( ◕◡◕ ノ)`);
