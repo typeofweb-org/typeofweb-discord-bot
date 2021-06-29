@@ -3,14 +3,21 @@ import { MongoClient } from 'mongodb';
 
 import { getConfig } from './config';
 
-export const initDb = async () => {
-  const mongoUrl = getConfig('MONGO_URL');
-  const dbName = mongoUrl.split('/').pop();
-  const mongoClient = new MongoClient(mongoUrl);
-  await mongoClient.connect();
-  const db = mongoClient.db(dbName);
-  return db;
-};
+export const initDb = (() => {
+  let mongoClient: MongoClient | undefined = undefined;
+
+  return async () => {
+    const mongoUrl = getConfig('MONGO_URL');
+    const dbName = mongoUrl.split('/').pop();
+    if (!mongoClient) {
+      const m = new MongoClient(mongoUrl, { keepAlive: true });
+      mongoClient = await m.connect();
+    }
+
+    const db = mongoClient.db(dbName);
+    return db;
+  };
+})();
 
 export type StatsCollection = {
   readonly memberId: string;

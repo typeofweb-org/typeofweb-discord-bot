@@ -1,6 +1,5 @@
 import type { Db } from 'mongodb';
 
-import type { StatsCollection } from '../db';
 import { getStatsCollection, initDb } from '../db';
 import type { Command } from '../types';
 import { getDateForWeekNumber, getWeekNumber } from '../utils';
@@ -20,38 +19,18 @@ const stats: Command = {
   async execute(msg) {
     const db = await initDb();
 
-    const { totalStats, statsChangeThisWeek, year1, year2, week1, week2 } =
-      await getStatsChangeThisWeek(db);
+    const { totalStats, statsThisWeek, year1, year2, week1, week2 } = await getStatsChangeThisWeek(
+      db,
+    );
 
-    const d1 = formatDate(getDateForWeekNumber(year2, week2 + 1));
-    const d2 = formatDate(getDateForWeekNumber(year1, week1 + 1));
-
-    const ids = [
-      ...new Set([
-        ...totalStats.map(({ memberId }) => memberId),
-        ...statsChangeThisWeek.map(({ memberId }) => memberId),
-      ]),
-    ];
-
-    await Promise.allSettled(ids.map((memberId) => msg.guild?.members.fetch(memberId)));
+    const d1 = formatDate(getDateForWeekNumber(year2, week2));
+    const d2 = formatDate(getDateForWeekNumber(year1, week1));
 
     return msg.channel.send(
       [
-        format(
-          `Najbardziej aktywne w tym tygodniu (${d1} – ${d2}):`,
-          statsChangeThisWeek.map((data) => ({
-            ...data,
-            displayName: msg.guild?.members.cache.get(data.memberId)?.displayName,
-          })),
-        ),
+        format(`Najbardziej aktywne osoby w tym tygodniu (${d1} – ${d2}):`, statsThisWeek),
         '\n',
-        format(
-          'Najbardziej aktywne osoby od początku istnienia serwera:',
-          totalStats.map((data) => ({
-            ...data,
-            displayName: msg.guild?.members.cache.get(data.memberId)?.displayName,
-          })),
-        ),
+        format('Najbardziej aktywne osoby od początku istnienia serwera:', totalStats),
       ].join('\n'),
     );
   },
@@ -59,20 +38,17 @@ const stats: Command = {
 
 export default stats;
 
-type Stats = {
-  readonly memberId: string;
-  readonly messagesCount: number;
-  readonly displayName?: string;
-};
-
-function format(title: string, stats: readonly Stats[]) {
+function format(
+  title: string,
+  stats: readonly { messagesCount?: number | null; memberName?: string | null }[],
+) {
   const messages = [
     `**${title}**`,
     ...stats
-      .slice(0, 10)
+      .filter((d) => d.messagesCount)
       .map(
-        ({ messagesCount, displayName }, index) =>
-          `\`${(index + 1).toString().padStart(2, ' ')}\`. ${displayName ?? ''} – ${
+        ({ messagesCount, memberName }, index) =>
+          `\`${(index + 1).toString().padStart(2, ' ')}\`. ${memberName ?? ''} – ${
             messagesCount ?? 0
           }`,
       ),
@@ -89,43 +65,21 @@ async function getStatsChangeThisWeek(db: Db) {
 
   now.setDate(now.getDate() - 7);
   const [year2, week2] = getWeekNumber(now);
-  const previousWeek = `${year2}-${week2}`;
 
-  const [totalStats, statsThisWeek, statsPreviousWeek] = await Promise.all([
-    statsCollection
-      .find(
-        {
-          yearWeek: null,
-        },
-        { sort: { messagesCount: 'desc' } },
-      )
-      .toArray(),
+  const statsThisWeekPromise = statsCollection
+    .find({ yearWeek: thisWeek })
+    .sort({ messagesCount: -1 })
+    .limit(10)
+    .toArray();
 
-    statsCollection.find({ yearWeek: thisWeek }).toArray(),
+  // @todo should aggregate and sum
+  const totalStatsPromise = getStats(db);
 
-    statsCollection.find({ yearWeek: previousWeek }).toArray(),
-  ]);
-
-  const totalStatsById = resultToMessagesByMemberId(totalStats);
-  const statsPreviousWeekById = resultToMessagesByMemberId(statsPreviousWeek);
-
-  const statsChangeThisWeek = statsThisWeek
-    .map(({ memberId, messagesCount }) => {
-      if (!messagesCount) {
-        return null;
-      }
-
-      const messagesCountDifference =
-        messagesCount - (statsPreviousWeekById[memberId] ?? totalStatsById[memberId] ?? 0);
-
-      return { memberId, messagesCount: messagesCountDifference };
-    })
-    .filter((obj): obj is Stats => !!obj)
-    .sort((a, b) => b.messagesCount - a.messagesCount);
+  const [statsThisWeek, totalStats] = await Promise.all([statsThisWeekPromise, totalStatsPromise]);
 
   return {
-    statsChangeThisWeek: statsChangeThisWeek.slice(0, 10),
-    totalStats: totalStats.slice(0, 10) as readonly Stats[],
+    statsThisWeek,
+    totalStats,
     year1,
     year2,
     week1,
@@ -133,12 +87,28 @@ async function getStatsChangeThisWeek(db: Db) {
   };
 }
 
-function resultToMessagesByMemberId(stats: readonly StatsCollection[]) {
-  return stats.reduce<Record<StatsCollection['memberId'], StatsCollection['messagesCount']>>(
-    (acc, { memberId, messagesCount }) => {
-      acc[memberId] = messagesCount;
-      return acc;
+export type StatsAgg = {
+  readonly _id: string;
+  readonly messagesCount: number;
+  readonly memberName: string;
+};
+
+const statsAggregation = [
+  {
+    $group: {
+      _id: '$memberId',
+      messagesCount: { $sum: '$messagesCount' },
+      memberName: { $push: '$memberName' },
     },
-    {},
-  );
-}
+  },
+  { $sort: { messagesCount: -1 } },
+  { $limit: 10 },
+  { $addFields: { memberName: { $arrayElemAt: [{ $reverseArray: '$memberName' }, 0] } } },
+];
+
+export const getStats = async (db: Db) => {
+  const statsCollection = getStatsCollection(db);
+
+  const agg = await statsCollection.aggregate<StatsAgg>(statsAggregation).toArray();
+  return agg;
+};

@@ -8,6 +8,8 @@ import { KARMA_REGEX } from './commands/karma';
 import { getConfig } from './config';
 import { createHttpServer } from './http-server';
 import { InvalidUsageError } from './types';
+import { getWeekNumber } from './utils';
+import { getStatsCollection, initDb } from './db';
 
 const MESSAGE_COLLECTOR_CACHE_S = 60 * 60;
 const messageCollectorCache = new Cache({ stdTTL: MESSAGE_COLLECTOR_CACHE_S });
@@ -113,6 +115,8 @@ client.on('message', async (msg) => {
     }
   }
 
+  void updateMessagesCount(msg.member?.id, msg.member?.displayName).catch(console.error);
+
   if (/thx|thank|dzięki|dziękuję|dzieki|dziekuje/i.test(msg.content)) {
     if (
       (thxTimeoutCache.get<Date>(msg.channel.id)?.getTime() ?? 0) <
@@ -125,6 +129,33 @@ client.on('message', async (msg) => {
 
   return;
 });
+
+async function updateMessagesCount(
+  memberId: Discord.GuildMember['id'] | undefined,
+  displayName: Discord.GuildMember['displayName'] | undefined,
+) {
+  const db = await initDb();
+  const statsCollection = getStatsCollection(db);
+  const [year, week] = getWeekNumber(new Date());
+  const yearWeek = `${year}-${week}`;
+
+  await statsCollection.updateOne(
+    {
+      memberId,
+      yearWeek,
+    },
+    {
+      $set: {
+        memberId,
+        memberName: displayName,
+        updatedAt: new Date(),
+        yearWeek,
+      },
+      $inc: { messagesCount: 1 },
+    },
+    { upsert: true },
+  );
+}
 
 function revertCommand(msg: Discord.Message) {
   if (!messageCollectorCache.has(msg.id) || msg.channel.type === 'dm') {
