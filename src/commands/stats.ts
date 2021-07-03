@@ -5,11 +5,11 @@ import type { Command } from '../types';
 import { getDateForWeekNumber, getWeekNumber } from '../utils';
 
 const formatDate = (d: Date) =>
-  String(d.getUTCFullYear()) +
+  String(d.getFullYear()) +
   '-' +
-  String(d.getUTCMonth() + 1).padStart(2, '0') +
+  String(d.getMonth() + 1).padStart(2, '0') +
   '-' +
-  String(d.getUTCDate()).padStart(2, '0');
+  String(d.getDate()).padStart(2, '0');
 
 const stats: Command = {
   name: 'stats',
@@ -19,16 +19,22 @@ const stats: Command = {
   async execute(msg) {
     const db = await initDb();
 
-    const { totalStats, statsThisWeek, year1, year2, week1, week2 } = await getStatsChangeThisWeek(
-      db,
-    );
+    const { totalStats, statsThisWeek, year1, week1 } = await getStatsChangeThisWeek(db);
 
-    const d1 = formatDate(getDateForWeekNumber(year2, week2));
-    const d2 = formatDate(getDateForWeekNumber(year1, week1));
+    // Monday
+    const d1 = getDateForWeekNumber(year1, week1);
+    d1.setUTCDate(d1.getUTCDate() - (d1.getUTCDay() || 7));
+
+    // Sunday
+    const d2 = new Date(d1);
+    d2.setUTCDate(d2.getUTCDate() + 6);
 
     return msg.channel.send(
       [
-        format(`Najbardziej aktywne osoby w tym tygodniu (${d1} – ${d2}):`, statsThisWeek),
+        format(
+          `Najbardziej aktywne osoby w tym tygodniu (${formatDate(d1)} – ${formatDate(d2)}):`,
+          statsThisWeek,
+        ),
         '\n',
         format('Najbardziej aktywne osoby od początku istnienia serwera:', totalStats),
       ].join('\n'),
