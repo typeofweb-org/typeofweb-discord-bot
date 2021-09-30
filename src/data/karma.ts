@@ -8,15 +8,29 @@ export type KarmaAgg = {
   readonly value: number;
 };
 
-const karmaAggregateGroup = {
-  $group: { _id: '$to', from: { $push: '$from' }, value: { $sum: '$value' } },
-} as const;
+const RATE_OF_DECAY = 1000 * 60 * 60 * 24 * (365 / 2); // half every half a year
+
+const karmaAggregateGroup = [
+  {
+    $project: {
+      to: '$to',
+      from: '$from',
+      value: {
+        $multiply: [
+          '$value',
+          { $exp: { $divide: [{ $subtract: ['$createdAt', new Date()] }, RATE_OF_DECAY] } },
+        ],
+      },
+    },
+  },
+  { $group: { _id: '$to', from: { $push: '$from' }, value: { $sum: '$value' } } },
+] as const;
 
 export const getKarmaForMember = async (memberId: string, db: Db) => {
   const karmaCollection = getKarmaCollection(db);
 
   const [agg] = await karmaCollection
-    .aggregate<KarmaAgg | undefined>([{ $match: { to: memberId } }, karmaAggregateGroup])
+    .aggregate<KarmaAgg | undefined>([{ $match: { to: memberId } }, ...karmaAggregateGroup])
     .toArray();
   return agg;
 };
@@ -25,7 +39,7 @@ export const getKarmaForMembers = async (db: Db) => {
   const karmaCollection = getKarmaCollection(db);
 
   const agg = await karmaCollection
-    .aggregate<KarmaAgg | undefined>([karmaAggregateGroup])
+    .aggregate<KarmaAgg | undefined>([...karmaAggregateGroup])
     .sort({ value: -1 })
     .limit(10)
     .toArray();
@@ -34,9 +48,10 @@ export const getKarmaForMembers = async (db: Db) => {
 
 export const getEmojiForKarmaValue = (value: number) => {
   const adjustedValue = Math.floor(Math.sqrt(value + 1) - 1);
-  const idx = Math.min(karmaEmojis.length, adjustedValue);
+  const idx = Math.min(karmaEmojis.length - 1, adjustedValue);
   return karmaEmojis[idx];
 };
+
 const karmaEmojis = [
   '👋',
   '👍',

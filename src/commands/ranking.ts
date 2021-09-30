@@ -20,7 +20,7 @@ const ranking: Command = {
       ...data.map(({ _id: memberId, value }, index) => {
         return `\`${(index + 1).toString().padStart(2, ' ')}\`. ${
           msg.guild?.members.cache.get(memberId)?.displayName ?? ''
-        } – ${value} ${getEmojiForKarmaValue(value)}`;
+        } – ${value.toFixed(2)} ${getEmojiForKarmaValue(value)}`;
       }),
     ];
 
