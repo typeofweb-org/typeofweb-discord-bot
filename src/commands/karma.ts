@@ -31,29 +31,20 @@ const addKarma: Command = {
     const db = await initDb();
     const karmaCollection = getKarmaCollection(db);
 
-    await karmaCollection.updateOne(
-      {
-        from,
-        to,
-      },
-      {
-        $set: {
-          from,
-          to,
-          createdAt: new Date(),
-        },
-        $inc: { value: 1 },
-      },
-      { upsert: true },
-    );
+    await karmaCollection.insertOne({
+      from,
+      to,
+      createdAt: new Date(),
+      value: 1,
+    });
 
     const agg = await getKarmaForMember(to, db);
     const value = agg?.value ?? 0;
 
     return msg.channel.send(
-      `${msg.author.toString()} podziękował(a) ${member.toString()}! Karma ${member.toString()} wynosi ${value} ${getEmojiForKarmaValue(
-        value,
-      )}`,
+      `${msg.author.toString()} podziękował(a) ${member.toString()}! Karma ${member.toString()} wynosi ${value.toFixed(
+        2,
+      )} ${getEmojiForKarmaValue(value)}`,
     );
   },
 };
@@ -75,7 +66,7 @@ const karma: Command = {
     const pkt = polishPlurals('punkt', 'punkty', 'punktów', value);
 
     return msg.channel.send(
-      `${member.displayName} ma ${value} ${pkt} karmy ${getEmojiForKarmaValue(value)}`,
+      `${member.displayName} ma ${value.toFixed(2)} ${pkt} karmy ${getEmojiForKarmaValue(value)}`,
     );
   },
 };
