@@ -7,18 +7,17 @@ const mdn: Command = {
   args: true,
   async execute(msg, args) {
     const query = encodeURIComponent(args.join(' '));
-    const res = await fetch(
-      `https://developer.mozilla.org/en-US/search.json?locale=en-US&highlight=false&q=${query}`
-    );
+    const res = await fetch(`https://developer.mozilla.org/api/v1/search?q=${query}&locale=en-US`);
     const data = (await res.json()) as MDNResponse;
-    if (!data.documents.length) {
-      return msg.channel.send(`Niestety nic nie znalazłam 😭`);
+
+    if (!data || !data?.documents?.length) {
+      return msg.channel.send(`Niestety nic nie znalazłem 😭`);
     }
 
     const firstDocument = data.documents[0];
     return msg.channel.send([
       firstDocument.excerpt,
-      `https://developer.mozilla.org/en-US/docs/${firstDocument.slug}`,
+      `https://developer.mozilla.org/${firstDocument.mdn_url}`,
     ]);
   },
 };
@@ -50,6 +49,7 @@ interface Document {
   tags: string[];
   score: number;
   parent: {};
+  mdn_url: string;
 }
 
 interface Filter {
