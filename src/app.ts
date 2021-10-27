@@ -117,7 +117,9 @@ client.on('messageDelete', async (msg) => {
     try {
       await revertCommand(msg);
     } catch (err) {
-      errors.push(err);
+      if (err instanceof Error) {
+        errors.push(err);
+      }
     }
   }
 
