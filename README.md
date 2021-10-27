@@ -2,7 +2,7 @@
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 
-[![All Contributors](https://img.shields.io/badge/all_contributors-4-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors-)
 
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
@@ -63,6 +63,7 @@ Thanks goes to these wonderful people:
     <td align="center"><a href="https://github.com/AndrewWelc"><img src="https://avatars.githubusercontent.com/u/78659791?s=460&u=c7f264564e80b125382a533d6d7eb5a28910cf4e&v=4" width="100px;" alt=""/><br /><sub><b>Andrew Welc</b></sub></a></td>
         <td align="center"><a href="https://github.com/Razi91"><img src="https://avatars0.githubusercontent.com/u/5995454?v=4" width="100px;" alt=""/><br /><sub><b>jkonieczny</b></sub></a></td>
     <td align="center"><a href="https://github.com/porithe"><img src="https://avatars.githubusercontent.com/u/33372728?s=460&u=ec4abd3d3b77d26aade94e105211aecc3afb5901&v=4" width="100px;" alt=""/><br /><sub><b>Porithe</b></sub></a></td>
+        <td align="center"><a href="https://github.com/AdamSiekierski"><img src="https://avatars.githubusercontent.com/u/24841038?v=4" width="100px;" alt=""/><br /><sub><b>Adam Siekierski</b></sub></a></td>
   </tr>
 </table>
 
