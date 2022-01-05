@@ -42,11 +42,11 @@ const skierowanie: Command = {
 
     const skierowanieEmbed = new Discord.MessageEmbed()
       .setColor('#5ab783')
-      .setAuthor(
-        `Type of Web oraz ${msg.author.username}`,
-        msg.author.avatarURL() ?? undefined,
-        'https://typeofweb.com',
-      )
+      .setAuthor({
+        name: `Type of Web oraz ${msg.author.username}`,
+        iconURL: msg.author.avatarURL() ?? undefined,
+        url: 'https://typeofweb.com',
+      })
       .setTitle('Skierowanie na naukę podstaw 🚑')
       .setThumbnail('https://typeofweb.com/wp-content/uploads/2020/04/logo_kwadrat11.png')
       .addField(
@@ -58,10 +58,11 @@ const skierowanie: Command = {
         `w celu lepszego zrozumienia fundamentów jej działania oraz poznania informacji niezbędnych do rozszerzania swojej wiedzy o bardziej zaawansowane zagadnienia`,
       )
       .setTimestamp()
-      .setFooter(
-        'Type of Web, Discord, Polska',
-        'https://cdn.discordapp.com/avatars/574682557988470825/6b0fab28093e6020f497fda41bdd3219.png?size=64',
-      );
+      .setFooter({
+        text: 'Type of Web, Discord, Polska',
+        iconURL:
+          'https://cdn.discordapp.com/avatars/574682557988470825/6b0fab28093e6020f497fda41bdd3219.png?size=64',
+      });
 
     const categoryFilter = args[1]?.toLowerCase();
     const linksFiltered = categoryFilter
@@ -75,8 +76,7 @@ const skierowanie: Command = {
       linksFiltered.map((l) => l.url).join('\n'),
     );
 
-    await msg.channel.send(skierowanieEmbed);
-    return msg.channel.send(linksEmbed);
+    return msg.channel.send({ embeds: [skierowanieEmbed, linksEmbed] });
   },
 };
 

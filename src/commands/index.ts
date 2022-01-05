@@ -25,7 +25,6 @@ import server from './server';
 import skierowanie from './skierowanie';
 import spotify from './spotify';
 import stats from './stats';
-import typeofweb from './towarticle';
 import wiki from './wiki';
 import xd from './xd';
 import yesno from './yesno';
@@ -54,7 +53,6 @@ const allCommands = [
   skierowanie,
   spotify,
   stats,
-  typeofweb,
   wiki,
   xd,
   yesno,
@@ -83,8 +81,8 @@ function verifyCooldown(msg: Discord.Message, command: Command) {
     const expirationTime = timestamps.get(msg.author.id)! + cooldownAmount;
 
     if (now < expirationTime) {
-      const member = msg.guild.member(msg.author);
-      if (member?.hasPermission(PERMISSION_TO_OVERRIDE_COOLDOWN)) {
+      const member = msg.guild.members.resolve(msg.author);
+      if (member?.permissions.has(PERMISSION_TO_OVERRIDE_COOLDOWN)) {
         return;
       }
 
@@ -105,7 +103,7 @@ function printHelp(msg: Discord.Message, member: Discord.GuildMember) {
       return a.name.localeCompare(b.name);
     })
     .filter((command) => {
-      if (command.permissions && !member.hasPermission(command.permissions)) {
+      if (command.permissions && !member.permissions.has(command.permissions)) {
         return false;
       }
       return true;
@@ -116,12 +114,12 @@ function printHelp(msg: Discord.Message, member: Discord.GuildMember) {
     ...commands.map((command) => {
       return `**\`${getConfig('PREFIX')}${command.name}\`** — ${command.description}`;
     }),
-  ];
+  ].join('\n');
 
   return msg.author
-    .send(data, { split: true })
+    .send(data)
     .then(() => {
-      if (msg.channel.type === 'dm') {
+      if (msg.channel.type === 'DM') {
         return undefined;
       }
       return msg.reply('Wysłałam Ci DM ze wszystkimi komendami! 🎉');
@@ -146,7 +144,7 @@ export function handleCommand(msg: Discord.Message) {
   const [, maybeCommand, rest] = COMMAND_PATTERN.exec(msg.content) || [null, null, null];
 
   if (maybeCommand === 'help') {
-    const member = msg.guild.member(msg.author);
+    const member = msg.guild.members.resolve(msg.author);
     if (member) {
       return printHelp(msg, member);
     }
@@ -161,16 +159,16 @@ export function handleCommand(msg: Discord.Message) {
   return processCommand(msg, command, rest);
 }
 
-function processCommand(msg: Discord.Message, command: Command, rest: string | null) {
-  const member = msg.guild?.member(msg.author);
+async function processCommand(msg: Discord.Message, command: Command, rest: string | null) {
+  const member = msg.guild?.members.resolve(msg.author);
 
-  if (!member || (command.permissions && !member.hasPermission(command.permissions))) {
+  if (!member || (command.permissions && !member.permissions.has(command.permissions))) {
     return undefined; // silence is golden
   }
 
-  void msg.channel.startTyping();
+  await msg.channel.sendTyping();
 
-  if (command.guildOnly && msg.channel.type !== 'text') {
+  if (command.guildOnly && msg.channel.type !== 'GUILD_TEXT') {
     throw new InvalidUsageError(`to polecenie można wywołać tylko na kanałach.`);
   }
 

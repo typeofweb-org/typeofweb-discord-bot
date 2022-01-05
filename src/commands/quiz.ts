@@ -37,9 +37,9 @@ const quiz: Command = {
 
     const shuffled = randomizeArray(questions);
     const selected = shuffled.slice(0, Number(amount));
-    const resQuestions = selected.map(
-      (item, index) => `**Pytanie ${index + 1}:**   ${item.question}`,
-    );
+    const resQuestions = selected
+      .map((item, index) => `**Pytanie ${index + 1}:**   ${item.question}`)
+      .join('\n');
 
     return msg.channel.send(resQuestions);
   },

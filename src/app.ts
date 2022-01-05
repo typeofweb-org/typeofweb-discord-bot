@@ -1,4 +1,4 @@
-import Discord from 'discord.js';
+import Discord, { Intents } from 'discord.js';
 import MonitoRSS from 'monitorss';
 import type { ClientConfig } from 'monitorss';
 import Cache from 'node-cache';
@@ -17,7 +17,20 @@ const messageCollectorCache = new Cache({ stdTTL: MESSAGE_COLLECTOR_CACHE_S });
 const THX_TIMEOUT_S = 15 * 60;
 const thxTimeoutCache = new Cache({ stdTTL: THX_TIMEOUT_S });
 
-const client = new Discord.Client();
+const client = new Discord.Client({
+  presence: {
+    status: 'online',
+  },
+  intents: new Intents([
+    Intents.FLAGS.GUILDS,
+    Intents.FLAGS.GUILD_MEMBERS,
+    Intents.FLAGS.GUILD_MESSAGES,
+    Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
+    Intents.FLAGS.GUILD_MESSAGE_TYPING,
+    Intents.FLAGS.GUILD_PRESENCES,
+    Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
+  ]),
+});
 
 const settings: { readonly setPresence: boolean; readonly config: ClientConfig } = {
   setPresence: true,
@@ -50,12 +63,14 @@ client.on('ready', () => {
 // eslint-disable-next-line functional/prefer-readonly-type
 const errors: Error[] = [];
 client.on('error', (error) => {
+  console.error(error);
   errors.push(error);
 });
 
 // eslint-disable-next-line functional/prefer-readonly-type
 const warnings: string[] = [];
 client.on('warn', (warning) => {
+  console.warn(warning);
   warnings.push(warning);
 });
 
@@ -63,6 +78,7 @@ client.on('warn', (warning) => {
 const debugs: string[] = [];
 const MAX_DEBUG_LENGTH = 100;
 client.on('debug', (debug) => {
+  console.debug(debug);
   debugs.push(debug.replace(getConfig('DISCORD_BOT_TOKEN'), 'DISCORD_BOT_TOKEN'));
   if (debugs.length > MAX_DEBUG_LENGTH) {
     debugs.shift();
@@ -91,27 +107,28 @@ client.on('message', async (msg) => {
   // }
 
   if (msg.content === `(╯°□°）╯︵ ┻━┻`) {
-    return msg.channel.send(`┬─┬ノ( ◕◡◕ ノ)`);
+    await msg.channel.send(`┬─┬ノ( ◕◡◕ ノ)`);
+    return;
   }
 
   if (isCommand(msg)) {
     try {
-      const collector = msg.channel.createMessageCollector(
-        (m: Discord.Message) => m.author.id === client.user?.id,
-      );
+      const collector = msg.channel.createMessageCollector({
+        filter: (m) => m.author.id === client.user?.id,
+      });
       await handleCommand(msg);
       const ids = collector.collected.map((m) => m.id);
       messageCollectorCache.set(msg.id, ids);
       collector.stop();
+      return;
     } catch (err) {
       if (err instanceof InvalidUsageError) {
-        void msg.reply(err.message);
+        await msg.reply(err.message);
       } else {
         console.error(err);
-        void msg.reply('przepraszam, ale coś poszło nie tak…');
+        await msg.reply('przepraszam, ale coś poszło nie tak…');
       }
-    } finally {
-      return msg.channel.stopTyping(true);
+      return;
     }
   }
 
@@ -123,7 +140,8 @@ client.on('message', async (msg) => {
       Date.now() - THX_TIMEOUT_S * 1000
     ) {
       thxTimeoutCache.set(msg.channel.id, new Date());
-      return msg.reply('protip: napisz `@nazwa ++`, żeby komuś podziękować!');
+      await msg.reply('protip: napisz `@nazwa ++`, żeby komuś podziękować!');
+      return;
     }
   }
 
@@ -158,7 +176,7 @@ async function updateMessagesCount(
 }
 
 function revertCommand(msg: Discord.Message) {
-  if (!messageCollectorCache.has(msg.id) || msg.channel.type === 'dm') {
+  if (!messageCollectorCache.has(msg.id) || msg.channel.type === 'DM') {
     return undefined;
   }
   // eslint-disable-next-line functional/prefer-readonly-type
@@ -177,7 +195,7 @@ client.on('messageDelete', async (msg) => {
     try {
       await revertCommand(message);
     } catch (err) {
-      errors.push(err);
+      errors.push(err instanceof Error ? err : new Error(String(err)));
     }
   }
 

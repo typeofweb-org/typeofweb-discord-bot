@@ -159,11 +159,11 @@ export function writeResponse(result: ExecutionResult): string {
         )}\n`;
   const codeResult =
     `Wynik (${result.time ?? 0} ms): ` +
-    wrapText(parseArg(result.result).substr(0, MAX_RESULT_CHARACTERS), 'json');
+    wrapText(parseArg(result.result).slice(0, MAX_RESULT_CHARACTERS), 'json');
   return stdoutText + codeResult;
 }
 
-const errorMessage = (error: Error | string) =>
+const errorMessage = (error: unknown) =>
   `Błąd: ${String(error)}\n` +
   'Poprawna składnia to:\n ' +
   '> !execute \\`\\`\\`js\n' +

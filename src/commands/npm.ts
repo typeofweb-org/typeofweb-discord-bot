@@ -24,7 +24,9 @@ const npm: Command = {
       ':';
 
     const topDocuments = objects.slice(0, MAX_RESULTS_NUMBER);
-    return msg.channel.send([message, ...topDocuments.map((doc) => doc.package.links.npm)]);
+    return msg.channel.send(
+      [message, ...topDocuments.map((doc) => doc.package.links.npm)].join('\n'),
+    );
   },
 };
 

@@ -26,7 +26,7 @@ const yesno: Command = {
       .setImage(image)
       .setColor(answerToColor[answer]);
 
-    return msg.channel.send(answerEmbed);
+    return msg.channel.send({ embeds: [answerEmbed] });
   },
 };
 
