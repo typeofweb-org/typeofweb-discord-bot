@@ -1,9 +1,7 @@
 # Type of Web Discord Bot
 
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-
-[![All Contributors](https://img.shields.io/badge/all_contributors-15-orange.svg?style=flat-square)](#contributors-)
-
+[![All Contributors](https://img.shields.io/badge/all_contributors-16-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ## Getting Started
@@ -82,6 +80,9 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     <td align="center"><a href="https://github.com/kbkk"><img src="https://avatars.githubusercontent.com/u/6276426?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Jakub Kisielewski</b></sub></a><br /><a href="https://github.com/typeofweb/typeofweb-discord-bot/commits?author=kbkk" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/drillprop"><img src="https://avatars.githubusercontent.com/u/51168865?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Bartosz Dryl</b></sub></a><br /><a href="https://github.com/typeofweb/typeofweb-discord-bot/commits?author=drillprop" title="Code">💻</a></td>
     <td align="center"><a href="https://jundymek.com/"><img src="https://avatars.githubusercontent.com/u/24244872?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Łukasz Dymek</b></sub></a><br /><a href="https://github.com/typeofweb/typeofweb-discord-bot/commits?author=jundymek" title="Code">💻</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/kamiloox"><img src="https://avatars.githubusercontent.com/u/45523480?v=4?s=100" width="100px;" alt=""/><br /><sub><b>kamiloox</b></sub></a><br /><a href="https://github.com/typeofweb/typeofweb-discord-bot/commits?author=kamiloox" title="Code">💻</a></td>
   </tr>
 </table>
 
