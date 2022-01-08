@@ -13,12 +13,8 @@ const TYPE_OF_WEB_GUILD_ID = '440163731704643589';
 
 const ROLE_NAME = 'top';
 
-type Guild = Discord.Guild | undefined;
-
-type Role = Discord.Role | undefined;
-
-const createKarmaRole = async (guild: Guild) => {
-  await guild?.roles.create({
+const createKarmaRole = (guild: Discord.Guild) => {
+  return guild.roles.create({
     data: {
       name: ROLE_NAME,
       color: 'DARK_VIVID_PINK',
@@ -26,37 +22,28 @@ const createKarmaRole = async (guild: Guild) => {
   });
 };
 
-const fetchKarmaRole = async (guild: Guild) => {
-  return guild && (await guild?.roles.fetch()).cache.find((role) => role.name === ROLE_NAME);
+const fetchKarmaRole = async (guild: Discord.Guild) => {
+  return (await guild.roles.fetch()).cache.find((role) => role.name === ROLE_NAME);
 };
 
-const getKarmaRole = async (guild: Guild) => {
+const getKarmaRole = async (guild: Discord.Guild) => {
   const role = await fetchKarmaRole(guild);
 
-  if (!role) await createKarmaRole(guild);
-  else return role;
-  return await fetchKarmaRole(guild);
+  if (role) return role;
+  else return createKarmaRole(guild);
 };
 
-const giveRole = async (guild: Guild, role: Role, memberId: string) => {
-  try {
-    const member = await guild?.members.fetch(memberId);
-    if (!member) console.error(`Member with id ${memberId} doesn't exists!`);
-    if (!role) console.error(`Role for karma doesn't exists`);
-    else await member?.roles.add(role);
-  } catch (err) {
-    console.error(`Could not assign member with id ${memberId} a role ${ROLE_NAME};`, err);
+const giveRole = async (guild: Discord.Guild, role: Discord.Role, memberId: string) => {
+  const member = await guild.members.fetch(memberId);
+  if (!member) {
+    return console.error(`Member with id ${memberId} doesn't exists!`);
   }
+
+  return member.roles.add(role);
 };
 
-const removeRole = async (member: Discord.GuildMember, role: Role) => {
-  if (!role) return console.error(`Role for karma doesn't exists`);
-
-  try {
-    await member.roles.remove(role.id);
-  } catch (err) {
-    console.error(`Could not remove member with id ${member.id} a role ${ROLE_NAME}`, err);
-  }
+const removeRole = (member: Discord.GuildMember, role: Discord.Role) => {
+  return member.roles.remove(role.id);
 };
 
 const getBestMembers = async (fromDate: Date, toDate?: Date) => {
@@ -75,17 +62,21 @@ const getBestMembers = async (fromDate: Date, toDate?: Date) => {
   return agg;
 };
 
-const assignMembersRoles = async (guild: Guild, role: Role) => {
+const assignMembersRoles = async (guild: Discord.Guild, role: Discord.Role) => {
   const startDate = offsetDateByWeeks(new Date(), 2);
   const bestKarmaMembers = await getBestMembers(startDate);
 
-  await Promise.all(bestKarmaMembers.map(({ _id }) => giveRole(guild, role, _id)));
+  return Promise.all(bestKarmaMembers.map(({ _id }) => giveRole(guild, role, _id)));
 };
 
-const removeMembersRoles = async (role: Role) => {
-  const membersWithRole = role?.members;
+const removeMembersRoles = (role: Discord.Role) => {
+  const membersWithRole = role.members;
 
-  if (membersWithRole) await Promise.all(membersWithRole.map((member) => removeRole(member, role)));
+  if (membersWithRole) {
+    return Promise.all(membersWithRole.map((member) => removeRole(member, role)));
+  } else {
+    return console.error(`Members with role doesn't exists!`);
+  }
 };
 
 const reassignRoles = async () => {
@@ -93,10 +84,18 @@ const reassignRoles = async () => {
   await client.login(getConfig('DISCORD_BOT_TOKEN'));
   const guild = client.guilds.cache.get(TYPE_OF_WEB_GUILD_ID);
 
+  if (!guild) return console.error(`Guild with id ${TYPE_OF_WEB_GUILD_ID} doesn't exists!`);
+
   const karmaRole = await getKarmaRole(guild);
 
-  await removeMembersRoles(karmaRole);
-  await assignMembersRoles(guild, karmaRole);
+  if (!karmaRole) return console.error(`Karma role doesn't exists!`);
+
+  try {
+    await removeMembersRoles(karmaRole);
+    await assignMembersRoles(guild, karmaRole);
+  } catch (err) {
+    console.error('Could not reassign roles for best members', err);
+  }
 };
 
 void reassignRoles();
