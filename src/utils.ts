@@ -24,3 +24,12 @@ export function getDateForWeekNumber(year: number, weekNo: number): Date {
   const yearStart = new Date(year, 0, 1);
   return new Date((weekNo * 7 - 1) * 86400000 + Number(yearStart));
 }
+
+// Offset date by n weeks: e.g offsetDateByWeek(new Date(), 2) will return current date minus two weeks
+export const offsetDateByWeeks = (d: Date, weeks: number): Date => {
+  const offsetDate = new Date(d);
+  const daysCount = weeks * 7;
+  offsetDate.setDate(offsetDate.getDate() - daysCount);
+
+  return offsetDate;
+};

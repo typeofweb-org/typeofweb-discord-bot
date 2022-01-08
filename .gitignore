@@ -64,7 +64,6 @@ jspm_packages/
 
 # dotenv environment variables file
 .env
-.env.dev
 
 package-lock.json
 *.tsbuildinfo

@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+require('dotenv').config({ path: '.env' });
+
 export function getConfig(name: 'ENV'): 'production' | 'staging' | 'development' | 'test';
 export function getConfig(name: 'NODE_ENV'): 'production' | 'development';
 export function getConfig(name: string): string;
