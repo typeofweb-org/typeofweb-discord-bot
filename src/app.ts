@@ -10,6 +10,7 @@ import { createHttpServer } from './http-server';
 import { InvalidUsageError } from './types';
 import { getWeekNumber } from './utils';
 import { getStatsCollection, initDb } from './db';
+import { updateKarmaRoles } from './cron/roles';
 
 const MESSAGE_COLLECTOR_CACHE_S = 60 * 60;
 const messageCollectorCache = new Cache({ stdTTL: MESSAGE_COLLECTOR_CACHE_S });
@@ -195,6 +196,17 @@ init().catch((err) => errors.push(err));
 
 const httpServer = createHttpServer(client, errors, warnings, debugs);
 
+const updateRoles = () => {
+  updateKarmaRoles()
+    .then(() => console.log(`Successfully updated roles`))
+    .catch((err) => errors.push(err));
+};
+
 httpServer.listen(getConfig('PORT'), () => {
   console.log(`Server running!`);
+
+  updateRoles();
+  setInterval(() => {
+    updateRoles();
+  }, 1000 * 60 * 60 * 24 * 1);
 });

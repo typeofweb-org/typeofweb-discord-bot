@@ -85,7 +85,7 @@ const removeMembersRoles = (role: Discord.Role) => {
   return;
 };
 
-const updateKarmaRoles = async () => {
+export const updateKarmaRoles = async () => {
   const client = new Discord.Client();
   await client.login(getConfig('DISCORD_BOT_TOKEN'));
 
@@ -95,10 +95,3 @@ const updateKarmaRoles = async () => {
   await removeMembersRoles(karmaRole);
   await assignMembersRoles(guild, karmaRole);
 };
-
-updateKarmaRoles()
-  .then(() => process.exit(0))
-  .catch((err) => {
-    console.error(err);
-    process.exit(1);
-  });
