@@ -73,6 +73,8 @@ const assignMembersRoles = async (guild: Discord.Guild, role: Discord.Role) => {
   const startDate = offsetDateByWeeks(new Date(), 2);
   const bestKarmaMembers = await getBestMembers(startDate);
 
+  console.log(bestKarmaMembers);
+
   return Promise.all(bestKarmaMembers.map(({ _id }) => giveRole(guild, role, _id)));
 };
 

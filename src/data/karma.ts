@@ -8,7 +8,7 @@ export type KarmaAgg = {
   readonly value: number;
 };
 
-const RATE_OF_DECAY = 1000 * 60 * 60 * 24 * (365 / 2); // half every half a year
+const RATE_OF_DECAY = 1000 * 60 * 60 * 24 * (365 / 4); // half every quarter
 
 const karmaAggregateGroup = [
   {
