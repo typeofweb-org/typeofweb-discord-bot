@@ -10,7 +10,7 @@ interface MemberTotalKarma {
 }
 
 const TYPE_OF_WEB_GUILD_ID = '440163731704643589';
-const ROLE_NAME = 'top';
+const ROLE_NAME = 'AKTYWNI';
 
 const createKarmaRole = (guild: Discord.Guild) => {
   return guild.roles.create({
@@ -18,13 +18,14 @@ const createKarmaRole = (guild: Discord.Guild) => {
       name: ROLE_NAME,
       color: 'DARK_VIVID_PINK',
       mentionable: false,
+      hoist: true,
     },
     reason: 'Most active',
   });
 };
 
 const fetchKarmaRole = async (guild: Discord.Guild) => {
-  const roles = await guild.roles.fetch();
+  const roles = await guild.roles.fetch(undefined, false);
   return roles.cache.find((role) => role.name === ROLE_NAME);
 };
 
@@ -43,10 +44,12 @@ const giveRole = async (guild: Discord.Guild, role: Discord.Role, memberId: stri
     return;
   }
 
+  console.debug(`Adding role ${role.name} to member ${member.displayName}!`);
   return member.roles.add(role);
 };
 
 const removeRole = (member: Discord.GuildMember, role: Discord.Role) => {
+  console.debug(`Removing role ${role.name} from member ${member.displayName}!`);
   return member.roles.remove(role.id);
 };
 
@@ -93,4 +96,9 @@ const updateKarmaRoles = async () => {
   await assignMembersRoles(guild, karmaRole);
 };
 
-updateKarmaRoles().catch(console.error);
+updateKarmaRoles()
+  .then(() => process.exit(0))
+  .catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
