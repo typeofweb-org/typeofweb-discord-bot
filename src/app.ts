@@ -11,6 +11,7 @@ import { InvalidUsageError } from './types';
 import { getWeekNumber } from './utils';
 import { getStatsCollection, initDb } from './db';
 import { updateKarmaRoles } from './cron/roles';
+import { messageToReflinks } from './commands/reflink';
 
 const MESSAGE_COLLECTOR_CACHE_S = 60 * 60;
 const messageCollectorCache = new Cache({ stdTTL: MESSAGE_COLLECTOR_CACHE_S });
@@ -118,6 +119,11 @@ client.on('message', async (msg) => {
 
   void updateMessagesCount(msg.member?.id, msg.member?.displayName).catch(console.error);
 
+  const maybeReflinks = messageToReflinks(msg.content);
+  if (maybeReflinks.length > 0) {
+    return msg.reply(maybeReflinks);
+  }
+
   if (/thx|thank|dzięki|dziękuję|dzieki|dziekuje/i.test(msg.content)) {
     if (
       (thxTimeoutCache.get<Date>(msg.channel.id)?.getTime() ?? 0) <
@@ -187,9 +193,11 @@ client.on('messageDelete', async (msg) => {
 
 async function init() {
   await client.login(getConfig('DISCORD_BOT_TOKEN'));
-  const rssClient = new MonitoRSS.ClientManager(settings);
-  await new Promise((resolve) => rssClient.start(() => resolve(undefined)));
-  console.log('MonitoRSS started!');
+  if (process.env.NODE_ENV === 'production') {
+    const rssClient = new MonitoRSS.ClientManager(settings);
+    await new Promise((resolve) => rssClient.start(() => resolve(undefined)));
+    console.log('MonitoRSS started!');
+  }
 }
 
 init().catch((err) => errors.push(err));
