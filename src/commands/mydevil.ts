@@ -6,7 +6,7 @@ const mydevil: Command = {
   description: 'Wyświetla link do MyDevil.',
   args: false,
   execute(msg: Discord.Message) {
-    return msg.channel.send(`http://www.mydevil.net/pp/9UVOSJRZIV`);
+    return msg.channel.send(`https://www.mydevil.net/pp/9UVOSJRZIV`);
   },
 };
 
