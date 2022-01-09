@@ -37,13 +37,7 @@ const fetchOrCreateKarmaRole = async (guild: Discord.Guild) => {
   return role;
 };
 
-const giveRole = async (guild: Discord.Guild, role: Discord.Role, memberId: string) => {
-  const member = await guild.members.fetch(memberId);
-  if (!member) {
-    console.error(`Member with id ${memberId} doesn't exists!`);
-    return;
-  }
-
+const giveRole = async (member: Discord.GuildMember, role: Discord.Role) => {
   console.debug(`Adding role ${role.name} to member ${member.displayName}!`);
   return member.roles.add(role);
 };
@@ -53,11 +47,14 @@ const removeRole = (member: Discord.GuildMember, role: Discord.Role) => {
   return member.roles.remove(role.id);
 };
 
-const getBestMembers = async (fromDate: Date, toDate = new Date()) => {
+const getBestKarmaMemberIds = async (
+  fromDate = offsetDateByWeeks(new Date(), 2),
+  toDate = new Date(),
+) => {
   const db = await initDb();
   const karmaCollection = getKarmaCollection(db);
 
-  const agg = karmaCollection
+  const agg = await karmaCollection
     .aggregate<MemberTotalKarma>([
       { $match: { createdAt: { $gte: fromDate, $lte: toDate } } },
       { $group: { _id: '$to', total: { $sum: '$value' } } },
@@ -69,22 +66,21 @@ const getBestMembers = async (fromDate: Date, toDate = new Date()) => {
   return agg;
 };
 
-const assignMembersRoles = async (guild: Discord.Guild, role: Discord.Role) => {
-  const startDate = offsetDateByWeeks(new Date(), 2);
-  const bestKarmaMembers = await getBestMembers(startDate);
+const getBestMembers = async (guild: Discord.Guild) => {
+  const ids = await getBestKarmaMemberIds();
 
-  console.log(bestKarmaMembers);
-
-  return Promise.all(bestKarmaMembers.map(({ _id }) => giveRole(guild, role, _id)));
+  return Promise.all(ids.map(({ _id }) => guild.members.fetch(_id)));
 };
 
-const removeMembersRoles = (role: Discord.Role) => {
-  if (role.members.size > 0) {
-    return Promise.all(role.members.map((member) => removeRole(member, role)));
-  }
+const assignMembersRoles = async (members: Discord.GuildMember[], role: Discord.Role) => {
+  return Promise.all(members.map((member) => giveRole(member, role)));
+};
 
-  console.error(`Members with role don't exists!`);
-  return;
+const removeMembersRoles = (
+  members: Discord.Collection<string, Discord.GuildMember>,
+  role: Discord.Role,
+) => {
+  return Promise.all(members.map((member) => removeRole(member, role)));
 };
 
 export const updateKarmaRoles = async () => {
@@ -92,8 +88,20 @@ export const updateKarmaRoles = async () => {
   await client.login(getConfig('DISCORD_BOT_TOKEN'));
 
   const guild = await client.guilds.fetch(TYPE_OF_WEB_GUILD_ID);
-  const karmaRole = await fetchOrCreateKarmaRole(guild);
+  const [karmaRole, bestKarmaMembers] = await Promise.all([
+    fetchOrCreateKarmaRole(guild),
+    getBestMembers(guild),
+  ]);
 
-  await removeMembersRoles(karmaRole);
-  await assignMembersRoles(guild, karmaRole);
+  const currentKarmaMembers = karmaRole.members;
+
+  const membersToRemove = currentKarmaMembers.filter(
+    (m) => !bestKarmaMembers.find((bm) => bm.id === m.id),
+  );
+  const membersToAdd = bestKarmaMembers.filter(
+    (bm) => !currentKarmaMembers.find((m) => m.id === bm.id),
+  );
+
+  await removeMembersRoles(membersToRemove, karmaRole);
+  await assignMembersRoles(membersToAdd, karmaRole);
 };
