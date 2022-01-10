@@ -10,8 +10,9 @@ import { createHttpServer } from './http-server';
 import { InvalidUsageError } from './types';
 import { getWeekNumber } from './utils';
 import { getStatsCollection, initDb } from './db';
-import { updateKarmaRoles } from './cron/roles';
 import { messageToReflinks } from './commands/reflink';
+import { updateKarmaRoles } from './cron/karma';
+import { updateStatsRoles } from './cron/stats';
 
 const MESSAGE_COLLECTOR_CACHE_S = 60 * 60;
 const messageCollectorCache = new Cache({ stdTTL: MESSAGE_COLLECTOR_CACHE_S });
@@ -193,6 +194,17 @@ client.on('messageDelete', async (msg) => {
 
 async function init() {
   await client.login(getConfig('DISCORD_BOT_TOKEN'));
+
+  // Auto assign roles
+  {
+    const TYPE_OF_WEB_GUILD_ID = '440163731704643589';
+    const guild = await client.guilds.fetch(TYPE_OF_WEB_GUILD_ID);
+    updateRoles(guild);
+    setInterval(() => {
+      updateRoles(guild);
+    }, 1000 * 60 * 60 * 24 * 1);
+  }
+
   if (process.env.NODE_ENV === 'production') {
     const rssClient = new MonitoRSS.ClientManager(settings);
     await new Promise((resolve) => rssClient.start(() => resolve(undefined)));
@@ -204,17 +216,15 @@ init().catch((err) => errors.push(err));
 
 const httpServer = createHttpServer(client, errors, warnings, debugs);
 
-const updateRoles = () => {
-  updateKarmaRoles()
+const updateRoles = (guild: Discord.Guild) => {
+  updateKarmaRoles(guild)
+    .then(() => console.log(`Successfully updated roles`))
+    .catch((err) => errors.push(err));
+  updateStatsRoles(guild)
     .then(() => console.log(`Successfully updated roles`))
     .catch((err) => errors.push(err));
 };
 
 httpServer.listen(getConfig('PORT'), () => {
   console.log(`Server running!`);
-
-  updateRoles();
-  setInterval(() => {
-    updateRoles();
-  }, 1000 * 60 * 60 * 24 * 1);
 });
