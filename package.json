@@ -23,6 +23,7 @@
   "author": "Michał Miszczyszyn <michal@mmiszy.pl> (https://typeofweb.com/)",
   "license": "ISC",
   "dependencies": {
+    "algoliasearch": "4.12.0",
     "bufferutil": "4.0.3",
     "discord.js": "12.5.3",
     "dotenv": "10.0.0",
