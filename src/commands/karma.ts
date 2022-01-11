@@ -1,10 +1,14 @@
 import Discord from 'discord.js';
 import { polishPlurals } from 'polish-plurals';
 
-import { getEmojiForKarmaValue, getKarmaForMember } from '../data/karma';
+import {
+  getEmojiForKarmaValue,
+  getKarmaForMember,
+  getKarmaForMembers,
+  KarmaAgg,
+} from '../data/karma';
 import { getKarmaCollection, initDb } from '../db';
 import type { Command } from '../types';
-import { InvalidUsageError } from '../types';
 
 export const KARMA_REGEX = new RegExp(
   `^${Discord.MessageMentions.USERS_PATTERN.source}\\s*\\+\\+\\s*(?<description>.*)$`,
@@ -52,22 +56,37 @@ const addKarma: Command = {
 const karma: Command = {
   name: 'karma',
   description: 'Sprawdź ile kto ma pkt. karmy.',
-  args: true,
+  args: false,
   async execute(msg) {
     const member = await msg.mentions.members?.first()?.fetch();
-    if (!member) {
-      throw new InvalidUsageError(`Podaj nazwę użytkownika.`);
-    }
 
     const db = await initDb();
-    const agg = await getKarmaForMember(member.id, db);
-    const value = agg?.value ?? 0;
 
-    const pkt = polishPlurals('punkt', 'punkty', 'punktów', value);
+    if (member) {
+      const agg = await getKarmaForMember(member.id, db);
+      const value = agg?.value ?? 0;
 
-    return msg.channel.send(
-      `${member.displayName} ma ${value.toFixed(2)} ${pkt} karmy ${getEmojiForKarmaValue(value)}`,
-    );
+      const pkt = polishPlurals('punkt', 'punkty', 'punktów', value);
+
+      return msg.channel.send(
+        `${member.displayName} ma ${value.toFixed(2)} ${pkt} karmy ${getEmojiForKarmaValue(value)}`,
+      );
+    } else {
+      const agg = await getKarmaForMembers(db);
+      const data = agg.filter((el): el is KarmaAgg => !!el);
+      await Promise.allSettled(data.map(({ _id: memberId }) => msg.guild?.members.fetch(memberId)));
+
+      const messages = [
+        `**TOP 10 karma**`,
+        ...data.map(({ _id: memberId, value }, index) => {
+          return `\`${(index + 1).toString().padStart(2, ' ')}\`. ${
+            msg.guild?.members.cache.get(memberId)?.displayName ?? ''
+          } – ${value.toFixed(2)} ${getEmojiForKarmaValue(value)}`;
+        }),
+      ];
+
+      return msg.channel.send(messages.join('\n'));
+    }
   },
 };
 
