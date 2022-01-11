@@ -17,7 +17,6 @@ const proxyExistenceMutating = <T extends object>(obj: T, prefix = ''): T => {
     }
   }
   return new Proxy(obj, {
-    // tslint:disable-next-line: no-any
     get(o: any, prop: string) {
       if (prop in o) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
@@ -35,7 +34,6 @@ const proxyExistenceMutating = <T extends object>(obj: T, prefix = ''): T => {
   });
 };
 
-// tslint:disable-next-line: no-any
 export const getMessageMock = <T extends Message>(
   name: string,
   params: { readonly [K in keyof T]?: any } = {},

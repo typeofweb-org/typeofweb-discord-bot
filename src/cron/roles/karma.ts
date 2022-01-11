@@ -1,7 +1,7 @@
 import Discord from 'discord.js';
-import { initDb, getKarmaCollection } from '../db';
-import { offsetDateByWeeks } from '../utils';
-import { fetchOrCreateRole, updateRoles } from './roles';
+import { initDb, getKarmaCollection } from '../../db';
+import { offsetDateByWeeks } from '../../utils';
+import { fetchOrCreateRole, updateRoles } from '.';
 
 const TOP_KARMA_ROLE_NAME = 'POMOCNI';
 
@@ -14,7 +14,7 @@ const createKarmaRole = (guild: Discord.Guild) => {
   return guild.roles.create({
     data: {
       name: TOP_KARMA_ROLE_NAME,
-      color: 'DARK_VIVID_PINK',
+      color: 'BLUE',
       mentionable: false,
       hoist: true,
     },
@@ -35,6 +35,7 @@ const getBestKarmaMemberIds = async (
       { $group: { _id: '$to', total: { $sum: '$value' } } },
       { $sort: { total: -1 } },
       { $limit: 10 },
+      { $match: { total: { $gt: 0 } } },
     ])
     .toArray();
 

@@ -6,5 +6,6 @@
   "eslint.run": "onSave",
   "editor.codeActionsOnSave": {
     // "source.fixAll": true
-  }
+  },
+  "typescript.preferences.importModuleSpecifier": "relative"
 }

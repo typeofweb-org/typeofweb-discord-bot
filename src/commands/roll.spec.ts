@@ -1,6 +1,5 @@
 /* eslint no-implicit-dependencies: "off" */
 /* eslint no-magic-numbers: "off" */
-/* tslint:disable:no-implicit-dependencies no-magic-numbers */
 import { expect } from 'chai';
 import 'mocha';
 
@@ -53,12 +52,12 @@ describe('roll', () => {
   describe('handleCommand', () => {
     it('should reply', async () => {
       const msg = getMessageMock('msg');
-      await roll.execute((msg as unknown) as Discord.Message, ['4d6']);
+      await roll.execute(msg as unknown as Discord.Message, ['4d6']);
       await expect(msg.channel.send).to.have.been.calledOnce;
     });
     it('reply instruction on fail', async () => {
       const msg = getMessageMock('msg');
-      await roll.execute((msg as unknown) as Discord.Message, ['3k5']);
+      await roll.execute(msg as unknown as Discord.Message, ['3k5']);
       await expect(msg.channel.send).to.have.been.calledOnceWith(instruction);
     });
   });

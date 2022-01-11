@@ -11,14 +11,12 @@ import { InvalidUsageError } from './types';
 import { getWeekNumber } from './utils';
 import { getStatsCollection, initDb } from './db';
 import { messageToReflinks } from './commands/reflink';
-import { updateKarmaRoles } from './cron/karma';
-import { updateStatsRoles } from './cron/stats';
+import { updateKarmaRoles } from './cron/roles/karma';
+import { updateStatsRoles } from './cron/roles/stats';
+import { thx } from './thx';
 
 const MESSAGE_COLLECTOR_CACHE_S = 60 * 60;
 const messageCollectorCache = new Cache({ stdTTL: MESSAGE_COLLECTOR_CACHE_S });
-
-const THX_TIMEOUT_S = 15 * 60;
-const thxTimeoutCache = new Cache({ stdTTL: THX_TIMEOUT_S });
 
 const client = new Discord.Client();
 
@@ -125,15 +123,7 @@ client.on('message', async (msg) => {
     return msg.reply(maybeReflinks);
   }
 
-  if (/thx|thank|dzięki|dziękuję|dzieki|dziekuje/i.test(msg.content)) {
-    if (
-      (thxTimeoutCache.get<Date>(msg.channel.id)?.getTime() ?? 0) <
-      Date.now() - THX_TIMEOUT_S * 1000
-    ) {
-      thxTimeoutCache.set(msg.channel.id, new Date());
-      return msg.reply('protip: napisz `@nazwa ++`, żeby komuś podziękować!');
-    }
-  }
+  await thx(msg);
 
   return;
 });
@@ -216,13 +206,14 @@ init().catch((err) => errors.push(err));
 
 const httpServer = createHttpServer(client, errors, warnings, debugs);
 
-const updateRoles = (guild: Discord.Guild) => {
-  updateKarmaRoles(guild)
-    .then(() => console.log(`Successfully updated roles`))
-    .catch((err) => errors.push(err));
-  updateStatsRoles(guild)
-    .then(() => console.log(`Successfully updated roles`))
-    .catch((err) => errors.push(err));
+const updateRoles = async (guild: Discord.Guild) => {
+  try {
+    await updateStatsRoles(guild);
+    await updateKarmaRoles(guild);
+    console.log(`Updated roles`);
+  } catch (err) {
+    errors.push(err);
+  }
 };
 
 httpServer.listen(getConfig('PORT'), () => {

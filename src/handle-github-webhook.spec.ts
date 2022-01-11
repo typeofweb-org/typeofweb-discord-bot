@@ -1,5 +1,4 @@
 /* eslint no-magic-numbers: "off" */
-/* tslint:disable:no-implicit-dependencies no-magic-numbers no-let no-duplicate-imports */
 
 import * as crypto from 'crypto';
 import type Http from 'http';
