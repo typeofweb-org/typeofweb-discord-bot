@@ -1,6 +1,3 @@
-/* eslint no-implicit-dependencies: "off" */
-/* eslint no-magic-numbers: "off" */
-
 import nock from 'nock';
 import Chai, { expect } from 'chai';
 

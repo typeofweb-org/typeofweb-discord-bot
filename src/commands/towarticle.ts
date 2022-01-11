@@ -11,7 +11,7 @@ const PER_PAGE = 3;
 const typeofweb: Command = {
   name: 'typeofweb',
   description: 'Wyszukuje artykuły z Type of Web',
-  args: true,
+  args: 'required',
   async execute(msg, args) {
     const ALGOLIA_APP_ID = getConfig('ALGOLIA_APP_ID');
     const ALGOLIA_API_KEY = getConfig('ALGOLIA_API_KEY');

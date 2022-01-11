@@ -1,5 +1,3 @@
-/* eslint no-magic-numbers: "off" */
-
 import { expect } from 'chai';
 import * as Discord from 'discord.js';
 
@@ -19,7 +17,7 @@ describe('skierowanie', () => {
   it('it should send two messages', async () => {
     const msg = getMessageMock('msg', { author: mockAuthor });
 
-    await skierowanie.execute((msg as unknown) as Discord.Message, ['user']);
+    await skierowanie.execute(msg as unknown as Discord.Message, ['user']);
 
     return expect(msg.channel.send).to.have.been.calledTwice;
   });
@@ -27,7 +25,7 @@ describe('skierowanie', () => {
   it('it should send the links for the passed category', async () => {
     const msg = getMessageMock('msg', { author: mockAuthor });
 
-    await skierowanie.execute((msg as unknown) as Discord.Message, ['user', 'react']);
+    await skierowanie.execute(msg as unknown as Discord.Message, ['user', 'react']);
 
     const linksMessageMock = [
       'https://reactjs.org/docs',

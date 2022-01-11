@@ -14,7 +14,7 @@ const formatDate = (d: Date) =>
 const stats: Command = {
   name: 'stats',
   description: 'Stats',
-  args: false,
+  args: 'prohibited',
   permissions: 'ADMINISTRATOR',
   async execute(msg) {
     const db = await initDb();

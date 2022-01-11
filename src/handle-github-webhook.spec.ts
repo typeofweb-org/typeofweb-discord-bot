@@ -1,5 +1,3 @@
-/* eslint no-magic-numbers: "off" */
-
 import * as crypto from 'crypto';
 import type Http from 'http';
 import type { AddressInfo } from 'net';

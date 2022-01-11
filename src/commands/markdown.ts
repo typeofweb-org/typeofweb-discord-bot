@@ -30,7 +30,7 @@ const formattedMarkdownManual = [...codesToInstruction(markdownCodes), '', ...so
 const markdown: Command = {
   name: 'markdown',
   description: 'Wyświetla przykłady formatowania tekstu w Markdown.',
-  args: false,
+  args: 'prohibited',
   execute(msg: Discord.Message) {
     return msg.channel.send(formattedMarkdownManual);
   },

@@ -34,7 +34,7 @@ const links = [
 const skierowanie: Command = {
   name: 'skierowanie',
   description: 'Skierowanie na naukę podstaw (+ dobre materiały do nauki)',
-  args: true,
+  args: 'required',
   cooldown: 10,
   async execute(msg, av) {
     // Filter out the empty args (whitespaces, etc)

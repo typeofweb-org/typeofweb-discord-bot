@@ -5,7 +5,7 @@ import type { Command } from '../types';
 const server: Command = {
   name: 'server',
   description: 'Zwraca nazwę serwera.',
-  args: false,
+  args: 'prohibited',
   execute(msg: Discord.Message) {
     return msg.channel.send(`Nazwa tego serwera to: ${String(msg.guild?.name)}`);
   },

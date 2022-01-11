@@ -5,7 +5,7 @@ import fetch from 'node-fetch';
 const wiki: Command = {
   name: 'wiki',
   description: 'Zwraca pierwszy wynik wyszukiwania w wikipedii',
-  args: true,
+  args: 'required',
   async execute(msg: Discord.Message, args: string[]) {
     if (!args.length) {
       return msg.channel.send('Nie wiem czego mam szukać 🤔 \n`!wiki <query phrase>`');

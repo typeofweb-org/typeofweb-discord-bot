@@ -3,7 +3,7 @@ import { Command } from '../types';
 const m1: Command = {
   name: 'm1',
   description: 'Apple silicon m1',
-  args: false,
+  args: 'prohibited',
   cooldown: 10,
   execute(msg) {
     return msg.channel.send([

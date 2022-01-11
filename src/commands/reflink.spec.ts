@@ -1,6 +1,3 @@
-/* eslint no-implicit-dependencies: "off" */
-/* eslint no-magic-numbers: "off" */
-
 import { expect } from 'chai';
 import { helionReflink, xKomReflink } from './reflink';
 

@@ -174,7 +174,7 @@ const errorMessage = (error: Error | string) =>
 const execute: Command = {
   name: 'execute',
   description: 'Wykonuje kod JS/TS',
-  args: false,
+  args: 'prohibited',
   cooldown: COOLDOWN,
   async execute(msg: Message) {
     try {

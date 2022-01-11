@@ -35,11 +35,22 @@ export const getKarmaForMember = async (memberId: string, db: Db) => {
   return agg;
 };
 
-export const getKarmaForMembers = async (db: Db) => {
+export const getKarmaForMembers = async (db: Db, memberIds: string[]) => {
   const karmaCollection = getKarmaCollection(db);
 
   const agg = await karmaCollection
-    .aggregate<KarmaAgg | undefined>([...karmaAggregateGroup])
+    .aggregate<KarmaAgg>([{ $match: { to: { $in: memberIds } } }, ...karmaAggregateGroup])
+    .sort({ value: -1 })
+    .limit(10)
+    .toArray();
+  return agg;
+};
+
+export const getKarmaForAllMembers = async (db: Db) => {
+  const karmaCollection = getKarmaCollection(db);
+
+  const agg = await karmaCollection
+    .aggregate<KarmaAgg>([...karmaAggregateGroup])
     .sort({ value: -1 })
     .limit(10)
     .toArray();

@@ -1,6 +1,3 @@
-/* eslint no-implicit-dependencies: "off" */
-/* eslint no-magic-numbers: "off" */
-
 import wiki from './wiki';
 import { getMessageMock } from '../../test/mocks';
 import { expect } from 'chai';

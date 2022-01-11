@@ -1,6 +1,3 @@
-/* eslint no-implicit-dependencies: "off" */
-/* eslint no-magic-numbers: "off" */
-
 import prune from './prune';
 import { getMessageMock } from '../../test/mocks';
 import { expect } from 'chai';

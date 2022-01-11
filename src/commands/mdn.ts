@@ -4,7 +4,7 @@ import fetch from 'node-fetch';
 const mdn: Command = {
   name: 'mdn',
   description: 'Wyszukuje podane wyrażenia na MDN',
-  args: true,
+  args: 'required',
   async execute(msg, args) {
     const query = encodeURIComponent(args.join(' '));
     const res = await fetch(

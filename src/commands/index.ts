@@ -173,14 +173,16 @@ function processCommand(msg: Discord.Message, command: Command, rest: string | n
   }
 
   verifyCooldown(msg, command);
-
-  if (command.args === false) {
-    return command.execute(msg);
-  }
-
   const args = rest ? rest.split(/\s+/g) : [];
-  if (!args.length && command.args === true) {
+
+  if (command.args === 'optional') {
+    return command.execute(msg, args);
+  }
+  if (!args.length && command.args === 'required') {
     throw new InvalidUsageError(`nie podano argumentów!`);
+  }
+  if (args.length && command.args === 'prohibited') {
+    throw new InvalidUsageError(`argumenty niedozwolone!`);
   }
 
   return command.execute(msg, args);

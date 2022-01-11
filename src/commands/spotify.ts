@@ -7,7 +7,7 @@ import { getConfig } from '../config';
 const spotify: Command = {
   name: 'spotify',
   description: 'Pjosenkę gra.',
-  args: true,
+  args: 'required',
   async execute(msg: Discord.Message, args: string[]) {
     const secret = Buffer.from(
       `${getConfig('SPOTIFY_CLIENT_ID')}:${getConfig('SPOTIFY_SECRET')}`,

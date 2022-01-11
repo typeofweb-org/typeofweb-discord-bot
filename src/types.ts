@@ -9,7 +9,7 @@ interface CommandCommon {
 }
 
 type CommandWithArgs = {
-  readonly args: true | 'optional';
+  readonly args: 'required' | 'optional';
   execute(
     msg: Discord.Message,
     args: readonly string[],
@@ -17,7 +17,7 @@ type CommandWithArgs = {
 } & CommandCommon;
 
 type CommandWithoutArgs = {
-  readonly args: false;
+  readonly args: 'prohibited';
   execute(msg: Discord.Message): Promise<null | Discord.Message | readonly Discord.Message[]>;
 } & CommandCommon;
 

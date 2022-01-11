@@ -26,7 +26,7 @@ const ANSWERS = [
 const odpowiedz: Command = {
   name: 'odpowiedz',
   description: 'Pomoże ci wybrać odpowiedź',
-  args: false,
+  args: 'prohibited',
   execute(msg) {
     // Really randomize the answer
     const randomAnswer = randomizeArray(ANSWERS)[0];

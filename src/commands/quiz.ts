@@ -15,7 +15,7 @@ const CATEGORIES = ['html', 'css', 'js', 'angular', 'react', 'git', 'other'];
 const quiz: Command = {
   name: 'quiz',
   description: 'Odpowiedz na pytanie',
-  args: true,
+  args: 'required',
   async execute(msg, args) {
     const [category, level, amount = '1'] = args;
 

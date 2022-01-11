@@ -4,7 +4,7 @@ import { Command } from '../types';
 const mydevil: Command = {
   name: 'mydevil',
   description: 'Wyświetla link do MyDevil.',
-  args: false,
+  args: 'prohibited',
   execute(msg: Discord.Message) {
     return msg.channel.send(`https://www.mydevil.net/pp/9UVOSJRZIV`);
   },

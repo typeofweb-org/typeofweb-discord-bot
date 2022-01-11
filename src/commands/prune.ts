@@ -8,7 +8,7 @@ const prune: Command = {
   name: 'prune',
   description: 'prune?',
   permissions: 'ADMINISTRATOR',
-  args: true,
+  args: 'required',
   async execute(msg, [howMany]) {
     // tslint:disable-next-line:no-magic-numbers
     const num = Number.parseInt(howMany, 10);

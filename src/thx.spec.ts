@@ -1,6 +1,3 @@
-/* eslint no-implicit-dependencies: "off" */
-/* eslint no-magic-numbers: "off" */
-
 import { thx } from './thx';
 import { expect } from 'chai';
 import * as Discord from 'discord.js';

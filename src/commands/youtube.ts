@@ -5,7 +5,7 @@ import fetch from 'node-fetch';
 const youtube: Command = {
   name: 'youtube',
   description: 'Wyszukuje video z youtube',
-  args: true,
+  args: 'required',
   async execute(msg, args) {
     const query = encodeURIComponent(args.join(' '));
     const YOUTUBE_API_KEY = getConfig('YOUTUBE_API_KEY');

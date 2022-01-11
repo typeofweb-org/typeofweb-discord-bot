@@ -3,7 +3,7 @@ import { Command } from '../types';
 const link: Command = {
   name: 'xd',
   description: 'XD',
-  args: false,
+  args: 'prohibited',
   cooldown: 60,
   execute(msg) {
     return msg.channel.send({

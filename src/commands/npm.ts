@@ -9,7 +9,7 @@ const pluralize = (count: number) => polishPlurals('paczkę', 'paczki', 'paczek'
 const npm: Command = {
   name: 'npm',
   description: 'Wyszukuje podane wyrażenia w NPM',
-  args: true,
+  args: 'required',
   async execute(msg, args) {
     const query = encodeURIComponent(args.join(' '));
     const res = await fetch(`http://registry.npmjs.com/-/v1/search?text=${query}`);

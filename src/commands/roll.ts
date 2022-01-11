@@ -39,7 +39,7 @@ export const instruction =
 const roll: Command = {
   name: 'roll',
   description: 'Rzuca kośćmi.',
-  args: true,
+  args: 'required',
   execute(msg, args) {
     try {
       const result = rollDices(args[0]);
