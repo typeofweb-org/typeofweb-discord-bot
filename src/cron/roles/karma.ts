@@ -3,7 +3,7 @@ import { initDb, getKarmaCollection } from '../../db';
 import { offsetDateByWeeks } from '../../utils';
 import { fetchOrCreateRole, updateRoles } from '.';
 
-const TOP_KARMA_ROLE_NAME = 'POMOCNI';
+const TOP_KARMA_ROLE_NAME = '🙏 POMOCNI';
 
 interface MemberTotalKarma {
   readonly _id: string;
