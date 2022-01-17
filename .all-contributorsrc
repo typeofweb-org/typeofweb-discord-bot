@@ -166,6 +166,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "Bartek532",
+      "name": "Bartosz Zagrodzki",
+      "avatar_url": "https://avatars.githubusercontent.com/u/57185551?v=4",
+      "profile": "http://bartek532.github.io/portfolio",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 3,
