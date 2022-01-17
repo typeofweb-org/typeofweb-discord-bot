@@ -13,7 +13,7 @@ import { getKarmaCollection, initDb } from '../db';
 import type { Command } from '../types';
 
 export const KARMA_REGEX = new RegExp(
-  `^(${Discord.MessageMentions.USERS_PATTERN.source}\\s*)+\\+\\+\\s*$`,
+  `^(${Discord.MessageMentions.USERS_PATTERN.source}).*\\+\\+\\s*`,
 );
 
 const addKarma: Command = {
