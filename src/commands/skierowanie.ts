@@ -33,7 +33,7 @@ const links = [
 
 const skierowanie: Command = {
   name: 'skierowanie',
-  description: 'Skierowanie na naukę podstaw (+ dobre materiały do nauki)',
+  description: 'Skierowanie na naukę podstaw (+ dobre materiały do nauki). Składnia: `!skierowanie <uzytkownik> <technologia>`',
   args: 'required',
   cooldown: 10,
   async execute(msg, av) {
