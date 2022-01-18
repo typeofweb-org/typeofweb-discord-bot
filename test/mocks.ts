@@ -61,3 +61,12 @@ export const getMessageMock = <T extends Message>(
   };
   return proxyExistenceMutating(mockMessage, name);
 };
+
+export const getMemberMock = () => {
+  // Math.pow due to Discord.MessageMentions.USERS_PATTERN regex: <@!?(\d{17,19})>
+  const id = (Math.random() * Math.pow(10, 18)).toFixed();
+
+  const mention = `<@${id}>`;
+
+  return { id, mention };
+};
