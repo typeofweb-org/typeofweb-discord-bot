@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import type * as Discord from 'discord.js';
 import Sinon from 'sinon';
+import * as Db from '../db';
 
 import { getMessageMock, getMemberMock } from '../../test/mocks';
 
@@ -26,7 +27,38 @@ const getAddKarmaMsgMock = (from: MemberMock, membersToReward: ReadonlyArray<Mem
   return msg;
 };
 
+type DB = ReturnType<typeof Db.initDb>;
+
 describe('add karma', () => {
+  const AggregateMock = {
+    sort() {
+      return this;
+    },
+    limit() {
+      return this;
+    },
+    toArray() {
+      return [];
+    },
+  };
+
+  const CollectionMock = {
+    insertMany: Sinon.stub(),
+    aggregate: Sinon.stub().returns(AggregateMock),
+  };
+
+  const DbMock = {
+    collection: Sinon.stub().returns(CollectionMock),
+  } as unknown as DB;
+
+  beforeEach(() => {
+    Sinon.stub(Db, 'initDb').returns(Promise.resolve(DbMock));
+  });
+  afterEach(() => {
+    Sinon.reset();
+    Sinon.restore();
+  });
+
   describe('checks regex', () => {
     it('checks if one user should be given a karma', () => {
       const memberToReward = getMemberMock();
@@ -71,7 +103,10 @@ describe('add karma', () => {
 
     await addKarma.execute(msg as unknown as Discord.Message, []);
 
-    await expect(msg.channel.send).to.have.been.calledWith(Sinon.match(memberToReward.mention));
+    const arg = CollectionMock.insertMany.lastCall.firstArg[0];
+    expect(arg.from).to.eql(from.id);
+    expect(arg.to).to.eql(memberToReward.id);
+    expect(arg.value).to.eql(1);
   });
 
   it('should add karma for two users', async () => {
@@ -84,11 +119,17 @@ describe('add karma', () => {
 
     await addKarma.execute(msg as unknown as Discord.Message, []);
 
-    await expect(msg.channel.send).to.have.been.calledWith(
-      Sinon.match(firstMemberToReward.mention),
-    );
-    await expect(msg.channel.send).to.have.been.calledWith(
-      Sinon.match(secondMemberToReward.mention),
-    );
+    {
+      const arg = CollectionMock.insertMany.lastCall.firstArg[0];
+      expect(arg.from).to.eql(from.id);
+      expect(arg.to).to.eql(firstMemberToReward.id);
+      expect(arg.value).to.eql(1);
+    }
+    {
+      const arg = CollectionMock.insertMany.lastCall.firstArg[1];
+      expect(arg.from).to.eql(from.id);
+      expect(arg.to).to.eql(secondMemberToReward.id);
+      expect(arg.value).to.eql(1);
+    }
   });
 });
