@@ -21,6 +21,5 @@ export const thx = (msg: Discord.Message) => {
   }
 
   thxTimeoutCache.set(msg.channel.id, new Date());
-  console.log(msg.content);
-  return msg.reply('protip: napisz `@nazwa ++`, żeby komuś podziękować!');
+  return msg.reply('protip: napisz `@nazwa ++`, żeby komuś podziękować! Możesz podziękować kilku osobom w jednej wiadomości!');
 };

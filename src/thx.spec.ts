@@ -5,6 +5,7 @@ import { getMessageMock } from '../test/mocks';
 
 describe('thx', () => {
   let id = 0;
+  const msgReply = 'protip: napisz `@nazwa ++`, żeby komuś podziękować! Możesz podziękować kilku osobom w jednej wiadomości!';
 
   it('it should ignore random messages', async () => {
     const msg = getMessageMock('msg', { content: 'msg', channel: { id: ++id } });
@@ -12,9 +13,7 @@ describe('thx', () => {
 
     await thx(msg as unknown as Discord.Message);
 
-    expect(msg.reply).not.to.have.been.calledOnceWith(
-      'protip: napisz `@nazwa ++`, żeby komuś podziękować!',
-    );
+    expect(msg.reply).not.to.have.been.calledOnceWith(msgReply);
   });
 
   it('it should respond to thanks', async () => {
@@ -23,9 +22,7 @@ describe('thx', () => {
 
     await thx(msg as unknown as Discord.Message);
 
-    expect(msg.reply).to.have.been.calledOnceWith(
-      'protip: napisz `@nazwa ++`, żeby komuś podziękować!',
-    );
+    expect(msg.reply).to.have.been.calledOnceWith(msgReply);
   });
 
   [
@@ -42,9 +39,7 @@ describe('thx', () => {
       msg.reply.resolves();
       await thx(msg as unknown as Discord.Message);
 
-      expect(msg.reply).not.to.have.been.calledOnceWith(
-        'protip: napisz `@nazwa ++`, żeby komuś podziękować!',
-      );
+      expect(msg.reply).not.to.have.been.calledOnceWith(msgReply);
     }),
   );
 });
