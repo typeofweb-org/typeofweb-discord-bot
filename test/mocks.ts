@@ -63,8 +63,7 @@ export const getMessageMock = <T extends Message>(
 };
 
 export const getMemberMock = () => {
-  // Math.pow due to Discord.MessageMentions.USERS_PATTERN regex: <@!?(\d{17,19})>
-  const id = (Math.random() * Math.pow(10, 18)).toFixed();
+  const id = (Math.random() * 1e18).toFixed();
 
   const mention = `<@${id}>`;
 

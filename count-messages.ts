@@ -7,10 +7,8 @@ import { getWeekNumber } from './src/utils';
 
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-if (process.env.NODE_ENV === 'production') {
-  require('dotenv').config({ path: '.env' });
-} else {
-  require('dotenv').config({ path: '.env.dev' });
+if (process.env.NODE_ENV !== 'test') {
+  require('dotenv').config();
 }
 
 const API_URL = `https://discord.com/api/v9`;
