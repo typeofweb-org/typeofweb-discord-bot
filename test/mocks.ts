@@ -61,3 +61,11 @@ export const getMessageMock = <T extends Message>(
   };
   return proxyExistenceMutating(mockMessage, name);
 };
+
+export const getMemberMock = () => {
+  const id = (Math.random() * 1e18).toFixed();
+
+  const mention = `<@${id}>`;
+
+  return { id, mention };
+};
