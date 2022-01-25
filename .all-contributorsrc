@@ -176,6 +176,16 @@
         "code",
         "doc"
       ]
+    },
+    {
+      "login": "michalczukm",
+      "name": "Michał Michalczuk",
+      "avatar_url": "https://avatars.githubusercontent.com/u/6861120?v=4",
+      "profile": "https://michalczukm.xyz",
+      "contributions": [
+        "code",
+        "bug"
+      ]
     }
   ],
   "contributorsPerLine": 3,
