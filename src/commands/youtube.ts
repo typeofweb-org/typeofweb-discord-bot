@@ -19,6 +19,7 @@ const youtube: Command = {
     const response = (await result.json()) as YoutubeResponse;
 
     if (isErrorResponse(response)) {
+      console.error(response);
       return msg.channel.send(`Uh, integracja z API YT nie zadziałała 😭`);
     }
 
