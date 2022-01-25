@@ -6,7 +6,7 @@ const thxTimeoutCache = new Cache({ stdTTL: THX_TIMEOUT_S });
 
 export const thx = (msg: Discord.Message) => {
   if (
-    !/(thx|thank|dzięki|dziękuję|dzieki|dziekuje)($|(\s+(?!temu|niej|niemu|tobie)+.*))/i.test(
+    !/(thx|thank|thanks|dzi[e|ę]ki|dzi[e|ę]kuj[e|ę])($|(\s+(?!temu|niej|niemu|tobie|nim)+.*))/i.test(
       msg.content,
     )
   ) {
@@ -21,5 +21,7 @@ export const thx = (msg: Discord.Message) => {
   }
 
   thxTimeoutCache.set(msg.channel.id, new Date());
-  return msg.reply('protip: napisz `@nazwa ++`, żeby komuś podziękować! Możesz podziękować kilku osobom w jednej wiadomości!');
+  return msg.reply(
+    'protip: napisz `@nazwa ++`, żeby komuś podziękować! Możesz podziękować kilku osobom w jednej wiadomości!',
+  );
 };
