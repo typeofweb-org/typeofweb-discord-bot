@@ -5,7 +5,8 @@ import { getMessageMock } from '../test/mocks';
 
 describe('thx', () => {
   let id = 0;
-  const msgReply = 'protip: napisz `@nazwa ++`, żeby komuś podziękować! Możesz podziękować kilku osobom w jednej wiadomości!';
+  const msgReply =
+    'protip: napisz `@nazwa ++`, żeby komuś podziękować! Możesz podziękować kilku osobom w jednej wiadomości!';
 
   it('it should ignore random messages', async () => {
     const msg = getMessageMock('msg', { content: 'msg', channel: { id: ++id } });
@@ -16,14 +17,26 @@ describe('thx', () => {
     expect(msg.reply).not.to.have.been.calledOnceWith(msgReply);
   });
 
-  it('it should respond to thanks', async () => {
-    const msg = getMessageMock('msg', { content: 'dzięki', channel: { id: ++id } });
-    msg.reply.resolves();
+  [
+    'thx',
+    'thank',
+    'thanks',
+    'dzieki',
+    'dzięki',
+    'dziekuje',
+    'dziekuję',
+    'dziękuje',
+    'dziękuję',
+  ].forEach((text) =>
+    it(`it should respond to ${text}`, async () => {
+      const msg = getMessageMock('msg', { content: text, channel: { id: ++id } });
+      msg.reply.resolves();
 
-    await thx(msg as unknown as Discord.Message);
+      await thx(msg as unknown as Discord.Message);
 
-    expect(msg.reply).to.have.been.calledOnceWith(msgReply);
-  });
+      expect(msg.reply).to.have.been.calledOnceWith(msgReply);
+    }),
+  );
 
   [
     'dzięki temu',
