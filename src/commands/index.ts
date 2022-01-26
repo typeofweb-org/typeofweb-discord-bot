@@ -16,6 +16,7 @@ import mongodb from './mongodb';
 import mydevil from './mydevil';
 import npm from './npm';
 import odpowiedz from './odpowiedz';
+import protip from './protip';
 import prune from './prune';
 import quiz from './quiz';
 import regulamin from './regulamin';
@@ -44,6 +45,7 @@ const allCommands = [
   mydevil,
   npm,
   odpowiedz,
+  protip,
   prune,
   quiz,
   regulamin,
