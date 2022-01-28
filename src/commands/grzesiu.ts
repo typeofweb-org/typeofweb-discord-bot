@@ -11,6 +11,7 @@ const openai = new OpenAIApi(configuration);
 
 const MAX_TOKENS = 2049;
 const RESPONSE_TOKENS = 64;
+const MAX_GENERATED_CONTENT_LEN = Math.floor((MAX_TOKENS - RESPONSE_TOKENS) / 2); // make it cheaper
 const BANNED_PATTERNS = /[`\[\]{}\(\)]|http/g;
 const COOLDOWN = 20;
 const GRZESIU_DELAY = 1500;
@@ -87,7 +88,7 @@ const generateGrzesiuPrompt = async (username: string, question: string) => {
   const txt = uniqueLines.reduce((txt, line) => {
     const newTxt = txt + `${GRZESIU_NAME}: ` + line + '\n';
     const fullConvo = getFullConvo(newTxt, username, question);
-    return fullConvo.length <= MAX_TOKENS - RESPONSE_TOKENS ? newTxt : txt;
+    return fullConvo.length <= MAX_GENERATED_CONTENT_LEN ? newTxt : txt;
   }, '');
   return getFullConvo(txt, username, question);
 };
