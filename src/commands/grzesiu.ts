@@ -12,7 +12,7 @@ const openai = new OpenAIApi(configuration);
 const MAX_TOKENS = 2049;
 const RESPONSE_TOKENS = 64;
 const BANNED_PATTERNS = /[`\[\]{}\(\)]|http/g;
-const COOLDOWN = 60;
+const COOLDOWN = 20;
 const GRZESIU_DELAY = 1500;
 const GRZESIU_NAME = 'grzegorz';
 
