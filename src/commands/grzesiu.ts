@@ -25,7 +25,9 @@ const grzesiu: Command = {
     const username = (msg.member?.displayName || msg.author.username).trim().split(/\s/)[0];
     const prompt = await generateGrzesiuPrompt(username, args.join(' '));
 
-    const response = await openai.createCompletion('text-davinci-001', {
+    // const engine = 'text-davinci-001';
+    const engine = 'text-babbage-001';
+    const response = await openai.createCompletion(engine, {
       prompt,
       temperature: 1,
       max_tokens: RESPONSE_TOKENS,
