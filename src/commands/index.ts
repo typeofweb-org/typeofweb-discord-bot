@@ -5,9 +5,10 @@ import { getConfig } from '../config';
 import type { Command } from '../types';
 import { InvalidUsageError } from '../types';
 
+import { addKarma, karma, KARMA_REGEX } from './karma';
 import co from './co';
 import execute from './execute';
-import { addKarma, karma, KARMA_REGEX } from './karma';
+import grzesiu from './grzesiu';
 import link from './link';
 import m1 from './m1';
 import markdown from './markdown';
@@ -35,6 +36,7 @@ export const COMMAND_PATTERN = new RegExp(getConfig('PREFIX') + '([a-z1-9]+)(?: 
 const allCommands = [
   co,
   execute,
+  grzesiu,
   karma,
   link,
   m1,

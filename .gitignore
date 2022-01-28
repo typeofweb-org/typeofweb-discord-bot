@@ -67,3 +67,4 @@ jspm_packages/
 
 package-lock.json
 *.tsbuildinfo
+grzesiu.js
