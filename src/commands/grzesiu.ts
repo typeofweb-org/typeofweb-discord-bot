@@ -9,6 +9,8 @@ const configuration = new Configuration({
 });
 const openai = new OpenAIApi(configuration);
 
+const MAX_TOKENS = 2049;
+const RESPONSE_TOKENS = 64;
 const BANNED_PATTERNS = /[`\[\]{}\(\)]|http/g;
 const COOLDOWN = 60;
 const GRZESIU_DELAY = 1500;
@@ -26,7 +28,7 @@ const grzesiu: Command = {
     const response = await openai.createCompletion('text-davinci-001', {
       prompt,
       temperature: 1,
-      max_tokens: 64,
+      max_tokens: RESPONSE_TOKENS,
       top_p: 1,
       frequency_penalty: 0,
       presence_penalty: 2,
@@ -59,8 +61,6 @@ const grzesiu: Command = {
 
 export default grzesiu;
 
-const MAX_TOKENS = 2049;
-
 const getRandomInt = (len: number) => Math.floor(Math.random() * len);
 
 const getRandomIndices = (num: number, max: number) => {
@@ -85,7 +85,7 @@ const generateGrzesiuPrompt = async (username: string, question: string) => {
   const txt = uniqueLines.reduce((txt, line) => {
     const newTxt = txt + `${GRZESIU_NAME}: ` + line + '\n';
     const fullConvo = getFullConvo(newTxt, username, question);
-    return fullConvo.length <= MAX_TOKENS ? newTxt : txt;
+    return fullConvo.length <= MAX_TOKENS - RESPONSE_TOKENS ? newTxt : txt;
   }, '');
   return getFullConvo(txt, username, question);
 };
