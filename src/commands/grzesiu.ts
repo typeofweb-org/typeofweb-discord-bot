@@ -22,7 +22,7 @@ const grzesiu: Command = {
   args: 'optional',
   cooldown: COOLDOWN,
   async execute(msg, args) {
-    const username = msg.member?.displayName || msg.author.username;
+    const username = (msg.member?.displayName || msg.author.username).trim().split(/\s/)[0];
     const prompt = await generateGrzesiuPrompt(username, args.join(' '));
 
     const response = await openai.createCompletion('text-davinci-001', {
