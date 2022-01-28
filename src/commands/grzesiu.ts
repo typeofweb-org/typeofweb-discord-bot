@@ -44,6 +44,10 @@ const grzesiu: Command = {
       .flatMap((l) => l.split(`${GRZESIU_NAME}:`))
       .filter((l) => l.trim().length > 0);
 
+    if (!messages.length) {
+      return msg.channel.send(`Niestety, Grzesiu nie miał nic do powiedzenia!`);
+    }
+
     return messages.reduce(async (acc, message) => {
       await acc;
       await msg.channel.send(`_${message}_`);
