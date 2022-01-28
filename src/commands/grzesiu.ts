@@ -12,23 +12,25 @@ const openai = new OpenAIApi(configuration);
 const BANNED_PATTERNS = /[`\[\]{}\(\)]|http/g;
 const COOLDOWN = 60;
 const GRZESIU_DELAY = 1500;
+const GRZESIU_NAME = 'grzegorz';
 
 const grzesiu: Command = {
   name: 'grzesiu',
   description: 'Użyj tego, gdy tęsknisz za Grzesiem',
-  args: 'prohibited',
+  args: 'optional',
   cooldown: COOLDOWN,
-  async execute(msg) {
-    const prompt = await generateGrzesiuPrompt();
+  async execute(msg, args) {
+    const username = msg.member?.displayName || msg.author.username;
+    const prompt = await generateGrzesiuPrompt(username, args.join(' '));
 
     const response = await openai.createCompletion('text-davinci-001', {
       prompt,
       temperature: 1,
       max_tokens: 64,
       top_p: 1,
-      best_of: 4,
       frequency_penalty: 0,
       presence_penalty: 2,
+      best_of: 4,
     });
 
     if (!response.data.choices?.[0]?.text) {
@@ -38,7 +40,9 @@ const grzesiu: Command = {
     const messages = response.data.choices[0].text
       .split('\n')
       .map((l) => l.trim())
-      .filter((l) => l.length > 0);
+      .filter((l) => l.startsWith(`${GRZESIU_NAME}:`))
+      .flatMap((l) => l.split(`${GRZESIU_NAME}:`))
+      .filter((l) => l.trim().length > 0);
 
     return messages.reduce(async (acc, message) => {
       await acc;
@@ -61,15 +65,23 @@ const getRandomIndices = (num: number, max: number) => {
   return [...set];
 };
 
-const generateGrzesiuPrompt = async () => {
+const generateGrzesiuPrompt = async (username: string, question: string) => {
   const indices = getRandomIndices(100, grzesJson.length);
   const uniqueLines = [...new Set(indices.map((idx) => grzesJson[idx].trim()))].filter(
     (line) => !BANNED_PATTERNS.test(line) && line.length > 0,
   );
 
-  const prompt = uniqueLines.reduce((txt, line) => {
-    const newTxt = txt + line + '\n';
-    return newTxt.length <= MAX_TOKENS ? newTxt : txt;
+  const getFullConvo = (txt: string, username: string, question: string) => {
+    if (question) {
+      return `${txt.trim()}\n${username}: ${question}\n${GRZESIU_NAME}:`;
+    }
+    return `${txt.trim()}\n${GRZESIU_NAME}:`;
+  };
+
+  const txt = uniqueLines.reduce((txt, line) => {
+    const newTxt = txt + `${GRZESIU_NAME}: ` + line + '\n';
+    const fullConvo = getFullConvo(newTxt, username, question);
+    return fullConvo.length <= MAX_TOKENS ? newTxt : txt;
   }, '');
-  return prompt;
+  return getFullConvo(txt, username, question);
 };
