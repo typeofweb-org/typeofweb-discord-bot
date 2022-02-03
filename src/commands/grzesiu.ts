@@ -1,13 +1,8 @@
 import { Command } from '../types';
 import { Configuration, OpenAIApi } from 'openai';
-import grzesJson from '../../grzes.json';
+import Fsp from 'fs/promises';
+import Path from 'path';
 import Natural from 'natural';
-
-const tokenizer = new Natural.AggressiveTokenizerPl();
-const tfidf = grzesJson.reduce((tfidf, line) => {
-  tfidf.addDocument(tokenizer.tokenize(line));
-  return tfidf;
-}, new Natural.TfIdf());
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -33,12 +28,16 @@ const grzesiu: Command = {
     const username = (msg.member?.displayName || msg.author.username).trim().split(/\s/)[0];
     const question = args.join(' ');
 
+    const grzesJson = JSON.parse(
+      await Fsp.readFile(Path.join(__dirname, '..', '..', 'grzes.json'), 'utf-8'),
+    ) as string[];
+
     const generators = {
       getGrzesiuAnswerFromOpenAI,
       getRandomGrzesiuAnswers,
     };
 
-    const messages = await generators.getRandomGrzesiuAnswers(username, question);
+    const messages = await generators.getRandomGrzesiuAnswers(username, question, grzesJson);
 
     if (!messages.length) {
       return msg.channel.send(`Niestety, Grzesiu nie miał nic do powiedzenia!`);
@@ -58,22 +57,17 @@ export default grzesiu;
 const getRandomInt = (len: number) => Math.floor(Math.random() * len);
 
 interface GrzesiuGenerator {
-  (username: string, question: string): Promise<string[]>;
+  (username: string, question: string, grzesJson: string[]): Promise<string[]>;
 }
 
 // random
-const getRandomGrzesiuAnswers: GrzesiuGenerator = async (_username, question) => {
+const getRandomGrzesiuAnswers: GrzesiuGenerator = async (_username, question, grzesJson) => {
   const g = grzesJson
     .map((l) => l.trim())
     .filter((line) => !BANNED_PATTERNS.test(line) && line.length > 0);
 
   const potentialItems =
-    question.trim().length > 0
-      ? g.filter((l, idx) => {
-          const coeff = (tfidf.tfidf(question, idx) as unknown as number) || 1;
-          return coeff * Natural.DiceCoefficient(question, l) > 0.35;
-        })
-      : [];
+    question.trim().length > 0 ? g.filter((l) => Natural.DiceCoefficient(question, l) > 0.35) : [];
 
   const initialIndex =
     potentialItems.length > 0 ? g.indexOf(potentialItems[getRandomInt(potentialItems.length)]) : -1;
@@ -98,8 +92,8 @@ const getRandomGrzesiuAnswers: GrzesiuGenerator = async (_username, question) =>
 };
 
 // openAI
-const getGrzesiuAnswerFromOpenAI: GrzesiuGenerator = async (username, question) => {
-  const prompt = await generateGrzesiuPrompt(username, question);
+const getGrzesiuAnswerFromOpenAI: GrzesiuGenerator = async (username, question, grzesJson) => {
+  const prompt = await generateGrzesiuPrompt(username, question, grzesJson);
 
   const engine = 'text-davinci-001';
   // const engine = 'text-babbage-001';
@@ -134,7 +128,7 @@ const getRandomIndices = (num: number, max: number) => {
   return [...set];
 };
 
-const generateGrzesiuPrompt = async (username: string, question: string) => {
+const generateGrzesiuPrompt = async (username: string, question: string, grzesJson: string[]) => {
   const indices = getRandomIndices(100, grzesJson.length);
   const uniqueLines = [...new Set(indices.map((idx) => grzesJson[idx].trim()))].filter(
     (line) => !BANNED_PATTERNS.test(line) && line.length > 0,
