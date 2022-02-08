@@ -11,12 +11,115 @@
   "commitConvention": "gitmoji",
   "contributors": [
     {
+      "login": "mmiszy",
+      "name": "Michał Miszczyszyn",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/1338731?v=4",
+      "profile": "https://typeofweb.com",
+      "contributions": [
+        "code",
+        "ideas",
+        "infra",
+        "review"
+      ]
+    },
+    {
       "login": "Deeadline",
       "name": "Deeadline",
       "avatar_url": "https://avatars3.githubusercontent.com/u/26546280?v=4",
       "profile": "https://github.com/Deeadline",
+      "contributions": [
+        "code",
+        "ideas"
+      ]
     },
-        {
+    {
+      "login": "przytrzask",
+      "name": "przytrzask",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/20127089?v=4",
+      "profile": "http://trzasq.pl",
+      "contributions": [
+        "code",
+        "ideas"
+      ]
+    },
+    {
+      "login": "nanoDW",
+      "name": "nanoDW",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/37413661?v=4",
+      "profile": "https://github.com/nanoDW",
+      "contributions": [
+        "code",
+        "ideas"
+      ]
+    },
+    {
+      "login": "Secrus",
+      "name": "Secrus",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/26322915?v=4",
+      "profile": "https://github.com/Secrus",
+      "contributions": [
+        "code",
+        "ideas",
+        "doc"
+      ]
+    },
+    {
+      "login": "larto42",
+      "name": "larto42",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/16961273?v=4",
+      "profile": "https://github.com/larto42",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "Razi91",
+      "name": "jkonieczny",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/5995454?v=4",
+      "profile": "https://github.com/Razi91",
+      "contributions": [
+        "code",
+        "ideas",
+        "test",
+        "security"
+      ]
+    },
+    {
+      "login": "D0man",
+      "name": "Kuba Domański",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/22179216?v=4",
+      "profile": "https://github.com/D0man",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Survikrowa",
+      "name": "Survikrowa",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/35381167?v=4",
+      "profile": "https://github.com/Survikrowa",
+      "contributions": [
+        "code",
+        "ideas"
+      ]
+    },
+    {
+      "login": "AdamSiekierski",
+      "name": "Adam Siekierski",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/24841038?v=4",
+      "profile": "http://siekierski.ml",
+      "contributions": [
+        "code",
+        "ideas"
+      ]
+    },
+    {
+      "login": "Deeadline",
+      "name": "Deeadline",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/26546280?v=4",
+      "profile": "https://github.com/Deeadline"
+    },
+    {
       "login": "AndrewWelc",
       "name": "Andrew Welc",
       "avatar_url": "https://avatars.githubusercontent.com/u/78659791?s=460&u=c7f264564e80b125382a533d6d7eb5a28910cf4e&v=4",
@@ -33,7 +136,7 @@
       "name": "Porithe",
       "avatar_url": "https://avatars.githubusercontent.com/u/33372728?s=460&u=ec4abd3d3b77d26aade94e105211aecc3afb5901&v=4",
       "profile": "https://github.com/porithe"
-    },
+    }
   ],
   "contributorsPerLine": 4,
   "skipCi": true
