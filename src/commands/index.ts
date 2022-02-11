@@ -30,6 +30,7 @@ import wiki from './wiki';
 import xd from './xd';
 import yesno from './yesno';
 import youtube from './youtube';
+import xkcd from './xkcd';
 
 export const COMMAND_PATTERN = new RegExp(getConfig('PREFIX') + '([a-z1-9]+)(?: (.*))?');
 
@@ -59,6 +60,7 @@ const allCommands = [
   xd,
   yesno,
   youtube,
+  xkcd,
 ];
 
 const cooldowns = new Discord.Collection<string, Discord.Collection<string, number>>();
