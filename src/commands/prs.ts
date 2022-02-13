@@ -2,7 +2,7 @@ import { Command } from '../types';
 
 const formatter = new Intl.ListFormat('pl', { style: 'long', type: 'conjunction' });
 
-const link: Command = {
+const prs: Command = {
   name: 'prs',
   description: 'PRs are welcome',
   args: 'required',
@@ -19,4 +19,4 @@ const link: Command = {
   },
 };
 
-export default link;
+export default prs;

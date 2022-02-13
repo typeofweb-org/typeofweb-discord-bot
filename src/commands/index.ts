@@ -26,6 +26,7 @@ import server from './server';
 import skierowanie from './skierowanie';
 import spotify from './spotify';
 import stats from './stats';
+import summon from './summon';
 import typeofweb from './towarticle';
 import wiki from './wiki';
 import xd from './xd';
@@ -57,6 +58,7 @@ const allCommands = [
   skierowanie,
   spotify,
   stats,
+  summon,
   typeofweb,
   wiki,
   xd,
