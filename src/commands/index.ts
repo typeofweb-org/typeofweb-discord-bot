@@ -8,7 +8,7 @@ import { InvalidUsageError } from '../types';
 import { addKarma, karma, KARMA_REGEX } from './karma';
 import co from './co';
 import execute from './execute';
-import grzesiu from './grzesiu';
+import { grzesiu, morritz } from './kocopoly';
 import link from './link';
 import m1 from './m1';
 import markdown from './markdown';
@@ -46,6 +46,7 @@ const allCommands = [
   markdown,
   mdn,
   mongodb,
+  morritz,
   mydevil,
   npm,
   odpowiedz,

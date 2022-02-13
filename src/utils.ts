@@ -6,6 +6,8 @@ export function capitalizeFirst<T extends string>(str: T): Capitalize<T> {
   return (str.charAt(0).toUpperCase() + str.slice(1)) as Capitalize<T>;
 }
 
+export const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export function getWeekNumber(d: Date): readonly [year: number, week: number] {
   const date = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
 

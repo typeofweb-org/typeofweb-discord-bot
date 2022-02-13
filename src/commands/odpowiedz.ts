@@ -28,7 +28,6 @@ const odpowiedz: Command = {
   description: 'Pomoże ci wybrać odpowiedź',
   args: 'prohibited',
   execute(msg) {
-    // Really randomize the answer
     const randomAnswer = randomizeArray(ANSWERS)[0];
     return msg.channel.send(randomAnswer);
   },

@@ -8,7 +8,7 @@ interface CommandCommon {
   readonly cooldown?: number;
 }
 
-type CommandWithArgs = {
+export type CommandWithArgs = {
   readonly args: 'required' | 'optional';
   execute(
     msg: Discord.Message,
