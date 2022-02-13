@@ -17,6 +17,7 @@ import mongodb from './mongodb';
 import mydevil from './mydevil';
 import npm from './npm';
 import odpowiedz from './odpowiedz';
+import prs from './prs';
 import prune from './prune';
 import quiz from './quiz';
 import regulamin from './regulamin';
@@ -28,9 +29,9 @@ import stats from './stats';
 import typeofweb from './towarticle';
 import wiki from './wiki';
 import xd from './xd';
+import xkcd from './xkcd';
 import yesno from './yesno';
 import youtube from './youtube';
-import xkcd from './xkcd';
 
 export const COMMAND_PATTERN = new RegExp(getConfig('PREFIX') + '([a-z1-9]+)(?: (.*))?');
 
@@ -47,6 +48,7 @@ const allCommands = [
   mydevil,
   npm,
   odpowiedz,
+  prs,
   prune,
   quiz,
   regulamin,
@@ -58,9 +60,9 @@ const allCommands = [
   typeofweb,
   wiki,
   xd,
+  xkcd,
   yesno,
   youtube,
-  xkcd,
 ];
 
 const cooldowns = new Discord.Collection<string, Discord.Collection<string, number>>();
