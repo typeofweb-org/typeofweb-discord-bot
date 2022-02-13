@@ -29,7 +29,7 @@ const grzesiu: Command = {
     const question = args.join(' ');
 
     const grzesJson = JSON.parse(
-      await Fsp.readFile(Path.join(__dirname, '..', '..', 'grzes.json'), 'utf-8'),
+      await Fsp.readFile(Path.join(__dirname, '..', 'grzes.json'), 'utf-8'),
     ) as string[];
 
     const generators = {
