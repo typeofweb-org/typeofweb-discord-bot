@@ -1,13 +1,12 @@
 import Discord from 'discord.js';
-import { polishPlurals } from 'polish-plurals';
 import Bluebird from 'bluebird';
 
 import {
-  getEmojiForKarmaValue,
   getKarmaForMember,
   getKarmaForAllMembers,
   KarmaAgg,
   getKarmaForMembers,
+  getKarmaDescription,
 } from '../data/karma';
 import { getKarmaCollection, initDb } from '../db';
 import type { Command } from '../types';
@@ -57,9 +56,9 @@ const addKarma: Command = {
 
     const messages = membersKarma.map(({ value, _id }) => {
       const member = membersToReward.find((m) => m.id === _id);
-      return `${msg.author.toString()} podziękował(a) ${member?.toString()}! Karma ${member?.toString()} wynosi ${value.toFixed(
-        2,
-      )} ${getEmojiForKarmaValue(value)}`;
+      return `${msg.author.toString()} podziękował(a) ${member?.toString()}! ${member?.toString()} ma ${getKarmaDescription(
+        value,
+      )}`;
     });
 
     return msg.channel.send(messages.join('\n'));
@@ -79,11 +78,7 @@ const karma: Command = {
       const agg = await getKarmaForMember(member.id, db);
       const value = agg?.value ?? 0;
 
-      const pkt = polishPlurals('punkt', 'punkty', 'punktów', value);
-
-      return msg.channel.send(
-        `${member.displayName} ma ${value.toFixed(2)} ${pkt} karmy ${getEmojiForKarmaValue(value)}`,
-      );
+      return msg.channel.send(`${member.displayName} ma ${getKarmaDescription(value)}`);
     } else {
       const agg = await getKarmaForAllMembers(db);
       const data = agg.filter((el): el is KarmaAgg => !!el);
@@ -92,9 +87,9 @@ const karma: Command = {
       const messages = [
         `**TOP 10 karma**`,
         ...data.map(({ _id: memberId, value }, index) => {
-          return `\`${(index + 1).toString().padStart(2, ' ')}\`. ${
-            msg.guild?.members.cache.get(memberId)?.displayName ?? ''
-          } – ${value.toFixed(2)} ${getEmojiForKarmaValue(value)}`;
+          const name = msg.guild?.members.cache.get(memberId)?.displayName ?? '';
+          return `\`${(index + 1).toString().padStart(2, ' ')}\`. ${name}\
+ – ${getKarmaDescription(value)}`;
         }),
       ];
 

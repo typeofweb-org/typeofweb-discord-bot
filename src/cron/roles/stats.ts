@@ -3,7 +3,7 @@ import { fetchOrCreateRole, updateRoles } from '.';
 import { initDb, getStatsCollection } from '../../db';
 import { offsetDateByWeeks } from '../../utils';
 
-const TOP_STATS_ROLE_NAME = '🏎 AKTYWNI';
+const TOP_STATS_ROLE_NAME = `🏎 AKTYWNI`;
 
 const createStatsRole = (guild: Discord.Guild) => {
   return guild.roles.create({
