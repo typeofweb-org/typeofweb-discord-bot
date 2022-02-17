@@ -58,7 +58,7 @@ export const getKarmaForAllMembers = async (db: Db) => {
 };
 
 export const getEmojiForKarmaValue = (value: number) => {
-  const adjustedValue = Math.floor(Math.sqrt(value + 1) - 1);
+  const adjustedValue = Math.floor(Math.log(value + 1));
   const idx = Math.min(karmaEmojis.length - 1, adjustedValue);
   return karmaEmojis[idx];
 };
