@@ -8,7 +8,7 @@ import { InvalidUsageError } from '../types';
 import { addKarma, karma, KARMA_REGEX } from './karma';
 import co from './co';
 import execute from './execute';
-import { grzesiu, morritz } from './kocopoly';
+// import { grzesiu, morritz } from './kocopoly';
 import link from './link';
 import m1 from './m1';
 import markdown from './markdown';
@@ -39,14 +39,14 @@ export const COMMAND_PATTERN = new RegExp(getConfig('PREFIX') + '([a-z1-9]+)(?: 
 const allCommands = [
   co,
   execute,
-  grzesiu,
+  // grzesiu,
   karma,
   link,
   m1,
   markdown,
   mdn,
   mongodb,
-  morritz,
+  // morritz,
   mydevil,
   npm,
   odpowiedz,
