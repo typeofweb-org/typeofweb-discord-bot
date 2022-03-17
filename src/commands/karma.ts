@@ -7,30 +7,13 @@ import {
   getKarmaForMembers,
   getKarmaDescription,
   isKarmaMafiaMember,
+  getKarmaTypeByCommand,
+  getKarmaValueByType,
 } from '../data/karma';
 import { getKarmaCollection, initDb } from '../db';
 import type { Command } from '../types';
 
 const KARMA_TO_ALLOW_REDUCE = 40;
-
-type ParsedKarmaMentionType = 'add' | 'reduce';
-
-const getKarmaValueByType = (type: ParsedKarmaMentionType) => {
-  if (type === 'reduce') {
-    return -1;
-  }
-  if (type === 'add') {
-    return 1;
-  }
-  return 420;
-};
-
-const getKarmaTypeByCommand = (command: string): ParsedKarmaMentionType => {
-  if (command === '--') {
-    return 'reduce';
-  }
-  return 'add';
-};
 
 export const KARMA_REGEX = new RegExp(
   `(${Discord.MessageMentions.USERS_PATTERN.source})\\s*(\\+\\+|\\-\\-)`,
@@ -41,7 +24,7 @@ const parseKarmaMentions = (message: string, canRecudeKarma: boolean) => {
     .map(([, , userId, karmaCommand]) => [userId, getKarmaTypeByCommand(karmaCommand)] as const)
     .filter(([, karmaType]) => canRecudeKarma || karmaType === 'add');
 
-  const parsedMentionsMap = new Map<string, ParsedKarmaMentionType>(parsedMentions);
+  const parsedMentionsMap = new Map(parsedMentions);
   return parsedMentionsMap;
 };
 

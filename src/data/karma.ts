@@ -59,19 +59,6 @@ export const getKarmaForAllMembers = async (db: Db) => {
 
 export const getKarmaLevel = (value: number) => Math.floor(Math.log(value + 1));
 
-export const getEmojiForKarmaValue = (value: number) => {
-  const level = getKarmaLevel(value);
-  const idx = Math.min(karmaEmojis.length - 1, level);
-  return karmaEmojis[idx];
-};
-
-export const getKarmaDescription = (value: number) =>
-  `${Math.floor(value)} XP (lvl ${getKarmaLevel(value)}) ${getEmojiForKarmaValue(value)}`;
-
-const KARMA_MAFIA_MEMBERS = ['349836529616814091', '363038285020266496']; // please dont edit this line
-
-export const isKarmaMafiaMember = (userId: string) => KARMA_MAFIA_MEMBERS.includes(userId);
-
 const karmaEmojis = [
   '👋',
   '👍',
@@ -86,3 +73,35 @@ const karmaEmojis = [
   '🥰',
   '😍',
 ] as const;
+
+export const getEmojiForKarmaValue = (value: number) => {
+  const level = getKarmaLevel(value);
+  const idx = Math.min(karmaEmojis.length - 1, level);
+  return karmaEmojis[idx];
+};
+
+export const getKarmaDescription = (value: number) =>
+  `${Math.floor(value)} XP (lvl ${getKarmaLevel(value)}) ${getEmojiForKarmaValue(value)}`;
+
+type ParsedKarmaMentionType = 'add' | 'reduce';
+
+export const getKarmaValueByType = (type: ParsedKarmaMentionType) => {
+  if (type === 'reduce') {
+    return -1;
+  }
+  if (type === 'add') {
+    return 1;
+  }
+  return 420;
+};
+
+export const getKarmaTypeByCommand = (command: string): ParsedKarmaMentionType => {
+  if (command === '--') {
+    return 'reduce';
+  }
+  return 'add';
+};
+
+const KARMA_MAFIA_MEMBERS = ['349836529616814091', '363038285020266496']; // please dont edit this line
+
+export const isKarmaMafiaMember = (userId: string) => KARMA_MAFIA_MEMBERS.includes(userId);
