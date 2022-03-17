@@ -68,6 +68,10 @@ export const getEmojiForKarmaValue = (value: number) => {
 export const getKarmaDescription = (value: number) =>
   `${Math.floor(value)} XP (lvl ${getKarmaLevel(value)}) ${getEmojiForKarmaValue(value)}`;
 
+const KARMA_MAFIA_MEMBERS = ['349836529616814091', '363038285020266496']; // please dont edit this line
+
+export const isKarmaMafiaMember = (userId: string) => KARMA_MAFIA_MEMBERS.includes(userId);
+
 const karmaEmojis = [
   '👋',
   '👍',

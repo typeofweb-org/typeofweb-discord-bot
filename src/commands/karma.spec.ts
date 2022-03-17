@@ -11,14 +11,15 @@ type MemberMock = ReturnType<typeof getMemberMock>;
 
 const getAddKarmaMsgMock = (from: MemberMock, membersToReward: ReadonlyArray<MemberMock>) => {
   const msg = getMessageMock('msg', {
+    content: membersToReward.map(({ mention }) => `random message ${mention} ++`).join(', '),
     mentions: {
       members: {
         size: membersToReward.length,
-        values: () => [
-          ...[from, ...membersToReward].map(({ id, mention }) => ({
-            fetch: () => ({ id, toString: () => mention }),
+        values: () =>
+          [from, ...membersToReward].map(({ id, mention }) => ({
+            id,
+            toString: () => mention,
           })),
-        ],
       },
     },
     author: { id: from.id, toString: () => from.mention },
@@ -87,11 +88,11 @@ describe('add karma', () => {
       expect(KARMA_REGEX.test(thirdMsg.content)).to.have.be.true;
     });
 
-    it('checks if one user should not be given a karma', () => {
+    it('checks if one user should be given a karma with prefixed message', () => {
       const memberToReward = getMemberMock();
 
       const msg = getMessageMock('msg', { content: `random message ${memberToReward.mention} ++` });
-      expect(KARMA_REGEX.test(msg.content)).to.have.be.false;
+      expect(KARMA_REGEX.test(msg.content)).to.have.be.true;
     });
   });
 

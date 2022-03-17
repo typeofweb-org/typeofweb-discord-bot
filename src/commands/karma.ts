@@ -1,5 +1,4 @@
 import Discord from 'discord.js';
-import Bluebird from 'bluebird';
 
 import {
   getKarmaForMember,
@@ -7,13 +6,44 @@ import {
   KarmaAgg,
   getKarmaForMembers,
   getKarmaDescription,
+  isKarmaMafiaMember,
 } from '../data/karma';
 import { getKarmaCollection, initDb } from '../db';
 import type { Command } from '../types';
 
+const KARMA_TO_ALLOW_REDUCE = 40;
+
+type ParsedKarmaMentionType = 'add' | 'reduce';
+
+const getKarmaValueByType = (type: ParsedKarmaMentionType) => {
+  if (type === 'reduce') {
+    return -1;
+  }
+  if (type === 'add') {
+    return 1;
+  }
+  return 420;
+};
+
+const getKarmaTypeByCommand = (command: string): ParsedKarmaMentionType => {
+  if (command === '--') {
+    return 'reduce';
+  }
+  return 'add';
+};
+
 export const KARMA_REGEX = new RegExp(
-  `^(${Discord.MessageMentions.USERS_PATTERN.source}).*\\+\\+\\s*`,
+  `(${Discord.MessageMentions.USERS_PATTERN.source})\\s*(\\+\\+|\\-\\-)`,
 );
+
+const parseKarmaMentions = (message: string, canRecudeKarma: boolean) => {
+  const parsedMentions = Array.from(message.matchAll(new RegExp(KARMA_REGEX.source, 'g')))
+    .map(([, , userId, karmaCommand]) => [userId, getKarmaTypeByCommand(karmaCommand)] as const)
+    .filter(([, karmaType]) => canRecudeKarma || karmaType === 'add');
+
+  const parsedMentionsMap = new Map<string, ParsedKarmaMentionType>(parsedMentions);
+  return parsedMentionsMap;
+};
 
 const addKarma: Command = {
   name: '++',
@@ -28,35 +58,48 @@ const addKarma: Command = {
     const db = await initDb();
     const karmaCollection = getKarmaCollection(db);
 
-    const from = msg.author.id;
+    const authorId = msg.author.id;
+    const authorKarma = await getKarmaForMember(authorId, db);
 
-    const membersToReward = await Bluebird.resolve(Array.from(msg.mentions.members.values()))
-      .map((m) => m.fetch())
-      .filter((m) => m && m.id !== from);
+    const canReduceKarma =
+      Math.floor(authorKarma?.value || 0) >= KARMA_TO_ALLOW_REDUCE || isKarmaMafiaMember(authorId);
+    const parsedKarmaMentions = parseKarmaMentions(msg.content, canReduceKarma);
 
-    if (membersToReward.length === 0) {
+    const mentionedMembers = Array.from(msg.mentions.members.values()).filter(
+      ({ id: memberId }) =>
+        parsedKarmaMentions.has(memberId) &&
+        (memberId !== authorId || isKarmaMafiaMember(authorId)),
+    );
+
+    if (mentionedMembers.length === 0) {
       return null;
     }
 
     await karmaCollection.insertMany(
-      membersToReward.map((m) => {
+      mentionedMembers.map((m) => {
+        const karmaType = parsedKarmaMentions.get(m.id)!;
+        const karmaValue = getKarmaValueByType(karmaType);
+
         return {
-          from,
+          from: authorId,
           to: m.id,
           createdAt: new Date(),
-          value: 1,
+          value: karmaValue,
         };
       }),
     );
 
     const membersKarma = await getKarmaForMembers(
       db,
-      membersToReward.map((m) => m.id),
+      mentionedMembers.map((m) => m.id),
     );
 
     const messages = membersKarma.map(({ value, _id }) => {
-      const member = membersToReward.find((m) => m.id === _id);
-      return `${msg.author.toString()} podziękował(a) ${member?.toString()}! ${member?.toString()} ma ${getKarmaDescription(
+      const member = mentionedMembers.find((m) => m.id === _id)!;
+      const karmaType = parsedKarmaMentions.get(member.id)!;
+      const karmaTypeDescription = karmaType === 'add' ? 'podziękował(a)' : 'ukarał(a)';
+
+      return `${msg.author.toString()} ${karmaTypeDescription} ${member?.toString()}! ${member?.toString()} ma ${getKarmaDescription(
         value,
       )}`;
     });
