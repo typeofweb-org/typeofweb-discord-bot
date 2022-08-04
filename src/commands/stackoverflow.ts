@@ -8,10 +8,10 @@ const ICON_URL =
 
 const isApiError = (data: ApiResponse): data is ApiResponseError => 'error_id' in data;
 
-const formatTitle = (number: number) =>
-  number === 1
+const formatTitle = (length: number) =>
+  length === 1
     ? 'najlepsza odpowiedź'
-    : number < 5
+    : length < 5
     ? 'najlepsze odpowiedzi'
     : 'najlepszych odpowiedzi';
 
@@ -20,13 +20,13 @@ const stackoverflow: Command = {
   description: 'Wyszukaj swój problem na stackoverflow',
   args: 'required',
   async execute(msg, args) {
-    const query = args.join('%2b').toLocaleLowerCase();
+    const query = encodeURIComponent(args.join(' ').toLocaleLowerCase());
     const result = await fetch(
       `https://api.stackexchange.com/2.3/search/advanced?pagesize=5&order=desc&sort=activity&q=${query}&site=stackoverflow`,
     );
     const response = (await result.json()) as ApiResponse;
 
-    if (isApiError(response)) {
+    if (!result.ok || isApiError(response)) {
       return msg.channel.send('Przepraszam, ale coś poszło nie tak 😭');
     }
 
@@ -62,7 +62,7 @@ interface ApiOwner {
 }
 
 interface ApiItem {
-  readonly tags: readonly string[];
+  readonly tags: ReadonlyArray<string>;
   readonly owner: ApiOwner;
   readonly is_answered: boolean;
   readonly view_count: number;
@@ -77,7 +77,7 @@ interface ApiItem {
 }
 
 interface ApiResponseSuccess {
-  readonly items: readonly ApiItem[];
+  readonly items: ReadonlyArray<ApiItem>;
   readonly has_more: boolean;
   readonly quota_max: number;
   readonly quota_remaining: number;
