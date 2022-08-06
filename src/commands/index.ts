@@ -5,9 +5,9 @@ import { getConfig } from '../config';
 import type { Command } from '../types';
 import { InvalidUsageError } from '../types';
 
-import { addKarma, karma, KARMA_REGEX } from './karma';
 import co from './co';
 import execute from './execute';
+import { addKarma, karma, KARMA_REGEX } from './karma';
 // import { grzesiu, morritz } from './kocopoly';
 import link from './link';
 import m1 from './m1';
@@ -25,6 +25,7 @@ import roll from './roll';
 import server from './server';
 import skierowanie from './skierowanie';
 import spotify from './spotify';
+import stackoverflow from './stackoverflow';
 import stats from './stats';
 import summon from './summon';
 import typeofweb from './towarticle';
@@ -66,6 +67,7 @@ const allCommands = [
   xkcd,
   yesno,
   youtube,
+  stackoverflow,
 ];
 
 const cooldowns = new Discord.Collection<string, Discord.Collection<string, number>>();
