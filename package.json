@@ -83,5 +83,8 @@
     "**/*.{md,js,json}": [
       "yarn prettier --write"
     ]
+  },
+  "engines": {
+    "node": "^14.0.0"
   }
 }
