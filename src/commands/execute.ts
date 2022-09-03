@@ -4,6 +4,7 @@ import { polishPlurals } from 'polish-plurals';
 import * as ts from 'typescript';
 
 import type { Command } from '../types';
+import { wrapErr } from '../utils';
 
 const pluralize = (count: number) => polishPlurals('linia', 'linie', 'linii', count);
 
@@ -187,7 +188,7 @@ const execute: Command = {
         return msg.channel.send(`Błąd wykonania: \`\`\`\n${String(error)}\n\`\`\``);
       }
     } catch (error) {
-      return msg.channel.send(errorMessage(error));
+      return msg.channel.send(errorMessage(wrapErr(error)));
     }
   },
 };

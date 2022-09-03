@@ -8,7 +8,7 @@ import { KARMA_REGEX } from './commands/karma';
 import { getConfig } from './config';
 import { createHttpServer } from './http-server';
 import { InvalidUsageError } from './types';
-import { getWeekNumber } from './utils';
+import { getWeekNumber, wrapErr } from './utils';
 import { getStatsCollection, initDb } from './db';
 import { messageToReflinks } from './commands/reflink';
 import { updateKarmaRoles } from './cron/roles/karma';
@@ -175,7 +175,7 @@ client.on('messageDelete', async (msg) => {
     try {
       await revertCommand(message);
     } catch (err) {
-      errors.push(err);
+      errors.push(wrapErr(err));
     }
   }
 
@@ -202,7 +202,7 @@ async function init() {
   }
 }
 
-init().catch((err) => errors.push(err));
+init().catch((err) => errors.push(wrapErr(err)));
 
 const httpServer = createHttpServer(client, errors, warnings, debugs);
 
@@ -212,7 +212,7 @@ const updateRoles = async (guild: Discord.Guild) => {
     await updateKarmaRoles(guild);
     console.log(`Updated roles`);
   } catch (err) {
-    errors.push(err);
+    errors.push(wrapErr(err));
   }
 };
 

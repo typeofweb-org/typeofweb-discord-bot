@@ -35,3 +35,10 @@ export const offsetDateByWeeks = (d: Date, weeks: number): Date => {
 
   return offsetDate;
 };
+
+export const wrapErr = (err: unknown): Error => {
+  if (err instanceof Error) {
+    return err;
+  }
+  return new Error(String(err));
+};
