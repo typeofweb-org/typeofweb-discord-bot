@@ -1,9 +1,9 @@
-import Discord, { GatewayIntentBits } from 'discord.js';
+import Discord, { GatewayIntentBits, REST, Routes, SlashCommandBuilder } from 'discord.js';
 import MonitoRSS from 'monitorss';
 import type { ClientConfig } from 'monitorss';
 import Cache from 'node-cache';
 
-import { handleCommand } from './commands';
+import { handleCommand, handleSlashCommand, legacyCommandsToSlashCommands } from './commands';
 import { KARMA_REGEX } from './commands/karma';
 import { messageToReflinks } from './commands/reflink';
 import { getConfig } from './config';
@@ -80,6 +80,16 @@ client.on('debug', (debug) => {
 function isCommand(msg: Discord.Message) {
   return msg.content.startsWith(getConfig('PREFIX')) || KARMA_REGEX.test(msg.content);
 }
+
+client.on('interactionCreate', async (interaction) => {
+  if (!interaction.isChatInputCommand()) return;
+
+  try {
+    await handleSlashCommand(interaction);
+  } catch (err) {
+    console.error(err);
+  }
+});
 
 // const ROLE_MUTED_NAME = 'muted' as const;
 // const MAX_MENTIONS_PER_MESSAGE = 10;
@@ -190,11 +200,25 @@ client.on('messageDelete', async (msg) => {
 });
 
 async function init() {
+  const rest = new REST({ version: '10' }).setToken(getConfig('DISCORD_BOT_TOKEN'));
+
+  const TYPE_OF_WEB_GUILD_ID = '440163731704643589';
+
+  try {
+    await rest.put(
+      Routes.applicationGuildCommands(getConfig('DISCORD_CLIENT_ID'), TYPE_OF_WEB_GUILD_ID),
+      {
+        body: legacyCommandsToSlashCommands(),
+      },
+    );
+  } catch (err) {
+    console.error(err);
+  }
+
   await client.login(getConfig('DISCORD_BOT_TOKEN'));
 
   // Auto assign roles
   {
-    const TYPE_OF_WEB_GUILD_ID = '440163731704643589';
     const guild = await client.guilds.fetch(TYPE_OF_WEB_GUILD_ID);
     void updateRoles(guild);
     setInterval(() => {

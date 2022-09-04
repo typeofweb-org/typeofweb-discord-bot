@@ -1,4 +1,4 @@
-import Discord from 'discord.js';
+import Discord, { SlashCommandBuilder } from 'discord.js';
 import type { PermissionsString } from 'discord.js';
 
 import { getConfig } from '../config';
@@ -143,17 +143,69 @@ function printHelp(msg: Discord.Message, member: Discord.GuildMember) {
     });
 }
 
+export const legacyCommandsToSlashCommands = () => {
+  return allCommands
+    .filter((legacyCommand) => legacyCommand.name)
+    .map((legacyCommand) => {
+      const slashCommand = new SlashCommandBuilder()
+        .setName(legacyCommand.name)
+        .setDescription(legacyCommand.description.slice(0, 100));
+
+      if (legacyCommand.args === 'optional') {
+        slashCommand.addStringOption((option) =>
+          option.setName('arg').setDescription('arg').setRequired(false),
+        );
+      }
+      if (legacyCommand.args === 'required') {
+        slashCommand.addStringOption((option) =>
+          option.setName('arg').setDescription('arg').setRequired(true),
+        );
+      }
+
+      return slashCommand;
+    })
+    .map((c) => c.toJSON());
+};
+
+export const handleSlashCommand = async (
+  interaction: Discord.ChatInputCommandInteraction<Discord.CacheType>,
+) => {
+  if (!interaction.isChatInputCommand()) {
+    return;
+  }
+
+  try {
+    const content = `${getConfig('PREFIX')}${interaction.commandName} ${
+      interaction.options.getString('arg') ?? ''
+    }`.trim();
+    // @ts-ignore
+    interaction.content = content;
+    // @ts-ignore
+    interaction.author = interaction.user;
+    // @ts-ignore
+    interaction.channel.send = interaction.reply.bind(interaction);
+    // @ts-ignore
+    await handleCommand(interaction);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 export function handleCommand(msg: Discord.Message) {
+  console.log(1);
   if (!msg.guild) {
     return undefined;
   }
 
+  console.log(2);
   if (KARMA_REGEX.test(msg.content)) {
     return processCommand(msg, addKarma, null);
   }
+  console.log(3);
 
   const [, maybeCommand, rest] = COMMAND_PATTERN.exec(msg.content) || [null, null, null];
 
+  console.log(4, msg.content);
   if (maybeCommand === 'help') {
     const member = msg.guild.members.cache.get(msg.author.id);
     if (member) {
@@ -161,8 +213,10 @@ export function handleCommand(msg: Discord.Message) {
     }
   }
 
+  console.log(5);
   const command = allCommands.find((c) => maybeCommand === c.name);
 
+  console.log(6, command, maybeCommand);
   if (!command || !maybeCommand) {
     return undefined;
   }
@@ -171,30 +225,40 @@ export function handleCommand(msg: Discord.Message) {
 }
 
 async function processCommand(msg: Discord.Message, command: Command, rest: string | null) {
+  console.log(10);
+  console.log(msg.guild);
   const member = msg.guild?.members.cache.get(msg.author.id);
 
+  console.log(11);
   if (!member || (command.permissions && !member.permissions.has(command.permissions))) {
     return undefined; // silence is golden
   }
 
+  console.log(12);
   await msg.channel.sendTyping();
 
+  console.log(13);
   if (command.guildOnly && msg.channel.type !== Discord.ChannelType.GuildText) {
     throw new InvalidUsageError(`to polecenie można wywołać tylko na kanałach.`);
   }
 
+  console.log(14);
   verifyCooldown(msg, command);
   const args = rest ? rest.split(/\s+/g) : [];
 
+  console.log(15);
   if (command.args === 'optional') {
     return command.execute(msg, args);
   }
+  console.log(16);
   if (!args.length && command.args === 'required') {
     throw new InvalidUsageError(`nie podano argumentów!`);
   }
+  console.log(17);
   if (args.length && command.args === 'prohibited') {
     throw new InvalidUsageError(`argumenty niedozwolone!`);
   }
 
+  console.log(18);
   return command.execute(msg, args);
 }
