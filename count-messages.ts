@@ -1,4 +1,4 @@
-import Discord, { Intents } from 'discord.js';
+import Discord, { GatewayIntentBits } from 'discord.js';
 import fetch from 'node-fetch';
 
 import { getConfig } from './src/config';
@@ -23,11 +23,14 @@ async function init() {
     process.exit(0);
   }
 
-  const intents = new Intents([
-    Intents.NON_PRIVILEGED, // include all non-privileged intents, would be better to specify which ones you actually need
-    'GUILD_MEMBERS', // lets you request guild members (i.e. fixes the issue)
-  ]);
-  const client = new Discord.Client({ ws: { intents } });
+  const client = new Discord.Client({
+    intents: [
+      GatewayIntentBits.Guilds,
+      GatewayIntentBits.GuildMessages,
+      GatewayIntentBits.MessageContent,
+      GatewayIntentBits.GuildMembers,
+    ],
+  });
   await client.login(getConfig('DISCORD_BOT_TOKEN'));
 
   const guild = await client.guilds.fetch(GUILD_ID);
@@ -41,11 +44,6 @@ async function init() {
 
   await members.reduce(async (acc, member) => {
     await acc;
-
-    if (member.deleted) {
-      // console.log(`Skipping… member.deleted`);
-      return acc;
-    }
 
     const existingMember = await statsCollection.findOne({
       memberId: member.id,

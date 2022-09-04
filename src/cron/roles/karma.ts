@@ -1,6 +1,8 @@
-import Discord from 'discord.js';
+import type Discord from 'discord.js';
+
 import { initDb, getKarmaCollection } from '../../db';
 import { offsetDateByWeeks } from '../../utils';
+
 import { fetchOrCreateRole, updateRoles } from '.';
 
 const TOP_KARMA_ROLE_NAME = '🙏 POMOCNI';
@@ -12,12 +14,10 @@ interface MemberTotalKarma {
 
 const createKarmaRole = (guild: Discord.Guild) => {
   return guild.roles.create({
-    data: {
-      name: TOP_KARMA_ROLE_NAME,
-      color: 'BLUE',
-      mentionable: false,
-      hoist: true,
-    },
+    name: TOP_KARMA_ROLE_NAME,
+    color: 'Blue',
+    mentionable: false,
+    hoist: true,
     reason: 'Najbardziej pomocny/a',
   });
 };

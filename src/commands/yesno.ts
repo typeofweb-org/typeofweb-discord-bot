@@ -1,6 +1,7 @@
 import Discord from 'discord.js';
-import { Command } from '../types';
 import fetch from 'node-fetch';
+
+import type { Command } from '../types';
 import { capitalizeFirst } from '../utils';
 
 const answerToColor = {
@@ -21,19 +22,19 @@ const yesno: Command = {
     const res = await fetch(url);
     const { answer, image } = (await res.json()) as YesNoApiResponse;
 
-    const answerEmbed = new Discord.MessageEmbed()
+    const answerEmbed = new Discord.EmbedBuilder()
       .setTitle(capitalizeFirst(answer))
       .setImage(image)
       .setColor(answerToColor[answer]);
 
-    return msg.channel.send(answerEmbed);
+    return msg.channel.send({ embeds: [answerEmbed] });
   },
 };
 
 export default yesno;
 
 interface YesNoApiResponse {
-  answer: 'yes' | 'no' | 'maybe';
-  forced: boolean;
-  image: string;
+  readonly answer: 'yes' | 'no' | 'maybe';
+  readonly forced: boolean;
+  readonly image: string;
 }

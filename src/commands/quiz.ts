@@ -41,7 +41,7 @@ const quiz: Command = {
       (item, index) => `**Pytanie ${index + 1}:**   ${item.question}`,
     );
 
-    return msg.channel.send(resQuestions);
+    return msg.channel.send(resQuestions.join('\n'));
   },
 };
 

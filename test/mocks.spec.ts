@@ -7,7 +7,7 @@ describe('mocks', () => {
   it('should return correct user mention and id', () => {
     const { id, mention } = getMemberMock();
 
-    const isMemberMentionCorrect = Discord.MessageMentions.USERS_PATTERN.test(mention);
+    const isMemberMentionCorrect = Discord.MessageMentions.UsersPattern.test(mention);
 
     expect(isMemberMentionCorrect).to.be.true;
     expect(mention).to.have.include(id);

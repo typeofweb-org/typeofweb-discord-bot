@@ -1,5 +1,5 @@
 import Discord from 'discord.js';
-import type { PermissionString } from 'discord.js';
+import type { PermissionsString } from 'discord.js';
 
 import { getConfig } from '../config';
 import type { Command } from '../types';
@@ -71,7 +71,7 @@ const allCommands = [
 ];
 
 const cooldowns = new Discord.Collection<string, Discord.Collection<string, number>>();
-const PERMISSION_TO_OVERRIDE_COOLDOWN: PermissionString = 'ADMINISTRATOR';
+const PERMISSION_TO_OVERRIDE_COOLDOWN: PermissionsString = 'Administrator';
 
 function verifyCooldown(msg: Discord.Message, command: Command) {
   if (typeof command.cooldown !== 'number') {
@@ -92,8 +92,8 @@ function verifyCooldown(msg: Discord.Message, command: Command) {
     const expirationTime = timestamps.get(msg.author.id)! + cooldownAmount;
 
     if (now < expirationTime) {
-      const member = msg.guild.member(msg.author);
-      if (member?.hasPermission(PERMISSION_TO_OVERRIDE_COOLDOWN)) {
+      const member = msg.guild.members.cache.get(msg.author.id);
+      if (member?.permissions.has(PERMISSION_TO_OVERRIDE_COOLDOWN)) {
         return;
       }
 
@@ -114,7 +114,7 @@ function printHelp(msg: Discord.Message, member: Discord.GuildMember) {
       return a.name.localeCompare(b.name);
     })
     .filter((command) => {
-      if (command.permissions && !member.hasPermission(command.permissions)) {
+      if (command.permissions && !member.permissions.has(command.permissions)) {
         return false;
       }
       return true;
@@ -128,9 +128,9 @@ function printHelp(msg: Discord.Message, member: Discord.GuildMember) {
   ];
 
   return msg.author
-    .send(data, { split: true })
+    .send(data.join('\n'))
     .then(() => {
-      if (msg.channel.type === 'dm') {
+      if (msg.channel.type === Discord.ChannelType.DM) {
         return undefined;
       }
       return msg.reply('Wysłałam Ci DM ze wszystkimi komendami! 🎉');
@@ -155,7 +155,7 @@ export function handleCommand(msg: Discord.Message) {
   const [, maybeCommand, rest] = COMMAND_PATTERN.exec(msg.content) || [null, null, null];
 
   if (maybeCommand === 'help') {
-    const member = msg.guild.member(msg.author);
+    const member = msg.guild.members.cache.get(msg.author.id);
     if (member) {
       return printHelp(msg, member);
     }
@@ -170,16 +170,16 @@ export function handleCommand(msg: Discord.Message) {
   return processCommand(msg, command, rest);
 }
 
-function processCommand(msg: Discord.Message, command: Command, rest: string | null) {
-  const member = msg.guild?.member(msg.author);
+async function processCommand(msg: Discord.Message, command: Command, rest: string | null) {
+  const member = msg.guild?.members.cache.get(msg.author.id);
 
-  if (!member || (command.permissions && !member.hasPermission(command.permissions))) {
+  if (!member || (command.permissions && !member.permissions.has(command.permissions))) {
     return undefined; // silence is golden
   }
 
-  void msg.channel.startTyping();
+  await msg.channel.sendTyping();
 
-  if (command.guildOnly && msg.channel.type !== 'text') {
+  if (command.guildOnly && msg.channel.type !== Discord.ChannelType.GuildText) {
     throw new InvalidUsageError(`to polecenie można wywołać tylko na kanałach.`);
   }
 

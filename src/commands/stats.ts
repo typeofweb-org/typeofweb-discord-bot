@@ -15,7 +15,7 @@ const stats: Command = {
   name: 'stats',
   description: 'Stats',
   args: 'prohibited',
-  permissions: 'ADMINISTRATOR',
+  permissions: 'Administrator',
   async execute(msg) {
     const db = await initDb();
 

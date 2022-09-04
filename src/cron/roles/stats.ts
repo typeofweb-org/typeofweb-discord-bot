@@ -1,18 +1,18 @@
-import Discord from 'discord.js';
-import { fetchOrCreateRole, updateRoles } from '.';
+import type Discord from 'discord.js';
+
 import { initDb, getStatsCollection } from '../../db';
 import { offsetDateByWeeks } from '../../utils';
+
+import { fetchOrCreateRole, updateRoles } from '.';
 
 const TOP_STATS_ROLE_NAME = `🏎 AKTYWNI`;
 
 const createStatsRole = (guild: Discord.Guild) => {
   return guild.roles.create({
-    data: {
-      name: TOP_STATS_ROLE_NAME,
-      color: 'DARK_VIVID_PINK',
-      mentionable: false,
-      hoist: true,
-    },
+    name: TOP_STATS_ROLE_NAME,
+    color: 'DarkVividPink',
+    mentionable: false,
+    hoist: true,
     reason: 'Najbardziej aktywna/y',
   });
 };

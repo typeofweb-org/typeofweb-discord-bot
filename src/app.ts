@@ -1,24 +1,31 @@
-import Discord from 'discord.js';
+import Discord, { GatewayIntentBits } from 'discord.js';
 import MonitoRSS from 'monitorss';
 import type { ClientConfig } from 'monitorss';
 import Cache from 'node-cache';
 
 import { handleCommand } from './commands';
 import { KARMA_REGEX } from './commands/karma';
-import { getConfig } from './config';
-import { createHttpServer } from './http-server';
-import { InvalidUsageError } from './types';
-import { getWeekNumber, wrapErr } from './utils';
-import { getStatsCollection, initDb } from './db';
 import { messageToReflinks } from './commands/reflink';
+import { getConfig } from './config';
 import { updateKarmaRoles } from './cron/roles/karma';
 import { updateStatsRoles } from './cron/roles/stats';
+import { getStatsCollection, initDb } from './db';
+import { createHttpServer } from './http-server';
 import { thx } from './thx';
+import { InvalidUsageError } from './types';
+import { getWeekNumber, wrapErr } from './utils';
 
 const MESSAGE_COLLECTOR_CACHE_S = 60 * 60;
 const messageCollectorCache = new Cache({ stdTTL: MESSAGE_COLLECTOR_CACHE_S });
 
-const client = new Discord.Client();
+const client = new Discord.Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.GuildMembers,
+  ],
+});
 
 const settings: { readonly setPresence: boolean; readonly config: ClientConfig } = {
   setPresence: true,
@@ -77,7 +84,7 @@ function isCommand(msg: Discord.Message) {
 // const ROLE_MUTED_NAME = 'muted' as const;
 // const MAX_MENTIONS_PER_MESSAGE = 10;
 
-client.on('message', async (msg) => {
+client.on('messageCreate', async (msg) => {
   if (msg.author.bot) {
     return;
   }
@@ -92,14 +99,15 @@ client.on('message', async (msg) => {
   // }
 
   if (msg.content === `(╯°□°）╯︵ ┻━┻`) {
-    return msg.channel.send(`┬─┬ノ( ◕◡◕ ノ)`);
+    await msg.channel.send(`┬─┬ノ( ◕◡◕ ノ)`);
+    return;
   }
 
   if (isCommand(msg)) {
     try {
-      const collector = msg.channel.createMessageCollector(
-        (m: Discord.Message) => m.author.id === client.user?.id,
-      );
+      const collector = msg.channel.createMessageCollector({
+        filter: (m: Discord.Message) => m.author.id === client.user?.id,
+      });
       await handleCommand(msg);
       const ids = collector.collected.map((m) => m.id);
       messageCollectorCache.set(msg.id, ids);
@@ -111,8 +119,6 @@ client.on('message', async (msg) => {
         console.error(err);
         void msg.reply('przepraszam, ale coś poszło nie tak…');
       }
-    } finally {
-      return msg.channel.stopTyping(true);
     }
   }
 
@@ -120,7 +126,8 @@ client.on('message', async (msg) => {
 
   const maybeReflinks = messageToReflinks(msg.content);
   if (maybeReflinks.length > 0) {
-    return msg.reply(maybeReflinks);
+    await msg.reply(maybeReflinks.join('\n'));
+    return;
   }
 
   await thx(msg);
@@ -156,7 +163,7 @@ async function updateMessagesCount(
 }
 
 function revertCommand(msg: Discord.Message) {
-  if (!messageCollectorCache.has(msg.id) || msg.channel.type === 'dm') {
+  if (!messageCollectorCache.has(msg.id) || msg.channel.type === Discord.ChannelType.DM) {
     return undefined;
   }
   // eslint-disable-next-line functional/prefer-readonly-type

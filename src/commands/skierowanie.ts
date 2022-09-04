@@ -33,35 +33,48 @@ const links = [
 
 const skierowanie: Command = {
   name: 'skierowanie',
-  description: 'Skierowanie na naukę podstaw (+ dobre materiały do nauki). Składnia: `!skierowanie <użytkownik> <technologia>`',
+  description:
+    'Skierowanie na naukę podstaw (+ dobre materiały do nauki). Składnia: `!skierowanie <użytkownik> <technologia>`',
   args: 'required',
   cooldown: 10,
-  async execute(msg, av) {
+  execute(msg, av) {
     // Filter out the empty args (whitespaces, etc)
     const args = av.filter((val) => val);
 
-    const skierowanieEmbed = new Discord.MessageEmbed()
+    const skierowanieEmbed = new Discord.EmbedBuilder()
       .setColor('#5ab783')
-      .setAuthor(
-        `Type of Web oraz ${msg.author.username}`,
-        msg.author.avatarURL() ?? undefined,
-        'https://typeofweb.com',
-      )
+      .setAuthor({
+        name: `Type of Web oraz ${msg.author.username}`,
+        iconURL: msg.author.avatarURL() ?? undefined,
+        url: 'https://typeofweb.com',
+      })
       .setTitle('Skierowanie na naukę podstaw 🚑')
       .setThumbnail('https://typeofweb.com/wp-content/uploads/2020/04/logo_kwadrat11.png')
-      .addField(
-        'Działając na podstawie mojej intuicji oraz wiadomości wysłanych przez osobę skierowaną, kieruję użytkownika/użytkowniczkę',
-        args[0],
-      )
-      .addField(
-        `na naukę podstaw wybranej przez siebie technologii,`,
-        `w celu lepszego zrozumienia fundamentów jej działania oraz poznania informacji niezbędnych do rozszerzania swojej wiedzy o bardziej zaawansowane zagadnienia`,
-      )
+      .addFields([
+        {
+          name: '1',
+          value:
+            'Działając na podstawie mojej intuicji oraz wiadomości wysłanych przez osobę skierowaną, kieruję użytkownika/użytkowniczkę',
+        },
+        {
+          name: '2',
+          value: args[0],
+        },
+        {
+          name: '3',
+          value: `na naukę podstaw wybranej przez siebie technologii,`,
+        },
+        {
+          name: '4',
+          value: `w celu lepszego zrozumienia fundamentów jej działania oraz poznania informacji niezbędnych do rozszerzania swojej wiedzy o bardziej zaawansowane zagadnienia`,
+        },
+      ])
       .setTimestamp()
-      .setFooter(
-        'Type of Web, Discord, Polska',
-        'https://cdn.discordapp.com/avatars/574682557988470825/6b0fab28093e6020f497fda41bdd3219.png?size=64',
-      );
+      .setFooter({
+        text: 'Type of Web, Discord, Polska',
+        iconURL:
+          'https://cdn.discordapp.com/avatars/574682557988470825/6b0fab28093e6020f497fda41bdd3219.png?size=64',
+      });
 
     const categoryFilter = args[1]?.toLowerCase();
     const linksFiltered = categoryFilter
@@ -70,13 +83,12 @@ const skierowanie: Command = {
 
     const linksMessage = 'Z powyższym skierowaniem należy udać się na poniższe strony internetowe:';
 
-    const linksEmbed = new Discord.MessageEmbed().addField(
-      linksMessage,
-      linksFiltered.map((l) => l.url).join('\n'),
-    );
+    const linksEmbed = new Discord.EmbedBuilder().addFields([
+      { name: '1', value: linksMessage },
+      { name: '2', value: linksFiltered.map((l) => l.url).join('\n') },
+    ]);
 
-    await msg.channel.send(skierowanieEmbed);
-    return msg.channel.send(linksEmbed);
+    return msg.channel.send({ embeds: [skierowanieEmbed, linksEmbed] });
   },
 };
 

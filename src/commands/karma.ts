@@ -1,10 +1,10 @@
-import Discord from 'discord.js';
 import Bluebird from 'bluebird';
+import Discord from 'discord.js';
 
+import type { KarmaAgg } from '../data/karma';
 import {
   getKarmaForMember,
   getKarmaForAllMembers,
-  KarmaAgg,
   getKarmaForMembers,
   getKarmaDescription,
 } from '../data/karma';
@@ -12,7 +12,7 @@ import { getKarmaCollection, initDb } from '../db';
 import type { Command } from '../types';
 
 export const KARMA_REGEX = new RegExp(
-  `^(${Discord.MessageMentions.USERS_PATTERN.source}).*\\+\\+\\s*`,
+  `^(${Discord.MessageMentions.UsersPattern.source}).*\\+\\+\\s*`,
 );
 
 const addKarma: Command = {

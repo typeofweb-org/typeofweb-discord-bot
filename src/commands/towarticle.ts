@@ -1,8 +1,9 @@
-import { Command } from '../types';
-import { polishPlurals } from 'polish-plurals';
-import { getConfig } from '../config';
 import Algoliasearch from 'algoliasearch';
-import { MessageEmbed } from 'discord.js';
+import { polishPlurals } from 'polish-plurals';
+import Discord from 'discord.js';
+
+import { getConfig } from '../config';
+import type { Command } from '../types';
 
 const pluralize = (count: number) => polishPlurals('artykuł', 'artykuły', 'artykułów', count);
 
@@ -33,46 +34,51 @@ const typeofweb: Command = {
     console.log(res.hits.map((h) => h.authors));
 
     const results = res.hits.map((h) =>
-      new MessageEmbed()
+      new Discord.EmbedBuilder()
         .setTitle(h.title)
         .setURL(`https://typeofweb.com/${h.permalink}`)
         .setThumbnail(`https://typeofweb.com/${h.img.url.replace(/^\/public\//, '')}`)
-        .setFooter(`https://typeofweb.com/${h.permalink}`)
+        .setFooter({
+          text: '',
+          iconURL: `https://typeofweb.com/${h.permalink}`,
+        })
         .setColor([28, 160, 86])
-        .setAuthor(
-          h.authors.map((a) => a.replace(/(?:^|-)(\w)/g, (_, m) => ' ' + m.toUpperCase()).trim()),
-        )
+        .setAuthor({
+          name: h.authors
+            .map((a) => a.replace(/(?:^|-)(\w)/g, (_, m: string) => ' ' + m.toUpperCase()).trim())
+            .join('\n'),
+        })
         .setDescription(h.excerpt),
     );
 
-    return results.reduce(async (acc, embed) => {
-      await acc;
-      return msg.channel.send({ embed });
-    }, msg.channel.send(`Pokazuję pierwsze ${total} ${pluralize(total)}:`));
+    return msg.channel.send({
+      content: `Pokazuję pierwsze ${total} ${pluralize(total)}:`,
+      embeds: results,
+    });
   },
 };
 
 export default typeofweb;
 
 interface TypeOfWebAlgoliaResult {
-  title: string;
-  date: Date;
-  type: string;
-  permalink: string;
-  authors: string[];
-  excerpt: string;
-  content: string;
-  img: Img;
-  category: Category;
+  readonly title: string;
+  readonly date: Date;
+  readonly type: string;
+  readonly permalink: string;
+  readonly authors: readonly string[];
+  readonly excerpt: string;
+  readonly content: string;
+  readonly img: Img;
+  readonly category: Category;
 }
 
 interface Category {
-  slug: string;
-  name: string;
+  readonly slug: string;
+  readonly name: string;
 }
 
 interface Img {
-  url: string;
-  width: number;
-  height: number;
+  readonly url: string;
+  readonly width: number;
+  readonly height: number;
 }

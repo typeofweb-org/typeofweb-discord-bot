@@ -1,5 +1,6 @@
-import { Command } from '../types';
 import fetch from 'node-fetch';
+
+import type { Command } from '../types';
 
 const mdn: Command = {
   name: 'mdn',
@@ -16,57 +17,59 @@ const mdn: Command = {
     }
 
     const firstDocument = data.documents[0];
-    return msg.channel.send([
-      firstDocument.excerpt,
-      `https://developer.mozilla.org/en-US/docs/${firstDocument.slug}`,
-    ]);
+    return msg.channel.send(
+      [
+        firstDocument.excerpt,
+        `https://developer.mozilla.org/en-US/docs/${firstDocument.slug}`,
+      ].join('\n'),
+    );
   },
 };
 
 export default mdn;
 
 interface MDNResponse {
-  query: string;
-  locale: string;
-  page: number;
-  pages: number;
-  start: number;
-  end: number;
-  next: string | null;
-  previous: string | null;
-  count: number;
-  filters: Filter[];
-  documents: Document[];
+  readonly query: string;
+  readonly locale: string;
+  readonly page: number;
+  readonly pages: number;
+  readonly start: number;
+  readonly end: number;
+  readonly next: string | null;
+  readonly previous: string | null;
+  readonly count: number;
+  readonly filters: readonly Filter[];
+  readonly documents: readonly Document[];
 }
 
 interface Document {
-  id: number;
-  title: string;
-  slug: string;
-  locale: string;
-  url: string;
-  edit_url: string;
-  excerpt: string;
-  tags: string[];
-  score: number;
-  parent: {};
+  readonly id: number;
+  readonly title: string;
+  readonly slug: string;
+  readonly locale: string;
+  readonly url: string;
+  readonly edit_url: string;
+  readonly excerpt: string;
+  readonly tags: readonly string[];
+  readonly score: number;
+  readonly parent: {};
 }
 
 interface Filter {
-  name: string;
-  slug: string;
-  options: Option[];
+  readonly name: string;
+  readonly slug: string;
+  readonly options: readonly Option[];
 }
 
 interface Option {
-  name: string;
-  slug: string;
-  count: number;
-  active: boolean;
-  urls: Urls;
+  readonly name: string;
+  readonly slug: string;
+  readonly count: number;
+  readonly active: boolean;
+  readonly urls: Urls;
 }
 
 interface Urls {
-  active: string;
-  inactive: string;
+  readonly active: string;
+  readonly inactive: string;
 }

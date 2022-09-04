@@ -1,3 +1,5 @@
+import Discord from 'discord.js';
+
 import type { Command } from '../types';
 import { InvalidUsageError } from '../types';
 
@@ -7,7 +9,7 @@ const MAX_MESSAGES = 10;
 const prune: Command = {
   name: 'prune',
   description: 'prune?',
-  permissions: 'ADMINISTRATOR',
+  permissions: 'Administrator',
   args: 'required',
   async execute(msg, [howMany]) {
     // tslint:disable-next-line:no-magic-numbers
@@ -26,7 +28,7 @@ const prune: Command = {
     }
 
     await msg.delete();
-    if (msg.channel.type !== 'dm') {
+    if (msg.channel.type !== Discord.ChannelType.DM) {
       const messages = await msg.channel.messages.fetch({ limit: num });
       await msg.channel.bulkDelete(messages);
     }

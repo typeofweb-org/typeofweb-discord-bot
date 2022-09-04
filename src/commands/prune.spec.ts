@@ -1,8 +1,10 @@
-import prune from './prune';
-import { getMessageMock } from '../../test/mocks';
 import { expect } from 'chai';
+import type * as Discord from 'discord.js';
 import Sinon from 'sinon';
-import * as Discord from 'discord.js';
+
+import { getMessageMock } from '../../test/mocks';
+
+import prune from './prune';
 
 describe('prune', () => {
   it('should show an error when you try to delete less than 1 message', async () => {
@@ -39,7 +41,7 @@ describe('prune', () => {
     // tslint:disable-next-line: no-any
     const messagesCollectionMock = { clear: Sinon.spy() };
     msg.channel.messages.fetch.resolves(messagesCollectionMock);
-    msg.guild.member.returns(memberMock);
+    msg.guild.members.cache.get.returns(memberMock);
 
     await expect(prune.execute(msg as unknown as Discord.Message, ['2'])).to.be.fulfilled;
     await expect(msg.channel.messages.fetch).to.have.been.calledOnceWithExactly({ limit: 2 });

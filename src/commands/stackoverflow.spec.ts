@@ -13,14 +13,15 @@ describe('stackoverflow', () => {
   } as const;
 
   const mockLinksEmbed = () =>
-    new Discord.MessageEmbed()
-      .setAuthor(
-        'Stack Overflow',
-        'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Stack_Overflow_icon.svg/768px-Stack_Overflow_icon.svg.png',
-        'https://stackoverflow.com/',
-      )
+    new Discord.EmbedBuilder()
+      .setAuthor({
+        name: 'Stack Overflow',
+        iconURL:
+          'https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/Stack_Overflow_icon.svg/768px-Stack_Overflow_icon.svg.png',
+        url: 'https://stackoverflow.com/',
+      })
       .setTitle('1 najlepsza odpowiedź:')
-      .setColor('f4811e')
+      .setColor('#f4811e')
       .addFields([{ name: mockItem.title, value: mockItem.link }]);
 
   it('should show error message when nothing found on stackoverflow', async () => {
@@ -30,7 +31,7 @@ describe('stackoverflow', () => {
       )
       .reply(200, { items: [] });
 
-    const msg = getMessageMock('msg');
+    const msg = getMessageMock('msg', {});
 
     await stackoverflow.execute(msg as unknown as Discord.Message, ['jak', 'pisac', 'testy']);
 
@@ -48,10 +49,14 @@ describe('stackoverflow', () => {
         items: [mockItem],
       });
 
-    const msg = getMessageMock('msg');
+    const msg = getMessageMock('msg', {});
 
     await stackoverflow.execute(msg as unknown as Discord.Message, ['jak', 'pisac', 'testy']);
 
-    return expect(msg.channel.send).to.have.been.calledOnceWithExactly(mockLinksEmbed());
+    return expect(
+      (
+        msg.channel.send.args[0][0] as { readonly embeds: readonly Discord.EmbedBuilder[] }
+      ).embeds.map((e) => e.data)[0],
+    ).to.eql(mockLinksEmbed().data);
   });
 });

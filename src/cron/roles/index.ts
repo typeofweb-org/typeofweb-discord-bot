@@ -1,8 +1,8 @@
-import Discord from 'discord.js';
+import type Discord from 'discord.js';
 
 const fetchRole = async (guild: Discord.Guild, roleName: string) => {
-  const roles = await guild.roles.fetch(undefined, false);
-  return roles.cache.find((role) => role.name === roleName);
+  const roles = await guild.roles.fetch(undefined, { cache: false });
+  return roles.find((role) => role.name === roleName);
 };
 
 export const fetchOrCreateRole = async (
@@ -27,7 +27,7 @@ const removeRole = (member: Discord.GuildMember, role: Discord.Role) => {
   return member.roles.remove(role.id);
 };
 
-const assignMembersRoles = async (members: Discord.GuildMember[], role: Discord.Role) => {
+const assignMembersRoles = async (members: readonly Discord.GuildMember[], role: Discord.Role) => {
   return Promise.all(members.map((member) => giveRole(member, role)));
 };
 
@@ -38,7 +38,10 @@ const removeMembersRoles = (
   return Promise.all(members.map((member) => removeRole(member, role)));
 };
 
-export const updateRoles = async (role: Discord.Role, futureRoleMembers: Discord.GuildMember[]) => {
+export const updateRoles = async (
+  role: Discord.Role,
+  futureRoleMembers: readonly Discord.GuildMember[],
+) => {
   const currentRoleMembers = role.members;
 
   const membersToRemove = currentRoleMembers.filter(

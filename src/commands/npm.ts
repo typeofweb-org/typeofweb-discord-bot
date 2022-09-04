@@ -1,6 +1,7 @@
-import { Command } from '../types';
 import fetch from 'node-fetch';
 import { polishPlurals } from 'polish-plurals';
+
+import type { Command } from '../types';
 
 const MAX_RESULTS_NUMBER = 3;
 
@@ -24,68 +25,70 @@ const npm: Command = {
       ':';
 
     const topDocuments = objects.slice(0, MAX_RESULTS_NUMBER);
-    return msg.channel.send([message, ...topDocuments.map((doc) => doc.package.links.npm)]);
+    return msg.channel.send(
+      [message, ...topDocuments.map((doc) => doc.package.links.npm)].join('\n'),
+    );
   },
 };
 
 export default npm;
 
 interface NpmResponse {
-  objects: NpmObject[];
-  time: string;
-  total: number;
+  readonly objects: readonly NpmObject[];
+  readonly time: string;
+  readonly total: number;
 }
 
 interface NpmObject {
-  package: Package;
-  score: Score;
-  searchScore: number;
-  flags?: Flags;
+  readonly package: Package;
+  readonly score: Score;
+  readonly searchScore: number;
+  readonly flags?: Flags;
 }
 
 interface Flags {
-  unstable: boolean;
+  readonly unstable: boolean;
 }
 
 interface Score {
-  final: number;
-  detail: Detail;
+  readonly final: number;
+  readonly detail: Detail;
 }
 
 interface Detail {
-  quality: number;
-  popularity: number;
-  maintenance: number;
+  readonly quality: number;
+  readonly popularity: number;
+  readonly maintenance: number;
 }
 
 interface Package {
-  name: string;
-  scope: string;
-  version: string;
-  description: string;
-  date: string;
-  links: Links;
-  publisher: Publisher;
-  maintainers: Publisher[];
-  keywords?: string[];
-  author?: Author;
+  readonly name: string;
+  readonly scope: string;
+  readonly version: string;
+  readonly description: string;
+  readonly date: string;
+  readonly links: Links;
+  readonly publisher: Publisher;
+  readonly maintainers: readonly Publisher[];
+  readonly keywords?: readonly string[];
+  readonly author?: Author;
 }
 
 interface Author {
-  name: string;
-  email?: string;
-  username?: string;
-  url?: string;
+  readonly name: string;
+  readonly email?: string;
+  readonly username?: string;
+  readonly url?: string;
 }
 
 interface Publisher {
-  username: string;
-  email: string;
+  readonly username: string;
+  readonly email: string;
 }
 
 interface Links {
-  npm: string;
-  homepage: string;
-  repository: string;
-  bugs: string;
+  readonly npm: string;
+  readonly homepage: string;
+  readonly repository: string;
+  readonly bugs: string;
 }

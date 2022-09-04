@@ -39,13 +39,17 @@ const stackoverflow: Command = {
       return msg.channel.send('Niestety nic nie znalazłem 😭');
     }
 
-    const embed = new Discord.MessageEmbed()
-      .setAuthor('Stack Overflow', ICON_URL, 'https://stackoverflow.com/')
+    const embed = new Discord.EmbedBuilder()
+      .setAuthor({
+        name: 'Stack Overflow',
+        iconURL: ICON_URL,
+        url: 'https://stackoverflow.com/',
+      })
       .setTitle(`${fields.length} ${formatTitle(fields.length)}:`)
       .addFields(fields)
-      .setColor('f4811e');
+      .setColor('#f4811e');
 
-    return msg.channel.send(embed);
+    return msg.channel.send({ embeds: [embed] });
   },
 };
 

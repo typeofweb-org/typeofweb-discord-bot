@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint no-magic-numbers: "off" */
 
 import type { Message } from 'discord.js';
@@ -34,32 +35,36 @@ const proxyExistenceMutating = <T extends object>(obj: T, prefix = ''): T => {
   });
 };
 
-export const getMessageMock = <T extends Message>(
+export const getMessageMock = <T extends Message, P extends { readonly [K in keyof T]?: any }>(
   name: string,
-  params: { readonly [K in keyof T]?: any } = {},
+  // @ts-ignore
+  params: P = {},
 ) => {
   const mockMessage = {
-    ...params,
+    ...(params as {}),
     channel: {
       bulkDelete: Sinon.stub(),
       send: Sinon.stub(),
       messages: { fetch: Sinon.stub() },
       type: '',
       [Symbol.toStringTag]: () => 'MOCK CHANNEL',
-      ...params.channel,
+      ...(params.channel as {}),
     },
     guild: {
-      member: Sinon.stub(),
-      ...params.guild,
+      members: {
+        cache: { get: Sinon.stub() },
+      },
+      ...(params.guild as {}),
     },
     delete: Sinon.stub(),
     author: {
+      id: '123',
       send: Sinon.stub(),
-      ...params.author,
+      ...(params.author as {}),
     },
     reply: Sinon.stub(),
-  };
-  return proxyExistenceMutating(mockMessage, name);
+  } as const;
+  return proxyExistenceMutating(mockMessage, name) as typeof mockMessage & P;
 };
 
 export const getMemberMock = () => {
