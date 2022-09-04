@@ -1,4 +1,4 @@
-import { Command } from '../types';
+import type { Command } from '../types';
 import { randomizeArray } from '../utils';
 const ANSWERS = [
   'Mój wywiad donosi: NIE',

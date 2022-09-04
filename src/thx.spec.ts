@@ -1,7 +1,9 @@
-import { thx } from './thx';
 import { expect } from 'chai';
-import * as Discord from 'discord.js';
+import type * as Discord from 'discord.js';
+
 import { getMessageMock } from '../test/mocks';
+
+import { thx } from './thx';
 
 describe('thx', () => {
   let id = 0;

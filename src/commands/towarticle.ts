@@ -1,6 +1,6 @@
 import Algoliasearch from 'algoliasearch';
-import { polishPlurals } from 'polish-plurals';
 import Discord from 'discord.js';
+import { polishPlurals } from 'polish-plurals';
 
 import { getConfig } from '../config';
 import type { Command } from '../types';

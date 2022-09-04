@@ -56,7 +56,7 @@ const addKarma: Command = {
 
     const messages = membersKarma.map(({ value, _id }) => {
       const member = membersToReward.find((m) => m.id === _id);
-      return `${msg.author.toString()} podziękował(a) ${member?.toString()}! ${member?.toString()} ma ${getKarmaDescription(
+      return `${msg.author.toString()} podziękował(a) ${member?.toString()!}! ${member?.toString()!} ma ${getKarmaDescription(
         value,
       )}`;
     });

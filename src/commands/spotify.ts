@@ -1,14 +1,16 @@
-import Discord from 'discord.js';
-import { Command } from '../types';
-import fetch from 'node-fetch';
 import { URLSearchParams } from 'url';
+
+import type Discord from 'discord.js';
+import fetch from 'node-fetch';
+
 import { getConfig } from '../config';
+import type { Command } from '../types';
 
 const spotify: Command = {
   name: 'spotify',
   description: 'Pjosenkę gra.',
   args: 'required',
-  async execute(msg: Discord.Message, args: string[]) {
+  async execute(msg: Discord.Message, args: readonly string[]) {
     const secret = Buffer.from(
       `${getConfig('SPOTIFY_CLIENT_ID')}:${getConfig('SPOTIFY_SECRET')}`,
     ).toString('base64');
@@ -48,79 +50,79 @@ const spotify: Command = {
 export default spotify;
 
 interface TokenResponse {
-  access_token: string;
-  token_type: string;
-  expires_in: number;
+  readonly access_token: string;
+  readonly token_type: string;
+  readonly expires_in: number;
 }
 
 interface QueryResponse {
-  tracks: Tracks;
+  readonly tracks: Tracks;
 }
 
 interface Tracks {
-  href: string;
-  items: Item[];
-  limit: number;
-  next: string;
-  offset: number;
-  total: number;
+  readonly href: string;
+  readonly items: readonly Item[];
+  readonly limit: number;
+  readonly next: string;
+  readonly offset: number;
+  readonly total: number;
 }
 
 interface Item {
-  album: Album;
-  artists: Artist[];
-  available_markets: string[];
-  disc_number: number;
-  duration_ms: number;
-  explicit: boolean;
-  external_ids: ExternalIds;
-  external_urls: ExternalURLs;
-  href: string;
-  id: string;
-  is_local: boolean;
-  name: string;
-  popularity: number;
-  preview_url: string;
-  track_number: number;
-  type: string;
-  uri: string;
+  readonly album: Album;
+  readonly artists: readonly Artist[];
+  readonly available_markets: readonly string[];
+  readonly disc_number: number;
+  readonly duration_ms: number;
+  readonly explicit: boolean;
+  readonly external_ids: ExternalIds;
+  readonly external_urls: ExternalURLs;
+  readonly href: string;
+  readonly id: string;
+  readonly is_local: boolean;
+  readonly name: string;
+  readonly popularity: number;
+  readonly preview_url: string;
+  readonly track_number: number;
+  readonly type: string;
+  readonly uri: string;
 }
 
 interface ExternalIds {
-  isrc: string;
+  readonly isrc: string;
 }
 
 interface Album {
-  album_type: string;
-  artists: Artist[];
-  available_markets: string[];
-  external_urls: ExternalURLs;
-  href: string;
-  id: string;
-  images: Image[];
-  name: string;
-  release_date: string;
-  release_date_precision: string;
-  total_tracks: number;
-  type: string;
-  uri: string;
+  readonly album_type: string;
+  readonly artists: readonly Artist[];
+  readonly available_markets: readonly string[];
+  readonly external_urls: ExternalURLs;
+  readonly href: string;
+  readonly id: string;
+  readonly images: readonly Image[];
+  readonly name: string;
+  readonly release_date: string;
+  readonly release_date_precision: string;
+  readonly total_tracks: number;
+  readonly type: string;
+  readonly uri: string;
 }
 
 interface Image {
-  height: number;
-  url: string;
-  width: number;
+  readonly height: number;
+  readonly url: string;
+  readonly width: number;
 }
 
 interface Artist {
-  external_urls: ExternalURLs;
-  href: string;
-  id: string;
-  name: string;
-  type: string;
-  uri: string;
+  readonly external_urls: ExternalURLs;
+  readonly href: string;
+  readonly id: string;
+  readonly name: string;
+  readonly type: string;
+  readonly uri: string;
 }
 
 interface ExternalURLs {
-  spotify: string;
+  readonly spotify: string;
 }

@@ -1,5 +1,6 @@
-import Discord from 'discord.js';
-import { Command } from '../types';
+import type Discord from 'discord.js';
+
+import type { Command } from '../types';
 
 const markdownCodes = [
   '*tekst*',
@@ -15,7 +16,7 @@ const markdownCodes = [
 
 const sourceExample = ['\\`\\`\\`js (html, css, json, cp, md, py, xml etc.)', 'kod', '\\`\\`\\`'];
 
-function codesToInstruction(codes: string[]) {
+function codesToInstruction(codes: readonly string[]) {
   const maxLength = Math.max(...codes.map((x) => x.length));
 
   return codes.map((code) => {

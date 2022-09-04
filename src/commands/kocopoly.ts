@@ -1,9 +1,10 @@
-import { Command, CommandWithArgs } from '../types';
-
 import Fsp from 'fs/promises';
 import Path from 'path';
-import { getRandomKocopolyAnswers } from './kocopoly/kocopolyUtils';
+
+import type { Command, CommandWithArgs } from '../types';
 import { capitalizeFirst, wait } from '../utils';
+
+import { getRandomKocopolyAnswers } from './kocopoly/kocopolyUtils';
 
 const COOLDOWN = 20;
 const KOCOPOLY_DELAY = 1500;
@@ -16,7 +17,7 @@ const kocopolyExecute =
 
     const kocopolyJson = JSON.parse(
       await Fsp.readFile(Path.join(__dirname, '..', kocopolyFilename), 'utf-8'),
-    ) as string[];
+    ) as readonly string[];
 
     const messages = await getRandomKocopolyAnswers(username, question, kocopolyJson, kocopolyName);
 

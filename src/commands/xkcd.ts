@@ -1,7 +1,8 @@
-import fetch from 'node-fetch';
 import Fsp from 'fs/promises';
 import Path from 'path';
+
 import Natural from 'natural';
+import fetch from 'node-fetch';
 
 import type { Command } from '../types';
 
@@ -22,7 +23,7 @@ const xkcd: Command = {
 
     const xkcdCache = JSON.parse(
       await Fsp.readFile(Path.join(__dirname, 'xkcd.cache.json'), 'utf-8'),
-    ) as { lastUpdatedAt: string; data: Record<number, XkcdResponse> };
+    ) as { readonly lastUpdatedAt: string; readonly data: Record<number, XkcdResponse> };
 
     const foundXkcd = Object.entries(xkcdCache.data)
       .map(([id, response]) => {
@@ -71,15 +72,15 @@ function parseXkcdArgs(args: readonly string[]) {
 }
 
 interface XkcdResponse {
-  month: string;
-  num: number;
-  link: string;
-  year: string;
-  news: string;
-  safe_title: string;
-  transcript: string;
-  alt: string;
-  img: string;
-  title: string;
-  day: string;
+  readonly month: string;
+  readonly num: number;
+  readonly link: string;
+  readonly year: string;
+  readonly news: string;
+  readonly safe_title: string;
+  readonly transcript: string;
+  readonly alt: string;
+  readonly img: string;
+  readonly title: string;
+  readonly day: string;
 }

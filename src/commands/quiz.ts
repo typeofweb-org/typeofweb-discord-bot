@@ -1,5 +1,6 @@
-import { Command } from '../types';
 import fetch from 'node-fetch';
+
+import type { Command } from '../types';
 import { randomizeArray } from '../utils';
 
 const MAX_QUESTIONS = 10;
@@ -73,18 +74,18 @@ const prepareUrl = (category: string, level: string) => {
 export default quiz;
 
 interface DevFAQResponse {
-  data: DevFAQ[];
-  meta: {
-    total: number;
+  readonly data: readonly DevFAQ[];
+  readonly meta: {
+    readonly total: number;
   };
 }
 
 interface DevFAQ {
-  id: number;
-  question: string;
-  _categoryId: string;
-  _levelId: string;
-  _statusId: string;
-  acceptedAt: string;
-  currentUserVotedOn: boolean;
+  readonly id: number;
+  readonly question: string;
+  readonly _categoryId: string;
+  readonly _levelId: string;
+  readonly _statusId: string;
+  readonly acceptedAt: string;
+  readonly currentUserVotedOn: boolean;
 }

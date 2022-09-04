@@ -1,5 +1,5 @@
-import { Configuration, OpenAIApi } from 'openai';
 import Natural from 'natural';
+import { Configuration, OpenAIApi } from 'openai';
 
 const configuration = new Configuration({
   apiKey: process.env.OPENAI_API_KEY,
@@ -15,13 +15,13 @@ const BANNED_PATTERNS = /[`\[\]{}\(\)]|http/g;
 const getRandomInt = (len: number) => Math.floor(Math.random() * len);
 
 interface KocopolyGenerator {
-  (username: string, question: string, kocopolyJson: string[], kocopolyName: string): Promise<
-    string[]
-  >;
+  (username: string, question: string, kocopolyJson: readonly string[], kocopolyName: string):
+    | readonly string[]
+    | Promise<readonly string[]>;
 }
 
 // random
-export const getRandomKocopolyAnswers: KocopolyGenerator = async (
+export const getRandomKocopolyAnswers: KocopolyGenerator = (
   _username,
   question,
   kocopolyJson,
@@ -43,6 +43,7 @@ export const getRandomKocopolyAnswers: KocopolyGenerator = async (
   const lines = [];
   let idx = initialIndex === -1 ? getRandomInt(g.length) : initialIndex;
 
+  // eslint-disable-next-line functional/no-loop-statement
   for (let i = 0; i < numberOfLines; ++i) {
     lines.push(g[idx]);
 
@@ -63,7 +64,7 @@ export const getKocopolyAnswerFromOpenAI: KocopolyGenerator = async (
   kocopolyJson,
   kocopolyName,
 ) => {
-  const prompt = await generateKocopolyPrompt(username, question, kocopolyJson, kocopolyName);
+  const prompt = generateKocopolyPrompt(username, question, kocopolyJson, kocopolyName);
 
   const engine = 'text-davinci-001';
   // const engine = 'text-babbage-001';
@@ -94,14 +95,15 @@ export const getKocopolyAnswerFromOpenAI: KocopolyGenerator = async (
 
 const getRandomIndices = (num: number, max: number) => {
   const set = new Set<number>();
+  // eslint-disable-next-line functional/no-loop-statement
   while (set.size < num) set.add(getRandomInt(max));
   return [...set];
 };
 
-const generateKocopolyPrompt = async (
+const generateKocopolyPrompt = (
   username: string,
   question: string,
-  kocopolyJson: string[],
+  kocopolyJson: readonly string[],
   kocopolyName: string,
 ) => {
   const indices = getRandomIndices(100, kocopolyJson.length);

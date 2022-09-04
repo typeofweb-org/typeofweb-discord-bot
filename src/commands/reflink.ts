@@ -23,7 +23,7 @@ export const xKomReflink = (url: string) => {
 
   const suffix = `?partnerid=${X_KOM_PARTNER_ID}&sm12=NDY=&ts=1641758054&token=6ab7b9cde43c838f9e76042a3b8bfdcd`;
   const mainLink = url.split('#')[0];
-  return mainLink + suffix + '&' + mainLink.length;
+  return mainLink + suffix + '&' + mainLink.length.toString();
 };
 
 export const isHelionReflink = (url: string) => {
@@ -55,7 +55,7 @@ export const myDevilReflink = () => {
   return `https://www.mydevil.net/pp/9UVOSJRZIV`;
 };
 
-export const messageToReflinks = (message: string): string[] => {
+export const messageToReflinks = (message: string): readonly string[] => {
   const maybeLinks = message.match(/https?:\/\/[^\s]+/g);
   if (!maybeLinks) {
     return [];

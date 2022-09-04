@@ -1,8 +1,8 @@
 import { expect } from 'chai';
 import 'mocha';
+import type * as Discord from 'discord.js';
 
 import { getMessageMock } from '../../test/mocks';
-import * as Discord from 'discord.js';
 
 import roll, { parseDice, rollDices, instruction } from './roll';
 
@@ -49,14 +49,14 @@ describe('roll', () => {
   });
   describe('handleCommand', () => {
     it('should reply', async () => {
-      const msg = getMessageMock('msg');
+      const msg = getMessageMock('msg', {});
       await roll.execute(msg as unknown as Discord.Message, ['4d6']);
-      await expect(msg.channel.send).to.have.been.calledOnce;
+      expect(msg.channel.send).to.have.been.calledOnce;
     });
     it('reply instruction on fail', async () => {
-      const msg = getMessageMock('msg');
+      const msg = getMessageMock('msg', {});
       await roll.execute(msg as unknown as Discord.Message, ['3k5']);
-      await expect(msg.channel.send).to.have.been.calledOnceWith(instruction);
+      expect(msg.channel.send).to.have.been.calledOnceWith(instruction);
     });
   });
 });

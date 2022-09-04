@@ -46,7 +46,7 @@ export default stats;
 
 function format(
   title: string,
-  stats: readonly { messagesCount?: number | null; memberName?: string | null }[],
+  stats: readonly { readonly messagesCount?: number | null; readonly memberName?: string | null }[],
 ) {
   const messages = [
     `**${title}**`,

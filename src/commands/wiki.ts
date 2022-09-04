@@ -1,12 +1,13 @@
-import Discord from 'discord.js';
-import { Command } from '../types';
+import type Discord from 'discord.js';
 import fetch from 'node-fetch';
+
+import type { Command } from '../types';
 
 const wiki: Command = {
   name: 'wiki',
   description: 'Zwraca pierwszy wynik wyszukiwania w wikipedii',
   args: 'required',
-  async execute(msg: Discord.Message, args: string[]) {
+  async execute(msg: Discord.Message, args: readonly string[]) {
     if (!args.length) {
       return msg.channel.send('Nie wiem czego mam szukać 🤔 \n`!wiki <query phrase>`');
     }
@@ -21,8 +22,8 @@ const wiki: Command = {
       .map(([key, value]) => `${key}=${value}`)
       .join('&');
     const res = await fetch(`${API_URL}?${query}`);
-    const resp = await res.json();
-    const [queryString, [articleTitle], [], [link]]: WikipediaResponse = resp;
+    const resp = (await res.json()) as WikipediaResponse;
+    const [queryString, [articleTitle], [], [link]] = resp;
 
     if (!articleTitle && !link) {
       return msg.channel.send(`Nic nie znalazłam pod hasłem ${queryString}`);
@@ -34,4 +35,4 @@ const wiki: Command = {
 };
 export default wiki;
 
-type WikipediaResponse = [string, string[], string[], string[]];
+type WikipediaResponse = readonly [string, readonly string[], readonly string[], readonly string[]];

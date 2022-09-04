@@ -17,7 +17,7 @@ export const fetchOrCreateRole = async (
   return role;
 };
 
-const giveRole = async (member: Discord.GuildMember, role: Discord.Role) => {
+const giveRole = (member: Discord.GuildMember, role: Discord.Role) => {
   console.debug(`Adding role ${role.name} to member ${member.displayName}!`);
   return member.roles.add(role);
 };
@@ -27,7 +27,7 @@ const removeRole = (member: Discord.GuildMember, role: Discord.Role) => {
   return member.roles.remove(role.id);
 };
 
-const assignMembersRoles = async (members: readonly Discord.GuildMember[], role: Discord.Role) => {
+const assignMembersRoles = (members: readonly Discord.GuildMember[], role: Discord.Role) => {
   return Promise.all(members.map((member) => giveRole(member, role)));
 };
 

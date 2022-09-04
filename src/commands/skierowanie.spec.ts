@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import * as Discord from 'discord.js';
+import type * as Discord from 'discord.js';
 
 import { getMessageMock } from '../../test/mocks';
 
@@ -21,7 +21,6 @@ describe('skierowanie', () => {
 
     await skierowanie.execute(msg as unknown as Discord.Message, ['user', 'react']);
 
-    // @ts-ignore
     const linksMessageMock = [
       'https://reactjs.org/docs',
       'https://developer.mozilla.org/en-US/docs/Learn',

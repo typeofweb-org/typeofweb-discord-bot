@@ -1,10 +1,12 @@
-import youtube from './youtube';
-import { getMessageMock } from '../../test/mocks';
 import { expect } from 'chai';
+import type * as Discord from 'discord.js';
 import nock from 'nock';
-import * as Config from '../config';
 import Sinon from 'sinon';
-import * as Discord from 'discord.js';
+
+import { getMessageMock } from '../../test/mocks';
+import * as Config from '../config';
+
+import youtube from './youtube';
 
 describe('youtube', () => {
   beforeEach(() => {
@@ -23,11 +25,11 @@ describe('youtube', () => {
       )
       .reply(200, { items: [] });
 
-    const msg = getMessageMock('msg');
+    const msg = getMessageMock('msg', {});
 
     await youtube.execute(msg as unknown as Discord.Message, ['moja', 'ulubiona', 'piosenka']);
 
-    await expect(msg.channel.send).to.have.been.calledOnce.and.calledWithMatch('Niestety nic');
+    expect(msg.channel.send).to.have.been.calledOnce.and.calledWithMatch('Niestety nic');
   });
 
   it('should show link when found on youtube', async () => {
@@ -37,12 +39,10 @@ describe('youtube', () => {
       )
       .reply(200, { items: [{ id: { videoId: 'aaa123' } }] });
 
-    const msg = getMessageMock('msg');
+    const msg = getMessageMock('msg', {});
 
     await youtube.execute(msg as unknown as Discord.Message, ['moja', 'ulubiona', 'piosenka']);
 
-    await expect(msg.channel.send).to.have.been.calledOnceWith(
-      'https://www.youtube.com/watch?v=aaa123',
-    );
+    expect(msg.channel.send).to.have.been.calledOnceWith('https://www.youtube.com/watch?v=aaa123');
   });
 });

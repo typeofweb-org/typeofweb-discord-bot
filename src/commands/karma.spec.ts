@@ -1,9 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable functional/no-this-expression */
 import { expect } from 'chai';
 import type * as Discord from 'discord.js';
 import Sinon from 'sinon';
-import * as Db from '../db';
 
 import { getMessageMock, getMemberMock } from '../../test/mocks';
+import * as Db from '../db';
 
 import { addKarma, KARMA_REGEX } from './karma';
 

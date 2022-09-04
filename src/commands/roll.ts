@@ -1,4 +1,4 @@
-import { Command } from '../types';
+import type { Command } from '../types';
 
 const MAX_COUNT = 20;
 const MAX_DICE = 100;

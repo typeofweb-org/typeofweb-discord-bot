@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { expect } from 'chai';
 import type * as Discord from 'discord.js';
 import Sinon from 'sinon';
@@ -7,16 +8,16 @@ import { getMessageMock } from '../../test/mocks';
 import prune from './prune';
 
 describe('prune', () => {
-  it('should show an error when you try to delete less than 1 message', async () => {
-    const msg = getMessageMock('msg');
+  it('should show an error when you try to delete less than 1 message', () => {
+    const msg = getMessageMock('msg', {});
 
     return expect(
       prune.execute(msg as unknown as Discord.Message, ['0']),
     ).to.be.eventually.rejectedWith('Musisz podać przynajmniej 1.');
   });
 
-  it('should show an error when you try to delete more than 10 messages', async () => {
-    const msg = getMessageMock('msg');
+  it('should show an error when you try to delete more than 10 messages', () => {
+    const msg = getMessageMock('msg', {});
 
     return expect(
       prune.execute(msg as unknown as Discord.Message, ['11']),
@@ -25,8 +26,8 @@ describe('prune', () => {
     );
   });
 
-  it('should show an error when you try to delete adsads messages', async () => {
-    const msg = getMessageMock('msg');
+  it('should show an error when you try to delete adsads messages', () => {
+    const msg = getMessageMock('msg', {});
 
     return expect(
       prune.execute(msg as unknown as Discord.Message, ['adsads']),
@@ -34,7 +35,7 @@ describe('prune', () => {
   });
 
   it('should fetch messages and delete them', async () => {
-    const msg = getMessageMock('msg');
+    const msg = getMessageMock('msg', {});
     const memberMock = {
       hasPermission: Sinon.spy(),
     };
@@ -44,18 +45,17 @@ describe('prune', () => {
     msg.guild.members.cache.get.returns(memberMock);
 
     await expect(prune.execute(msg as unknown as Discord.Message, ['2'])).to.be.fulfilled;
-    await expect(msg.channel.messages.fetch).to.have.been.calledOnceWithExactly({ limit: 2 });
-    await expect(msg.channel.bulkDelete).to.have.been.calledOnceWithExactly(messagesCollectionMock);
+    expect(msg.channel.messages.fetch).to.have.been.calledOnceWithExactly({ limit: 2 });
+    expect(msg.channel.bulkDelete).to.have.been.calledOnceWithExactly(messagesCollectionMock);
   });
 
   it('should delete itself', async () => {
-    const msg = getMessageMock('msg');
-    // tslint:disable-next-line: no-any
+    const msg = getMessageMock('msg', {});
     const messagesCollectionMock = { clear: Sinon.spy() } as any;
     msg.channel.messages.fetch.resolves(messagesCollectionMock);
 
     await prune.execute(msg as unknown as Discord.Message, ['2']);
 
-    await expect(msg.delete).to.have.been.calledOnce;
+    expect(msg.delete).to.have.been.calledOnce;
   });
 });

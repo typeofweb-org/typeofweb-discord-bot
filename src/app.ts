@@ -52,7 +52,7 @@ const settings: { readonly setPresence: boolean; readonly config: ClientConfig }
 };
 
 client.on('ready', () => {
-  console.log(`Logged in as ${client.user?.tag}!`);
+  console.log(`Logged in as ${client.user?.tag!}!`);
 });
 
 // eslint-disable-next-line functional/prefer-readonly-type
@@ -196,9 +196,9 @@ async function init() {
   {
     const TYPE_OF_WEB_GUILD_ID = '440163731704643589';
     const guild = await client.guilds.fetch(TYPE_OF_WEB_GUILD_ID);
-    updateRoles(guild);
+    void updateRoles(guild);
     setInterval(() => {
-      updateRoles(guild);
+      void updateRoles(guild);
     }, 1000 * 60 * 60 * 24 * 1);
   }
 

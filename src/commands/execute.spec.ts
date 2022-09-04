@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+
 import 'mocha';
 import * as execute from './execute';
 
@@ -147,6 +148,8 @@ describe('Command: execute', () => {
        }
       `,
     ];
+
+    // eslint-disable-next-line functional/no-loop-statement
     for (const code of dangerous) {
       await expect(execute.executeCode(code, 'js')).to.eventually.be.rejected;
     }

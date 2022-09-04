@@ -1,4 +1,4 @@
-import Discord from 'discord.js';
+import type Discord from 'discord.js';
 import Cache from 'node-cache';
 
 const THX_TIMEOUT_S = 15 * 60;
