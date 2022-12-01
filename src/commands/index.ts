@@ -5,6 +5,7 @@ import { getConfig } from '../config';
 import type { Command } from '../types';
 import { InvalidUsageError } from '../types';
 
+import aoc from './aoc';
 import co from './co';
 import execute from './execute';
 import { addKarma, karma, KARMA_REGEX } from './karma';
@@ -38,6 +39,7 @@ import youtube from './youtube';
 export const COMMAND_PATTERN = new RegExp(getConfig('PREFIX') + '([a-z1-9]+)(?: (.*))?');
 
 const allCommands = [
+  aoc,
   co,
   execute,
   // grzesiu,
