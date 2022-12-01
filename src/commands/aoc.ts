@@ -4,6 +4,7 @@ import fetch from 'node-fetch';
 import { getConfig } from '../config';
 import type { Command } from '../types';
 
+const LEADERBOARD_JOIN_CODE = `756840-8c3f18ad`;
 const LEADERBOARD_URL = 'https://adventofcode.com/2022/leaderboard/private/view/756840';
 
 const CACHE_TTL = 15 * 60;
@@ -35,10 +36,11 @@ const aoc: Command = {
     const leaderboard = aocCache.get<readonly LeaderboardEntry[]>(CACHE_KEY);
     const lastUpdateDate = new Date(aocCache.getTtl(CACHE_KEY)! - CACHE_TTL * 1000);
 
-    const formattedLastUpdateHour = `${lastUpdateDate
-      .getHours()
-      .toString()
-      .padStart(2, '0')}:${lastUpdateDate.getMinutes().toString().padStart(2, '0')}`;
+    const formattedLastUpdateHour = new Intl.DateTimeFormat('pl-PL', {
+      hour: 'numeric',
+      minute: 'numeric',
+      timeZone: 'Europe/Warsaw',
+    }).format(lastUpdateDate);
 
     const messages = [
       `**TOP 10 leaderboard AOC** (stan na ${formattedLastUpdateHour}):`,
@@ -46,6 +48,8 @@ const aoc: Command = {
         ({ name, local_score, stars }, index) =>
           `\`${(index + 1).toString().padStart(2, ' ')}\`. ${name} – ${local_score} - ${stars} ⭐️`,
       ),
+      `Dołącz do nas na https://adventofcode.com/2022/leaderboard/private z kodem \`${LEADERBOARD_JOIN_CODE}\` :)`,
+      //   `Wyświetl pełny ranking na ${LEADERBOARD_URL}`,
     ];
 
     return msg.channel.send(messages.join('\n'));
