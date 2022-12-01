@@ -1,3 +1,4 @@
+import Cache from 'node-cache';
 import fetch from 'node-fetch';
 
 import { getConfig } from '../config';
@@ -6,10 +7,9 @@ import type { Command } from '../types';
 const LEADERBOARD_URL = 'https://adventofcode.com/2022/leaderboard/private/view/756840';
 const AOC_SESSION = getConfig('ADVENT_OF_CODE_SESSION');
 
-// eslint-disable-next-line functional/no-let
-let leaderboard: readonly LeaderboardEntry[] = [];
-// eslint-disable-next-line functional/no-let
-let lastUpdateTimestamp = 0;
+const CACHE_TTL = 15 * 60;
+const CACHE_KEY = 'leaderboard';
+const aocCache = new Cache({ stdTTL: CACHE_TTL, deleteOnExpire: true });
 
 const aoc: Command = {
   name: 'aoc',
@@ -17,26 +17,31 @@ const aoc: Command = {
   args: 'prohibited',
   cooldown: 60,
   async execute(msg) {
-    if (lastUpdateTimestamp + 60 * 1000 * 15 < Date.now()) {
-      lastUpdateTimestamp = Date.now();
+    if (!aocCache.has('leaderboard')) {
       const res = await fetch(`${LEADERBOARD_URL}.json`, {
         headers: {
           Cookie: `session=${AOC_SESSION}`,
         },
       });
       const data = (await res.json()) as LeaderboardResponse;
-      leaderboard = Object.values(data.members)
+      const leaderboard = Object.values(data.members)
         .sort((a, b) => b.local_score - a.local_score)
         .splice(0, 10);
+
+      aocCache.set(CACHE_KEY, leaderboard);
     }
 
-    const lastUpdateDate = new Date(lastUpdateTimestamp);
+    const leaderboard = aocCache.get<readonly LeaderboardEntry[]>(CACHE_KEY);
+    const lastUpdateDate = new Date(aocCache.getTtl(CACHE_KEY)! - CACHE_TTL * 1000);
+
+    console.log(lastUpdateDate);
+
     const messages = [
       `**TOP 10 leaderboard AOC** (stan na ${lastUpdateDate
         .getHours()
         .toString()
         .padStart(2, '0')}:${lastUpdateDate.getMinutes().toString().padStart(2, '0')}):`,
-      ...leaderboard.map(
+      ...leaderboard!.map(
         ({ name, local_score, stars }, index) =>
           `\`${(index + 1).toString().padStart(2, ' ')}\`. ${name} – ${local_score} - ${stars} ⭐️`,
       ),
