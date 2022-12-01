@@ -49,7 +49,6 @@ const aoc: Command = {
           `\`${(index + 1).toString().padStart(2, ' ')}\`. ${name} – ${local_score} - ${stars} ⭐️`,
       ),
       `Dołącz do nas na https://adventofcode.com/2022/leaderboard/private z kodem \`${LEADERBOARD_JOIN_CODE}\` :)`,
-      //   `Wyświetl pełny ranking na ${LEADERBOARD_URL}`,
     ];
 
     return msg.channel.send(messages.join('\n'));
