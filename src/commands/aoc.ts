@@ -26,7 +26,7 @@ const aoc: Command = {
       const data = (await res.json()) as LeaderboardResponse;
       const leaderboard = Object.values(data.members)
         .sort((a, b) => b.local_score - a.local_score)
-        .splice(0, 10);
+        .slice(0, 10);
 
       aocCache.set(CACHE_KEY, leaderboard);
     }
@@ -34,13 +34,13 @@ const aoc: Command = {
     const leaderboard = aocCache.get<readonly LeaderboardEntry[]>(CACHE_KEY);
     const lastUpdateDate = new Date(aocCache.getTtl(CACHE_KEY)! - CACHE_TTL * 1000);
 
-    console.log(lastUpdateDate);
+    const formattedLastUpdateHour = `${lastUpdateDate
+      .getHours()
+      .toString()
+      .padStart(2, '0')}:${lastUpdateDate.getMinutes().toString().padStart(2, '0')}`;
 
     const messages = [
-      `**TOP 10 leaderboard AOC** (stan na ${lastUpdateDate
-        .getHours()
-        .toString()
-        .padStart(2, '0')}:${lastUpdateDate.getMinutes().toString().padStart(2, '0')}):`,
+      `**TOP 10 leaderboard AOC** (stan na ${formattedLastUpdateHour}):`,
       ...leaderboard!.map(
         ({ name, local_score, stars }, index) =>
           `\`${(index + 1).toString().padStart(2, ' ')}\`. ${name} – ${local_score} - ${stars} ⭐️`,
