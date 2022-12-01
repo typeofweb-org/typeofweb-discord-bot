@@ -5,7 +5,6 @@ import { getConfig } from '../config';
 import type { Command } from '../types';
 
 const LEADERBOARD_URL = 'https://adventofcode.com/2022/leaderboard/private/view/756840';
-const AOC_SESSION = getConfig('ADVENT_OF_CODE_SESSION');
 
 const CACHE_TTL = 15 * 60;
 const CACHE_KEY = 'leaderboard';
@@ -17,6 +16,8 @@ const aoc: Command = {
   args: 'prohibited',
   cooldown: 60,
   async execute(msg) {
+    const AOC_SESSION = getConfig('ADVENT_OF_CODE_SESSION');
+
     if (!aocCache.has('leaderboard')) {
       const res = await fetch(`${LEADERBOARD_URL}.json`, {
         headers: {
