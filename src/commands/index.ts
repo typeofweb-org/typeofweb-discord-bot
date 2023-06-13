@@ -18,6 +18,7 @@ import mongodb from './mongodb';
 import mydevil from './mydevil';
 import npm from './npm';
 import odpowiedz from './odpowiedz';
+import praca from './praca';
 import prs from './prs';
 import prune from './prune';
 import quiz from './quiz';
@@ -70,6 +71,7 @@ const allCommands = [
   yesno,
   youtube,
   stackoverflow,
+  praca,
 ];
 
 const cooldowns = new Discord.Collection<string, Discord.Collection<string, number>>();
